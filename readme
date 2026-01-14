@@ -1,0 +1,20 @@
+out line of what has to be acheived:
+- set the background to be something greyish
+- make a small banner on the bottom that is rendered first
+- add buttons on the left and the right
+- abstract the containers (this nessesitates an array of them anyway for the way that moving to the left and the right will function)
+  - gif of for the main screen
+  - gif of when this is focused
+  - when clicked:
+    - freeze all other gifs (if this is too complex it is not too nessesary)
+    - fade everything else to black
+    - zoom into the center of the containers 
+      - 15 frames on 30?fps so ab a half a second total
+      - halfway thru the bakcgrounf is completely black
+    - fade the so that when the focused container is full size, it will be completely displayed over the main gif
+    - banner on the bottom is 
+    - the shape when focused is quartal-ish (rounded corners and the edges are ~10px from the side of the screen, right before the corner ~20px, corner of corner maybe 50 from each side)
+    - blue rounded arrows to the left and right (some sort of main transition from left to edge 99 216 251 to 160 231 252, boarder 100 143 167)
+
+focused lower banner:
+- 
