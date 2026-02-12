@@ -29,9 +29,64 @@ out line of what has to be acheived in the order of importance:
 
 -[ ] Make a proper Readme
 
-Adding a new markdown file for a new post?
-A few things you need to do:
-add your article to the 
+To add a new post:
+  1. Format markdown files:
+  ``` markdown
+  ---
+  title: {title}
+  dateWritten: {date}
+  timeSpan: {dates}
+  ---
+  {content}
+  ```
+  ex:
+  ``` markdown
+  ---
+  title: Robots Are Cool
+  dateWritten: Jan 1985
+  timeSpan: Jan 1985 - Aug 2020
+  ---
+  # Robots
+  Cool! Am I right?
+  ```
+  Note: make sure that all the references are in github flavor and not using obsidian flavor:
+  ``` markdown
+  # title
+  go to [#title|title]
+  ```
+  changed to:
+  ``` markdown
+  # title
+  go to [title](#title)
+  ```
+  Note: make sure all the references are to the correct path
+  ``` markdown
+  look at this supper cool picture I took
+  ![](../../../public/img/picture.png)
+  ```
+
+  2. Change the src/data/article-order.json (order matters, but not yet):
+  ``` json
+  {
+    "articles": [
+        "article"
+    ]
+  }
+  ```
+  ex:
+  ``` json
+  {
+    "articles": [
+        "article",
+        "artwocle"
+    ]
+  }
+  ```
+
+  3. Uploading files
+
+
+
 
 
 - make a small banner on the bottom that is rendered first

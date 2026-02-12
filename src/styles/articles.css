@@ -1,0 +1,71 @@
+/* Wii Color Palette (told claude to scape for wii styling)*/
+:root {
+  /* Primary Colors */
+  --wii-blue: #34BEED;
+  --wii-blue-dark: #009AC7;
+  --wii-white: #FFFFFF;
+  
+  /* Neutral Grays */
+  --wii-gray: #8B8B8B;
+  --wii-gray-light: #9A9A9A;
+  --wii-background: #E7E7E7;
+  --wii-background-light: #F2F2F2;
+  
+  /* Text Colors */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+}
+
+@font-face {
+  font-family: 'Contb';
+  src: url('../fonts/contb.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Claude told me this is a good type face but I dont beleive it is correct 100%*/
+body {
+  font-family: 'Contb', sans-serif;
+  line-height: 0;
+  color: var(--text-primary);
+  background-color: var(--wii-background);
+  margin: 0;
+  padding: 0;
+}
+
+/* Articles layout styles */
+h1 {
+  font-size: 2rem;
+  color: var(--wii-blue-dark);
+}
+
+/* Style all content inside article */
+article * {
+  color: var(--text-primary);
+}
+
+article img {
+  width: 200px;
+  height: auto;
+}
+
+article h1 {
+  font-size: 1.5rem;
+  color: var(--wii-blue);
+}
+
+article h4 {
+  font-size: 1.2rem;
+  color: var(--wii-blue);
+}
+
+article a {
+  color: var(--wii-blue-dark);
+  text-decoration: underline;
+}
+
+article p {
+  margin: 1rem 0;
+  color: var(--text-primary);
+}
