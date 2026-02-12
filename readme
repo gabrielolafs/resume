@@ -33,6 +33,8 @@ To add a new post:
   1. Format markdown files:
   ``` markdown
   ---
+  layout: ../../layouts/articles.astro
+
   title: {title}
   dateWritten: {date}
   timeSpan: {dates}
@@ -42,6 +44,8 @@ To add a new post:
   ex:
   ``` markdown
   ---
+  layout: ../../layouts/articles.astro
+
   title: Robots Are Cool
   dateWritten: Jan 1985
   timeSpan: Jan 1985 - Aug 2020
@@ -64,6 +68,7 @@ To add a new post:
   look at this supper cool picture I took
   ![](../../../public/img/picture.png)
   ```
+  Note: make new lines in markdown correctly! Put two spaces at the end of a line
 
   2. Change the src/data/article-order.json (order matters, but not yet):
   ``` json
