@@ -1,0 +1,31 @@
+---
+import * as article from './articles/primary.md';
+import Layout from '../layouts/articles.astro';
+import '../styles/articles.css';
+
+const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
+---
+
+<a href="https://www.linkedin.com/in/gabriel-g-olafsson/">
+    <button>LinkedIn</button>
+</a>
+
+<a href="mailto:gabe@gabrielolafsson.com">
+    <button>Email</button>
+</a>
+
+<Layout {...article} set:html={article.compiledContent()} />
+
+<p>Post Archive:</p>
+<ul>
+    <!-- all posts but primary - doing it this way because the home page will not be in astro and this is temp just for usability -->
+    {posts.map(post => 
+        (post.frontmatter.title !== "Gabriel G. Olafsson" && 
+            <li>
+                <a href={post.url}>
+                    {post.frontmatter.title}
+                </a>
+            </li>
+        )
+    )}
+</ul>

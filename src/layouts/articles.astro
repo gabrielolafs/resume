@@ -1,0 +1,21 @@
+---
+import '../styles/articles.css';
+
+const { frontmatter } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    {frontmatter.dateWritten && <a href="/"><button> Home </button></a>}
+    <h1>{frontmatter.title}</h1>
+    {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
+    {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
+    <br/>
+    <article>
+      <slot /> 
+    </article>
+  </body>
+</html>

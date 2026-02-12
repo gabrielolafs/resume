@@ -1,5 +1,99 @@
-out line of what has to be acheived:
-- set the background to be something greyish
+* make sure that I have a way of easily exporting from obsidain into this:
+locallize everything into their own folders (real obsidian heads would be against this, but im fake)
+have all of the images integrated thru []() stuff or however it really is
+* make sure i have all the markdown files use GitHub styled md, which is not exactly obsidian. main difference in this application 
+is that the links to other sections that would be putting them into the obsidian node graph are a little differnce and made
+by the obsidinan team:
+CHANGE ALL [#section|whatever] to [section](whatever)
+^^^^
+so their is more stuff with links. I am not sure if I want to go thru with the effort of making the links open in a new tab, I need to 
+see if the effect on usablity is enough to warent it. I have to see if there is a built in astro convertion. everything seem to be recomending that I
+either completely change the markdown (which i am not too fund of. i would have to change each markdown file individually. kinda defeting the whole
+reason that astro is hear in the first place)
+
+previous versions were no longer fully representative of what I want to acheive.
+
+out line of what has to be acheived in the order of importance:
+-[ ] Astro
+  -[ ] Serving markdown files
+  -[ ] Styled well - really tough - for me
+    -[ ] Centered + space for arrows - zooming could cause issues?
+    -[ ] Use a color pallet close - lot of time for research  
+    -[ ] Use the font they use - easy? it has to be somebodies special interest
+  -[ ] Link to other articals (I know that the arrows will throw a wrench in this)
+  -[ ] Be able to move from file to file
+
+-[ ] Bottom nav - for each page - banner?
+  -[ ] Overlays with a grey color
+  -[ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
+
+-[ ] Make a proper Readme
+
+To add a new post:
+  1. Format markdown files:
+  ``` markdown
+  ---
+  layout: ../../layouts/articles.astro
+
+  title: {title}
+  dateWritten: {date}
+  timeSpan: {dates}
+  ---
+  {content}
+  ```
+  ex:
+  ``` markdown
+  ---
+  layout: ../../layouts/articles.astro
+
+  title: Robots Are Cool
+  dateWritten: Jan 1985
+  timeSpan: Jan 1985 - Aug 2020
+  ---
+  # Robots
+  Cool! Am I right?
+  ```
+  Note: make sure that all the references are in github flavor and not using obsidian flavor:
+  ``` markdown
+  # title
+  go to [#title|title]
+  ```
+  changed to:
+  ``` markdown
+  # title
+  go to [title](#title)
+  ```
+  Note: make sure all the references are to the correct path
+  ``` markdown
+  look at this supper cool picture I took
+  ![](../../../public/img/picture.png)
+  ```
+  Note: make new lines in markdown correctly! Put two spaces at the end of a line
+
+  2. Change the src/data/article-order.json (order matters, but not yet):
+  ``` json
+  {
+    "articles": [
+        "article"
+    ]
+  }
+  ```
+  ex:
+  ``` json
+  {
+    "articles": [
+        "article",
+        "artwocle"
+    ]
+  }
+  ```
+
+  3. Uploading files
+
+
+
+
+
 - make a small banner on the bottom that is rendered first
 - add buttons on the left and the right
 - abstract the containers (this nessesitates an array of them anyway for the way that moving to the left and the right will function)

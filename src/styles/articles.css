@@ -1,0 +1,104 @@
+/* Wii Color Palette (told claude to scape for wii styling)*/
+:root {
+  /* Primary Colors */
+  --wii-blue: #34BEED;
+  --wii-blue-dark: #009AC7;
+  --wii-white: #FFFFFF;
+  
+  /* Neutral Grays */
+  --wii-gray: #8B8B8B;
+  --wii-gray-light: #9A9A9A;
+  --wii-background: #E7E7E7;
+  --wii-background-light: #F2F2F2;
+  
+  /* Text Colors */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+}
+
+/* this is like exactly the font. I am so happy */
+@font-face {
+  font-family: 'Contb';
+  src: url('../fonts/contb.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Contm';
+  src: url('../fonts/contm.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Claude told me this is a good type face but I dont beleive it is correct 100%*/
+body {
+  font-family: 'Contm', sans-serif;
+  line-height: 1;
+  color: var(--text-primary);
+  background-color: var(--wii-background);
+  margin: 0;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+/* Articles layout styles */
+h1 {
+  font-family: 'Contb', sans-serif;
+  font-size: 2rem;
+  color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Style all content inside article */
+article * {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+article img {
+  width: 200px;
+  height: auto;
+}
+
+article h5 {
+  font-family: 'Contb', sans-serif;
+
+  font-size: 1.2rem;
+  color: var(--wii-blue);
+}
+
+article a {
+  color: var(--wii-blue-dark);
+  text-decoration: underline;
+}
+
+article p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+/* main page styling */
+ul li a {
+  color: var(--wii-blue-dark)
+}
+
+button {
+  font-family: 'Contb', sans-serif;
+  background-color: var(--wii-background);
+  color: var(--text-secondary);
+  border: 2px;
+  border-style: solid;
+  border-color: var(--wii-blue);
+  border-radius: 30px;
+  padding: 5px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 5px;
+}
