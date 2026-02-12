@@ -17,6 +17,7 @@
   --text-muted: #999999;
 }
 
+/* this is like exactly the font. I am so happy */
 @font-face {
   font-family: 'Contb';
   src: url('../fonts/contb.ttf') format('truetype');
@@ -27,22 +28,31 @@
 /* Claude told me this is a good type face but I dont beleive it is correct 100%*/
 body {
   font-family: 'Contb', sans-serif;
-  line-height: 0;
+  line-height: 1;
   color: var(--text-primary);
   background-color: var(--wii-background);
   margin: 0;
-  padding: 0;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 /* Articles layout styles */
 h1 {
   font-size: 2rem;
   color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 /* Style all content inside article */
 article * {
   color: var(--text-primary);
+  margin: 0;
 }
 
 article img {
@@ -66,6 +76,6 @@ article a {
 }
 
 article p {
-  margin: 1rem 0;
+  margin-bottom: 1rem;
   color: var(--text-primary);
 }
