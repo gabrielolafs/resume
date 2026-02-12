@@ -2,7 +2,6 @@
 layout: ../../layouts/articles.astro
 
 title: 'The Best Post'
-author: 'Ben'
 dateWritten: 'Jan 2026'
 timeSpan: 'Nov 2025 - Now'
 ---

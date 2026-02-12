@@ -79,3 +79,7 @@ article p {
   margin-bottom: 1rem;
   color: var(--text-primary);
 }
+
+ul li a {
+  color: var(--wii-blue-dark)
+}

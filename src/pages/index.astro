@@ -1,13 +1,13 @@
 ---
 import * as article from './articles/article.md';
 import Layout from '../layouts/articles.astro';
+import type { ACTION_ERROR_CODES } from 'astro:actions';
+import '../styles/articles.css';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
-<p>{article.frontmatter.title}</p>
-<p>By: {article.frontmatter.author}</p>
 
-<div set:html={article.compiledContent()} />
+<Layout {...article} set:html={article.compiledContent()} />
 
 <p>Post Archive:</p>
 <ul>
