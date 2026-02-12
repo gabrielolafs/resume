@@ -1,14 +1,25 @@
 ---
-import * as wii from './articles/article.md';
-const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }))
+import * as article from './articles/article.md';
+import Layout from '../layouts/articles.astro';
+
+const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
+<Layout title="Home Page">
 
-<p>{wii.frontmatter.title}</p>
-<p>By: {wii.frontmatter.author}</p>
+    <p>{article.frontmatter.title}</p>
+    <p>By: {article.frontmatter.author}</p>
 
-<div set:html={wii.compiledContent()} />
+    <div set:html={article.compiledContent()} />
 
-<p>Post Archive:</p>
-<ul>
-    {posts.map(post => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
-</ul>
+    <p>Post Archive:</p>
+    <ul>
+        {posts.map(post => 
+            <li>
+                <a href={post.url}>
+                    {post.frontmatter.title}
+                </a>
+            </li>
+        )}
+    </ul>
+
+</Layout>

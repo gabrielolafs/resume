@@ -13,7 +13,7 @@ reason that astro is hear in the first place)
 
 previous versions were no longer fully representative of what I want to acheive.
 
-out line of what has to be acheived:
+out line of what has to be acheived in the order of importance:
 -[ ] Astro
   -[ ] Serving markdown files
   -[ ] Styled well - really tough - for me
@@ -23,12 +23,17 @@ out line of what has to be acheived:
   -[ ] Link to other articals (I know that the arrows will throw a wrench in this)
   -[ ] Be able to move from file to file
 
-- [ ] Make a proper Readme
+-[ ] Bottom nav - for each page - banner?
+  -[ ] Overlays with a grey color
+  -[ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
+
+-[ ] Make a proper Readme
 
 Adding a new markdown file for a new post?
 A few things you need to do:
 add your article to the 
-- set the background to be something greyish
+
+
 - make a small banner on the bottom that is rendered first
 - add buttons on the left and the right
 - abstract the containers (this nessesitates an array of them anyway for the way that moving to the left and the right will function)

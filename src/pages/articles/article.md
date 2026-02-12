@@ -1,4 +1,6 @@
 ---
+layout: ../../layouts/articles.astro
+
 title: 'Johny'
 author: 'Ben'
 ---
