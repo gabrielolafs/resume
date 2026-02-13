@@ -6,13 +6,9 @@ import '../styles/articles.css';
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
 
-<a href="https://www.linkedin.com/in/gabriel-g-olafsson/">
-    <button>LinkedIn</button>
-</a>
+<a class="button" href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</button></a>
 
-<a href="mailto:gabe@gabrielolafsson.com">
-    <button>Email</button>
-</a>
+<a class="button" href="mailto:gabe@gabrielolafsson.com">Email</a>
 
 <Layout {...article} set:html={article.compiledContent()} />
 

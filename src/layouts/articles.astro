@@ -9,10 +9,13 @@ const { frontmatter } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
+    <a class="button" href="https://google.com">what</a>
     {frontmatter.dateWritten && <a href="/"><button> Home </button></a>}
     <h1>{frontmatter.title}</h1>
     {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
     {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
+    <a class="button" href="https://google.com">what</a>
+
     <br/>
     <article>
       <slot /> 
