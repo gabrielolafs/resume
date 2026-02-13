@@ -2,17 +2,13 @@
 import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
 import '../styles/articles.css';
+import WiiButton from '../components/wii-button.astro';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
 
-<a href="https://www.linkedin.com/in/gabriel-g-olafsson/">
-    <button>LinkedIn</button>
-</a>
-
-<a href="mailto:gabe@gabrielolafsson.com">
-    <button>Email</button>
-</a>
+<WiiButton href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</WiiButton>
+<WiiButton href="mailto:gabe@gabrielolafsson.com">Email</WiiButton>
 
 <Layout {...article} set:html={article.compiledContent()} />
 

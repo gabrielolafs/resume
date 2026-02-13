@@ -1,0 +1,26 @@
+---
+import '../styles/button.css'
+const { href } = Astro.props;
+---
+
+<a href={href} class="wii-button">
+    <svg class="button-bg" viewBox="0 0 35 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path 
+            d="M 10 0 C 0 0 1 14 3 18 C 3 9 8 10 10 10 L 28 10 A 3 5 0 0 0 28 0 L 10 0 Z" 
+        />    
+    </svg>
+    <span class="button-text">
+        <slot />
+    </span>
+</a>
+
+<!-- <a href={href} class="wii-button">
+    <svg class="button-bg" viewBox="0 0 37 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path 
+            d="M 10 0 C 0 0 1 14 7 18 C 7 9 12 10 14 10 L 28 10 A 5 5 0 0 0 28 0 L 10 0 Z" 
+        />    
+    </svg>
+    <span class="button-text">
+        <slot />
+    </span>
+</a> -->

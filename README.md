@@ -1,46 +1,137 @@
-# Astro Starter Kit: Basics
+# Nostalgic Portfolio Page
+By: Gabriel G. Olafsson
 
-```sh
-npm create astro@latest -- --template basics
+##### To run locally
+``` bash
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Below are the steps to add a new post
+### 1. Format markdown files:
+``` markdown
+---
+layout: {route to layout, the same on every file}
 
-## 🚀 Project Structure
+title: {title}
+dateWritten: {date}
+timeSpan: {dates}
+---
+{content}
+```
+###### ex:
+``` markdown
+---
+layout: ../../layouts/articles.astro
 
-Inside of your Astro project, you'll see the following folders and files:
+title: 'Robots Are Cool'
+dateWritten: 'Jan 1985'
+timeSpan: 'Jan 1985 - Aug 2020'
+---
+# Robots
+Cool! Am I right?
+```
+#### Note: make sure all references are [github flavored](https://github.github.com/gfm/) not obsidian flavored, really only two main differences:
+``` markdown
+--- 
+Obsidain version
+--- 
+# title to go to:
+go to [[#title to go to:|title]]
+```
+``` markdown
+---
+Altered version for astro
+---
+# title to go to:
+go to [title](#title-to-go-to)
+```
+Basically, Obsidian uses wiki styled linking which is not supported and needs to be changed. Astro also does some formating to the replace all spaces with "-" and remove chars like ":". For more detailed information reference [markdown in Astro](https://docs.astro.build/en/guides/markdown-content/)
+``` markdown
+---
+example of picture in markdown
+---
+look at this supper cool picture I took
+![](../../../public/img/picture.png)
+```
+``` markdown
+--- 
+title: example of linking to another article
+---
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+# linking to the article
+[article](/article/article)
+Note that Astro uses the file name as the route. Using the title will not work.
+
+# linking another articles header 
+i need to make a link to acticle's [title](/article/article#title-to-go-to)
+```
+#### Note: make new lines in markdown correctly! Put two spaces at the end of a line to have a break
+
+### 2. Change the src/data/article-order.json (order will matter once paging is implemented):
+``` json
+{
+  "articles": [
+      "article"
+  ]
+}
+```
+To add an article after the first:
+``` json
+{
+  "articles": [
+      "article",
+      "artwocle"
+  ]
+}
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+### 3. Uploading files
+Keep in mind the file stucture! This is how I have set up my obsidian folder
+``` markdown
+/portfolio_content
+  /public
+    /img
+      picture.png
+      ...
+  /src
+    /pages
+      /articles
+        article.md
+        ...
+```
+Grab your markdown files and put them into /src/pages/articles/article.md
+Grab your photos and put them into /public/img
 
-## 🧞 Commands
+As long as it looks good, thats it! Just make a pr and merge it in, and cloudlflare will deploy!
 
-All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
+# Current TODOs somewhat ordered by importance:
+``` markdown
+-[ ] Astro
+  -[x] Serving markdown files
+  -[ ] Styled well - really tough - for me
+    -[ ] Centered + space for arrows - zooming could cause issues?
+    -[x] Use a color pallet close - lot of time for research  
+    -[x] Use the font they use - easy? it has to be somebodies special interest
+  -[x] Link to other articals (I know that the arrows will throw a wrench in this - it was pretty easy to account for in markdwon, might not be as big an issue as I though it would be)
+  -[x] Be able to move from file to file (routing)
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+-[ ] Bottom nav - for each page - banner?
+  -[ ] Overlays with a grey color
+  -[ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
+
+-[ ] three js
+  -[ ] crt filter
+  -[ ] animate full screen fuction
+  -[ ] implement 3d files into markdown files (technical challenge, plus tedious to make the files)
+
+-[ ] mobile support
+  -[ ] change clickable count (2 x 4 icons?) on main page
+  -[ ] move arrow buttons to a more comfortable place
+  -[ ] 
+
+-[ ] change cursor (super small thing but i think it very important)
+
+-[ ] Make a proper Readme
+```
