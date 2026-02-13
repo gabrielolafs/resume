@@ -45,7 +45,7 @@ Altered version for astro
 # title to go to:
 go to [title](#title-to-go-to)
 ```
-Basically, Obsidian used wiki styled linking which is not supported so that need to change. Astro also does some formating to the replacing all spaces with "-" and removing chars like ":". for more detailed information reference [markdown in Astro](https://docs.astro.build/en/guides/markdown-content/)
+Basically, Obsidian uses wiki styled linking which is not supported and needs to be changed. Astro also does some formating to the replace all spaces with "-" and remove chars like ":". For more detailed information reference [markdown in Astro](https://docs.astro.build/en/guides/markdown-content/)
 ``` markdown
 ---
 example of picture in markdown
@@ -53,7 +53,19 @@ example of picture in markdown
 look at this supper cool picture I took
 ![](../../../public/img/picture.png)
 ```
-#### Note: make new lines in markdown correctly! Put two spaces at the end of a line
+``` markdown
+--- 
+title: example of linking to another article
+---
+
+# linking to the article
+[article](/article/article)
+Note that Astro uses the file name as the route. Using the title will not work.
+
+# linking another articles header 
+i need to make a link to acticle's [title](/article/article#title-to-go-to)
+```
+#### Note: make new lines in markdown correctly! Put two spaces at the end of a line to have a break
 
 ### 2. Change the src/data/article-order.json (order will matter once paging is implemented):
 ``` json
@@ -102,7 +114,7 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
     -[ ] Centered + space for arrows - zooming could cause issues?
     -[x] Use a color pallet close - lot of time for research  
     -[x] Use the font they use - easy? it has to be somebodies special interest
-  -[ ] Link to other articals (I know that the arrows will throw a wrench in this)
+  -[x] Link to other articals (I know that the arrows will throw a wrench in this - it was pretty easy to account for in markdwon, might not be as big an issue as I though it would be)
   -[x] Be able to move from file to file (routing)
 
 -[ ] Bottom nav - for each page - banner?
