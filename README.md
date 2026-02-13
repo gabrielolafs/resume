@@ -46,8 +46,10 @@ Altered version for astro
 go to [title](#title-to-go-to)
 ```
 Basically, Obsidian used wiki styled linking which is not supported so that need to change. Astro also does some formating to the replacing all spaces with "-" and removing chars like ":". for more detailed information reference [markdown in Astro](https://docs.astro.build/en/guides/markdown-content/)
-#### Note: make sure all the references are to the correct path - refer to [file struct](#3-uploading-files)
 ``` markdown
+---
+example of picture in markdown
+---
 look at this supper cool picture I took
 ![](../../../public/img/picture.png)
 ```
