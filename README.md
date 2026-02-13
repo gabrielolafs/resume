@@ -69,7 +69,7 @@ To add an article after the first:
 }
 ```
 
-###### 3. Uploading files
+### 3. Uploading files
 Keep in mind the file stucture! This is how I have set up my obsidian folder
 ``` markdown
 /portfolio_content
@@ -92,30 +92,30 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 
 # Current TODOs somewhat ordered by importance:
 ``` markdown
--[ ] Astro
-  -[x] Serving markdown files
-  -[ ] Styled well - really tough - for me
-    -[ ] Centered + space for arrows - zooming could cause issues?
-    -[x] Use a color pallet close - lot of time for research  
-    -[x] Use the font they use - easy? it has to be somebodies special interest
-  -[ ] Link to other articals (I know that the arrows will throw a wrench in this)
-  -[x] Be able to move from file to file (routing)
+- [ ] Astro
+  - [x] Serving markdown files
+  - [ ] Styled well - really tough - for me
+    - [ ] Centered + space for arrows - zooming could cause issues?
+    - [x] Use a color pallet close - lot of time for research  
+    - [x] Use the font they use - easy? it has to be somebodies special interest
+  - [ ] Link to other articals (I know that the arrows will throw a wrench in this)
+  - [x] Be able to move from file to file (routing)
 
--[ ] Bottom nav - for each page - banner?
-  -[ ] Overlays with a grey color
-  -[ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
+- [ ] Bottom nav - for each page - banner?
+  - [ ] Overlays with a grey color
+  - [ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
 
--[ ] three js
-  -[ ] crt filter
-  -[ ] animate full screen fuction
-  -[ ] implement 3d files into markdown files (technical challenge, plus tedious to make the files)
+- [ ] three js
+  - [ ] crt filter
+  - [ ] animate full screen fuction
+  - [ ] implement 3d files into markdown files (technical challenge, plus tedious to make the files)
 
--[ ] mobile support
-  -[ ] change clickable count (2 x 4 icons?) on main page
-  -[ ] move arrow buttons to a more comfortable place
-  -[ ] 
+- [ ] mobile support
+  - [ ] change clickable count (2 x 4 icons?) on main page
+  - [ ] move arrow buttons to a more comfortable place
+  - [ ] 
 
--[ ] change cursor (super small thing but i think it very important)
+- [ ] change cursor (super small thing but i think it very important)
 
--[ ] Make a proper Readme
+- [ ] Make a proper Readme
 ```
