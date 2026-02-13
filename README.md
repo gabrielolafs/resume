@@ -4,8 +4,8 @@ By: Gabriel G. Olafsson
 ##### To run locally
 
 
-### To add a new post:
-###### 1. Format markdown files:
+## Below are the steps to add a new post
+### 1. Format markdown files:
 ``` markdown
 ---
 layout: {route to layout, the same on every file}
@@ -16,7 +16,7 @@ timeSpan: {dates}
 ---
 {content}
 ```
-ex:
+###### ex:
 ``` markdown
 ---
 layout: ../../layouts/articles.astro
@@ -28,24 +28,30 @@ timeSpan: Jan 1985 - Aug 2020
 # Robots
 Cool! Am I right?
 ```
-Note: make sure all references are [github flavored](https://github.github.com/gfm/) not obsidian flavored, really only one main difference:
+#### Note: make sure all references are [github flavored](https://github.github.com/gfm/) not obsidian flavored, really only two main differences:
 ``` markdown
-# title to go to
-go to [[#title to go to|title]]
+--- 
+Obsidain version
+--- 
+# title to go to:
+go to [[#title to go to:|title]]
 ```
-changed to:
 ``` markdown
-# title
-go to [title](#title to go to)
+---
+Altered version for astro
+---
+# title to go to:
+go to [title](#title-to-go-to)
 ```
-Note: make sure all the references are to the correct path - refer to [file struct](#3-uploading-files)
+Basically, Obsidian used wiki styled linking which is not supported so that need to change. Astro also does some formating to the replacing all spaces with - and removing chars like :
+#### Note: make sure all the references are to the correct path - refer to [file struct](#3-uploading-files)
 ``` markdown
 look at this supper cool picture I took
 ![](../../../public/img/picture.png)
 ```
-###### Note: make new lines in markdown correctly! Put two spaces at the end of a line
+#### Note: make new lines in markdown correctly! Put two spaces at the end of a line
 
-##### 2. Change the src/data/article-order.json (order will matter once paging is implemented):
+### 2. Change the src/data/article-order.json (order will matter once paging is implemented):
 ``` json
 {
   "articles": [
@@ -85,7 +91,7 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 
 
 # Current TODOs somewhat ordered by importance:
-
+``` markdown
 -[ ] Astro
   -[x] Serving markdown files
   -[ ] Styled well - really tough - for me
@@ -112,3 +118,4 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 -[ ] change cursor (super small thing but i think it very important)
 
 -[ ] Make a proper Readme
+```
