@@ -102,7 +102,17 @@ import CircleButton from './circle-button.astro';
         const now = new Date();
         const hours = now.getHours();
         const minutes = now.getMinutes().toString().padStart(2, '0');
-        const timeString = `${hours}:${minutes}`;
+        const seconds = now.getSeconds();
+
+        var timeString = '';
+
+        if (seconds % 4) {
+            timeString = `${hours} ${minutes}`;
+        }
+        else {
+            timeString = `${hours}:${minutes}`;
+        }
+        
         const timeElement = document.getElementById('current-time');
         if (timeElement) {
             timeElement.textContent = timeString;
