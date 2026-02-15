@@ -1,0 +1,15 @@
+---
+import '../styles/button.css'
+const { href } = Astro.props;
+---
+
+<a href={href} class="circle-button">
+    <svg class="button-bg" viewBox="0 0 35 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path 
+            d="M3 12Q13 10 13 3Q1 0 3 12">
+        </path>
+    </svg>
+    <span class="button-text">
+        <slot />
+    </span>
+</a>

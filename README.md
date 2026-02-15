@@ -108,6 +108,8 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 
 # Current TODOs somewhat ordered by importance:
 ``` markdown
+-[ ] Make a logo for myself
+
 -[ ] Astro
   -[x] Serving markdown files
   -[ ] Styled well - really tough - for me

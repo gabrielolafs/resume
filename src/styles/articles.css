@@ -17,6 +17,11 @@
   --text-muted: #999999;
 
   --button-background: #e6e9ef;
+
+  --round-button-background: #bcbcbc;
+  --round-button-glare: #c3c3c3;
+
+  --background-color: #d3d3d3;
 }
 
 /* i found like the exact the font. I am so happy */
@@ -29,6 +34,12 @@
 @font-face {
   font-family: 'Contm';
   src: url('../fonts/contm.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'digital-7';
+  src: url('../fonts/digital-7.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

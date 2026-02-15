@@ -3,12 +3,15 @@ import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
 import '../styles/articles.css';
 import WiiButton from '../components/wii-button.astro';
+import CircleButton from '../components/circle-button.astro';
+import BottomBar from '../components/bottom-bar.astro';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
 
 <WiiButton href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</WiiButton>
 <WiiButton href="mailto:gabe@gabrielolafsson.com">Email</WiiButton>
+<CircleButton href="/">thing</CircleButton>
 
 <Layout {...article} set:html={article.compiledContent()} />
 
@@ -25,3 +28,5 @@ const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true })
         )
     )}
 </ul>
+
+<BottomBar />

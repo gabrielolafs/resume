@@ -18,6 +18,26 @@
   padding: 0.8rem 1.5rem; 
 }
 
+.circle-button {
+  display: inline-block;
+  font-family: 'Contm', sans-serif;
+  background: var(--button-background);
+  color: var(--text-primary);
+  border: 2px;
+  border-style: solid;
+  border-color: var(--wii-blue);
+  border-radius: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 5px;
+  text-decoration: none;
+
+  position: relative;
+  display: inline-flex;
+  /* padding will have to be changed to be the same size when in the bottom nav bar */
+  padding: 0.8rem 1.5rem; 
+}
+
 .button-bg {
   position: absolute;
   top: 2px;
@@ -31,8 +51,4 @@
 .button-text {
   position: relative;
   z-index: 1;
-}
-
-path {
-  fill: #ffffff;
 }
