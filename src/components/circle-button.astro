@@ -4,12 +4,9 @@ const { href } = Astro.props;
 ---
 
 <a href={href} class="circle-button">
-    <svg class="button-bg" viewBox="0 0 35 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path 
-            d="M3 12Q13 10 13 3Q1 0 3 12">
+    <svg class="circle-button-glare" viewBox="0 0 20 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="var(--round-button-glare)"
+            d="M4 14 C-1 8 2 -2 14 2 C13 14 4 14 4 14 Z">
         </path>
     </svg>
-    <span class="button-text">
-        <slot />
-    </span>
 </a>
