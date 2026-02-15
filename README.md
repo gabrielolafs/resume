@@ -109,19 +109,59 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 # Current TODOs somewhat ordered by importance:
 ``` markdown
 -[ ] Make a logo for myself
+-[ ] Change the icon in the tab to be this logo
 
--[ ] Astro
+-[x] Astro (specifically the markdown implementation)
   -[x] Serving markdown files
-  -[ ] Styled well - really tough - for me
-    -[ ] Centered + space for arrows - zooming could cause issues?
+  -[x] Styled well - really tough - for me
+    -[x] Centered + space for arrows - zooming could cause issues?
     -[x] Use a color pallet close - lot of time for research  
     -[x] Use the font they use - easy? it has to be somebodies special interest
   -[x] Link to other articals (I know that the arrows will throw a wrench in this - it was pretty easy to account for in markdwon, might not be as big an issue as I though it would be)
   -[x] Be able to move from file to file (routing)
 
--[ ] Bottom nav - for each page - banner?
-  -[ ] Overlays with a grey color
-  -[ ] Buttons with blue outline [Home, Fullscreen] (in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button)
+-[ ] Main bottom banner
+  -[x] Circle buttons
+    -[x] Styled
+    -[x] Able to take svgs as an arg
+  -[x] Outline in blue
+  -[x] grey background
+    -[ ] Fix small spacing glitch? I think all it is a rounding issue combining px and percent - maybe just round to the nearest pixel?
+  -[x] Drop shadows on buttons
+  -[ ] Shadows from the outline. This one I have been struggling with a lot. I think I will have to make a new svg path for each with a height that is taller than it used to be for everything. that would solve the issue of the center line being cut off. But the curves are the real stickler. I have to do some research on how to cast a shaodow downwards from an svg. I thought I had something that would work (linear gradient) but it has not yet and it would be messed up on the scaling so I have not gotten anything that looks good yet. radial and linear??? make them all into one svg and use other variables in order to scale on the x????? Ive spent like 2 hours on this alone, I have to figure it out
+  -[x] svg mail icon for right side
+  -[ ] modal for the right side (email). this is were I will have all of the links to get in touch with me.
+    -[ ] link all [github, linkedin, email] (would be really cool if i found or recrated the ond linkedin logo and stuff like that to make it more acurate to the time period)
+  -[x] svg for the left side (do i mess with the outline?? i just cant tell)
+    -[ ] link to my resume (will be my resume link - not sure if I want a dedicated page at this time or just have it be a download link. Well have to think on it more.)
+
+-[ ] Article bottom nav
+  -[ ] grey color background
+  -[ ] svg with the ever so slightest curve to it 
+    -[ ] grey fill
+    -[ ] black line
+    -[ ] no shadow?
+  -[x] Buttons with blue outline [Home, Fullscreen] (~~in page navigation is going to be a little weird... i dont know a nice way to acomidate all the linking without the user just pressing the back button~~ Al told me how to open in a new tab which I had given up on but it is like super easy - implementing it in Astro might get a little weird tho. _blank)
+    -[x] General styling
+    -[ ] Truely Styled (have the same size and really hone in that svg path)
+    -[ ] animation??
+
+-[ ] Main Page
+  -[ ] Create a 1d array from the json file 
+  -[ ] teasiers for each of the projects that I have worked on
+    -[ ] want to acomidate the mobile users - this will 
+  -[ ] if > 8 pages (this is something I dont think is wize to do at this time and this is something that is more of a very end game task)
+    -[ ] page flipping 
+    -[ ]
+
+  -[ ] 
+  -[ ]
+  -[ ]
+  -[ ]
+  -[ ]
+  -[ ]
+  -[ ]
+
 
 -[ ] three js
   -[ ] crt filter
