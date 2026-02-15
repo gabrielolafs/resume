@@ -79,3 +79,39 @@
   color: var(--text-primary);
   letter-spacing: 0.1em;
 }
+
+.date-display {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+
+/* hate how this is being done, but the display flex was messing with other stuff so this is the best solution that google could think of */
+.bottom-container > :first-child {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  height: 70%;
+  width: auto;
+  aspect-ratio: 1 / 1; 
+}
+
+.bottom-container > :last-child {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  height: 70%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+}

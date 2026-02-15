@@ -11,7 +11,6 @@ const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true })
 
 <WiiButton href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</WiiButton>
 <WiiButton href="mailto:gabe@gabrielolafsson.com">Email</WiiButton>
-<CircleButton href="/">thing</CircleButton>
 
 <Layout {...article} set:html={article.compiledContent()} />
 

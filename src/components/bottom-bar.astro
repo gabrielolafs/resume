@@ -1,8 +1,12 @@
 ---
 import '../styles/bottom-bar.css'; 
+import CircleButton from './circle-button.astro';
 ---
 
 <div class="bottom-container">
+    <CircleButton />
+
+    <!-- all the svg styling is below. no real nice way to do it while scaling on width -->
     <div class="top-of-bottom-container">
         <div class="left-line">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
@@ -36,17 +40,22 @@ import '../styles/bottom-bar.css';
         </div>
     </div>
 
-    <div class="time-display">
-        <span id="current-time">12:00</span>
-    </div>
-    
     <div class="rest-of-bottom-container">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none">
             <rect x="0" y="0" width="1" height="1" fill="var(--background-color)"/>
         </svg>
     </div>
-</div>
 
+    <div class="time-display">
+        <span id="current-time">12:00</span>
+    </div>
+
+    <div class="date-display">
+        <span id="current-date">Mon 2/15</span>
+    </div>
+
+    <CircleButton />
+</div>
 <script>
     function updateTime() {
         const now = new Date();
@@ -56,6 +65,17 @@ import '../styles/bottom-bar.css';
         const timeElement = document.getElementById('current-time');
         if (timeElement) {
             timeElement.textContent = timeString;
+        }
+
+        // Update date
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayName = days[now.getDay()];
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const dateString = `${dayName} ${month}/${day}`;
+        const dateElement = document.getElementById('current-date');
+        if (dateElement) {
+            dateElement.textContent = dateString;
         }
     }
 
