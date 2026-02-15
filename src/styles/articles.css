@@ -20,6 +20,7 @@
 
   --round-button-background: #bcbcbc;
   --round-button-glare: #c3c3c3;
+  --round-button-content: #7f7f7f;
 
   --background-color: #d3d3d3;
 }
@@ -50,8 +51,6 @@ body {
   color: var(--text-primary);
   background-color: var(--wii-background);
   margin: 0;
-  padding-left: 5%;
-  padding-right: 5%;
 }
 
 /* Articles layout styles */

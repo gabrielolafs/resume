@@ -4,13 +4,19 @@ import CircleButton from './circle-button.astro';
 ---
 
 <div class="bottom-container">
-    <CircleButton />
+    <CircleButton>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+            <path fill="var(--round-button-content)" stroke-width="0" 
+            d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+            </path>
+        </svg>
+    </CircleButton>
 
-    <!-- all the svg styling is below. no real nice way to do it while scaling on width -->
+    <!-- background and outline pass -->
     <div class="top-of-bottom-container">
         <div class="left-line">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>
+                <path stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>                
                 <rect x="0" y="1" width="4" height="5" fill="var(--background-color)"/>
             </svg>
         </div>
@@ -40,6 +46,35 @@ import CircleButton from './circle-button.astro';
         </div>
     </div>
 
+    <!-- shadow pass -->
+    <div class="shadow-layer">
+        <div class="left-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
+                <path class="shadow-path" stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>                
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 9 6" preserveAspectRatio="none">
+                <path class="shadow-path" stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M4 1 C7 1 8 5 13 5"></path>
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="13 0 3 6" preserveAspectRatio="none">
+                <path class="shadow-path" stroke="var(--wii-blue)" stroke-width="1" d="M13 5 L16 5"></path>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="16 0 8 6" preserveAspectRatio="none">
+                <path class="shadow-path" stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M16 5 C21 5 21 1 24 1"></path>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="24 0 6 6" preserveAspectRatio="none">
+                <path class="shadow-path" stroke="var(--wii-blue)" stroke-width="1" d="M24 1 L30 1"></path>
+            </svg>
+        </div>
+    </div>
+
     <div class="rest-of-bottom-container">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none">
             <rect x="0" y="0" width="1" height="1" fill="var(--background-color)"/>
@@ -54,7 +89,13 @@ import CircleButton from './circle-button.astro';
         <span id="current-date">Mon 2/15</span>
     </div>
 
-    <CircleButton />
+    <CircleButton>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+            <path fill="var(--round-button-content)" stroke-width="0" 
+                d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+            </path>
+        </svg>
+    </CircleButton>
 </div>
 <script>
     function updateTime() {

@@ -35,6 +35,7 @@
   position: relative;
   /* padding will have to be changed to be the same size when in the bottom nav bar */
   padding: 0; 
+  filter: drop-shadow(5px 5px 2px #a1a5a8);
 }
 
 .button-bg {
@@ -54,10 +55,29 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 .button-text {
   position: relative;
   z-index: 1;
+}
+
+.slot {
+  z-index: 15;
+}
+
+.circle-button-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  left: 25%;
+  top: 25%;
+  width: 50%;  /* Control icon size */
+  height: 50%;
+}
+
+.circle-button-content svg {
+  width: 100%;
+  height: 100%;
 }
