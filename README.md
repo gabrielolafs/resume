@@ -152,15 +152,7 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
     -[ ] want to acomidate the mobile users - this will 
   -[ ] if > 8 pages (this is something I dont think is wize to do at this time and this is something that is more of a very end game task)
     -[ ] page flipping 
-    -[ ]
-
-  -[ ] 
-  -[ ]
-  -[ ]
-  -[ ]
-  -[ ]
-  -[ ]
-  -[ ]
+    -[ ] tease the next few
 
 
 -[ ] three js
