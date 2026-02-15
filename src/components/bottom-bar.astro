@@ -81,6 +81,34 @@ import CircleButton from './circle-button.astro';
         </svg>
     </div>
 
+    <div class="outline-layer">
+        <div class="left-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
+                <path stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>                
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 9 6" preserveAspectRatio="none">
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M4 1 C7 1 8 5 13 5"></path>
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="13 0 3 6" preserveAspectRatio="none">
+                <path stroke="var(--wii-blue)" stroke-width="1" d="M13 5 L16 5"></path>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="16 0 8 6" preserveAspectRatio="none">
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M16 5 C21 5 21 1 24 1"></path>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="24 0 6 6" preserveAspectRatio="none">
+                <path stroke="var(--wii-blue)" stroke-width="1" d="M24 1 L30 1"></path>
+            </svg>
+        </div>
+    </div>
+
     <div class="time-display">
         <span id="current-time">12:00</span>
     </div>
@@ -106,7 +134,7 @@ import CircleButton from './circle-button.astro';
 
         var timeString = '';
 
-        if (seconds % 4) {
+        if (seconds % 3) {
             timeString = `${hours} ${minutes}`;
         }
         else {

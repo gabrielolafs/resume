@@ -66,21 +66,40 @@
   pointer-events: none;
 }
 
+.outline-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 3;
+  pointer-events: none;
+}
+
 /* Need to add the same child sizing rules */
 .shadow-layer .left-line,
 .shadow-layer .right-line,
-.shadow-layer .center-line {
+.shadow-layer .center-line,
+.outline-layer .left-line,
+.outline-layer .right-line,
+.outline-layer .center-line {
   flex-grow: 1; 
   min-width: 50px;
 }
 
 .shadow-layer .left-curve,
-.shadow-layer .right-curve {
+.shadow-layer .right-curve,
+.outline-layer .left-curve,
+.outline-layer .right-curve {
   flex-shrink: 0;
   width: 80px;
 }
 
-.shadow-layer svg {
+.shadow-layer svg,
+.outline-layer svg {
   width: 100%;
   height: 100%;
   display: block;
