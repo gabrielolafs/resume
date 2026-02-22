@@ -5,12 +5,6 @@ import CircleButton from './circle-button.astro';
 
 <div class="bottom-container">
     <CircleButton>
-        <!-- with out line -->
-        <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 25">
-            <path stroke-linecap="round" stroke-width="1" stroke="var(--text-secondary)" fill="var(--round-button-content)" stroke-width="1" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
-            <path stroke-linecap="round" fill="none" stroke-width="1" stroke="var(--text-secondary)" d="M13 1L13 6Q13 7 14 7L19 7"></path>
-            <path stroke-linecap="round" stroke-width="1" stroke="var(--text-secondary)" d="M2 4L12 4M4 6L12 6M4 8L12 8M2 11L16 11M4 13L12 13M4 15L16 15M4 17L14 17M2 20L15 20M4 22L18 22"></path>
-        </svg> -->
 
         <!-- with out outline -->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 26">
@@ -23,110 +17,68 @@ import CircleButton from './circle-button.astro';
     <!-- background and outline pass -->
     <div class="top-of-bottom-container">
         <div class="left-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>                
-                <rect x="0" y="1" width="4" height="5" fill="var(--background-color)"/>
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-ll" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="1" width="10" height="29" fill="var(--background-color)"/>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/>
+                <rect x="0" y="1" width="10" height="10" fill="url(#sg-ll)"/>
             </svg>
         </div>
         <div class="left-curve">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 9 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M4 1 C7 1 8 5 13 5"></path>
-                <path fill="var(--background-color)" d="M4 1 C7 1 8 5 13 5 L13 6 L4 6 Z"></path>
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-lc" x1="0" y1="7" x2="0" y2="17" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0.0"/>
+                    </linearGradient>
+                </defs>
+                <path fill="var(--background-color)" stroke="none" d="M0 1 C4 1 4 7 9 7 L9 30 L0 30 Z"/>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 C4 1 4 7 9 7"/>
+                <path fill="url(#sg-lc)" d="M0 1 C4 1 4 7 9 7 L9 17 C4 17 4 11 0 11 Z"/>
             </svg>
         </div>
         <div class="center-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="13 0 3 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M13 5 L16 5"></path>
-                <rect x="13" y="5" width="3" height="1" fill="var(--background-color)"/>
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-cl" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="7" width="10" height="23" fill="var(--background-color)"/>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 L10 7"/>
+                <rect x="0" y="7" width="10" height="10" fill="url(#sg-cl)"/>
             </svg>
         </div>
         <div class="right-curve">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="16 0 8 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M16 5 C21 5 21 1 24 1"></path>
-                <path fill="var(--background-color)" d="M16 5 C21 5 21 1 24 1 L24 6 L16 6 Z"></path>
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-rc" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <path fill="var(--background-color)" stroke="none" d="M0 7 C5 7 6 1 9 1 L9 30 L0 30 Z"/>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 C5 7 6 1 9 1"/>
+                <path fill="url(#sg-rc)" d="M0 7 C5 7 6 1 9 1 L9 11 C6 11 5 17 0 17 Z"/>
             </svg>
         </div>
         <div class="right-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="24 0 6 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M24 1 L30 1"></path>
-                <rect x="24" y="1" width="6" height="5" fill="var(--background-color)"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- shadow pass -->
-    <div class="shadow-layer">
-        <div class="left-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
                 <defs>
-                    <linearGradient id="shadowGradientLeftLine" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.4);stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0);stop-opacity:0" />
+                    <linearGradient id="sg-rl" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
-                <rect x="0" y="1" width="4" height="4" fill="url(#shadowGradientLeftLine)"/>
-            </svg>  
-        </div>
-        <div class="left-curve">
-            <!-- too hard for me right now -->
-        </div>
-        <div class="center-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="13 0 3 6" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="shadowGradientCenter" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.4);stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0);stop-opacity:0" />
-                    </linearGradient>
-                </defs>
-                <rect x="13" y="5" width="3" height="1" fill="url(#shadowGradientCenter)"/>
-            </svg>  
-        </div>
-        <div class="right-curve">
-            <!-- too hard for me right now -->
-        </div>
-        <div class="right-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="24 0 6 6" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="shadowGradientRightLine" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:rgba(0,0,0,0.4);stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:rgba(0,0,0,0);stop-opacity:0" />
-                    </linearGradient>
-                </defs>
-                <rect x="24" y="1" width="6" height="4" fill="url(#shadowGradientRightLine)"/>
-            </svg>  
-        </div>
-    </div>
-
-    <div class="rest-of-bottom-container">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none">
-            <rect x="0" y="0" width="1" height="1" fill="var(--background-color)"/>
-        </svg>
-    </div>
-
-    <div class="outline-layer">
-        <div class="left-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M0 1 L4 1"></path>                
-            </svg>
-        </div>
-        <div class="left-curve">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 0 9 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M4 1 C7 1 8 5 13 5"></path>
-            </svg>
-        </div>
-        <div class="center-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="13 0 3 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M13 5 L16 5"></path>
-            </svg>
-        </div>
-        <div class="right-curve">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="16 0 8 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M16 5 C21 5 21 1 24 1"></path>
-            </svg>
-        </div>
-        <div class="right-line">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="24 0 6 6" preserveAspectRatio="none">
-                <path stroke="var(--wii-blue)" stroke-width="1" d="M24 1 L30 1"></path>
+                <rect x="0" y="1" width="10" height="29" fill="var(--background-color)"/>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/>
+                <rect x="0" y="1" width="10" height="10" fill="url(#sg-rl)"/>
             </svg>
         </div>
     </div>
