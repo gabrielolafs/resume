@@ -14,17 +14,133 @@ import CircleButton from './circle-button.astro';
         </svg>
     </CircleButton>
 
-    <!-- background and outline pass -->
-    <div class="top-of-bottom-container">
+    <!-- background pass -->
+    <div class="bottom-container-background-pass">
+        <div class="left-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="1" width="10" height="29" fill="var(--background-color)"/>
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path fill="var(--background-color)" d="M0 1 C4 1 4 7 9 7 L9 30 L0 30 Z" />
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="7" width="10" height="23" fill="var(--background-color)"/>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path fill="var(--background-color)" stroke="none" d="M0 7 C5 7 6 1 9 1 L9 30 L0 30 Z"/>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="1" width="10" height="29" fill="var(--background-color)"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- everything else pass -->
+    <div class="bottom-container-everything-else-pass">
         <div class="left-line">
             <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
                 <defs>
-                    <linearGradient id="sg-ll" x1="0" y1="0" x2="0" y2="1">
+                    <filter id="line-shadow" x="0%" y="0%" width="100%" height="100%">
+                        <feOffset dx="0" dy="0" result="offset" />
+                        <feGaussianBlur in="offset" stdDeviation="5" result="blur" />
+                    </filter>
+                </defs>
+
+                <!-- apply the shadow -->
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <!-- <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" /> -->
+
+                <!-- <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/> -->
+                <!-- <rect x="0" y="1" width="10" height="10" fill="url(#sg-ll)"/> -->
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <!-- Downward shadow filter -->
+                    <filter id="shadow" x="00%" y="-10%" width="400%" height="400%">
+                        <feOffset dx="0" dy="0" result="offset" />
+                        <feGaussianBlur in="offset" stdDeviation="5" result="blur" />
+                    </filter>
+                </defs>
+                <!-- apply the shadow -->
+                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+
+                <path d="M0 1 C4 1 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="1" fill="var(--wii-background)" />
+
+                <!-- Main blue curve -->
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 1 C4 1 4 7 9 7" />
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-cl" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
                         <stop offset="100%" stop-color="black" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 L10 7"/>
+                <rect x="0" y="7" width="10" height="10" fill="url(#sg-cl)"/>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-rc" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 C5 7 6 1 9 1"/>
+                <path fill="url(#sg-rc)" d="M0 7 C5 7 6 1 9 1 L9 11 C6 11 5 17 0 17 Z"/>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <linearGradient id="sg-rl" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="black" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/>
+                <rect x="0" y="1" width="10" height="10" fill="url(#sg-rl)"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- shadow pass -->
+    <!-- <div class="top-of-bottom-container">
+        <div class="left-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <defs>
+                    <filter id="left-line-shadow" x="00%" y="1%" width="400%" height="400%">
+                        <feOffset dx="0" dy="0" result="offset" />
+                        <feGaussianBlur in="offset" stdDeviation="5" result="blur" />
+                    </filter>
+                </defs>
                 <rect x="0" y="1" width="10" height="29" fill="var(--background-color)"/>
+                <rect x="0" y="1" width="10" height="29" vector-effect="non-scaling-stroke" fill="var(--background-color)"/>
+
+                apply the shadow
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#left-line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#left-line-shadow)" />
+                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+
                 <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/>
                 <rect x="0" y="1" width="10" height="10" fill="url(#sg-ll)"/>
             </svg>
@@ -32,14 +148,23 @@ import CircleButton from './circle-button.astro';
         <div class="left-curve">
             <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
                 <defs>
-                    <linearGradient id="sg-lc" x1="0" y1="7" x2="0" y2="17" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="black" stop-opacity="0.4"/>
-                        <stop offset="100%" stop-color="black" stop-opacity="0.0"/>
-                    </linearGradient>
+                    Downward shadow filter
+                    <filter id="shadow" x="00%" y="-10%" width="400%" height="400%">
+                        <feOffset dx="0" dy="0" result="offset" />
+                        <feGaussianBlur in="offset" stdDeviation="5" result="blur" />
+                    </filter>
                 </defs>
-                <path fill="var(--background-color)" stroke="none" d="M0 1 C4 1 4 7 9 7 L9 30 L0 30 Z"/>
-                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 C4 1 4 7 9 7"/>
-                <path fill="url(#sg-lc)" d="M0 1 C4 1 4 7 9 7 L9 17 C4 17 4 11 0 11 Z"/>
+
+                <path fill="var(--background-color)" d="M0 1 C4 1 4 7 9 7 L9 30 L0 30 Z" />
+
+                apply the shadow
+                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+
+                <path d="M0 1 C4 1 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="1" fill="var(--wii-background)" />
+
+                Main blue curve
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 1 C4 1 4 7 9 7" />
             </svg>
         </div>
         <div class="center-line">
@@ -81,8 +206,13 @@ import CircleButton from './circle-button.astro';
                 <rect x="0" y="1" width="10" height="10" fill="url(#sg-rl)"/>
             </svg>
         </div>
-    </div>
+    </div> -->
 
+
+    <!-- clean up and outline pass -->
+
+
+    
     <div class="time-display">
         <span id="current-time">12:00</span>
     </div>
