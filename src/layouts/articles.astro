@@ -11,12 +11,21 @@ const { frontmatter } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <dev class="background">
-      <svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 24 24">
-        <path d="m2,4q-1,8 0,16q0.4,1.6 2,2q8,1 16,0q2,0 2,-2q1,-8 0,-16q0,-2 -2,-2q-8,-1 -16,0q-2,0 -2,2" fill="none" id="svg_1" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+    <div class="vignette">
+      <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+        <defs>
+          <mask id="crt-mask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+            <!-- White rectangle = fully visible -->
+            <rect width="1" height="1" fill="white" fill="none"/>
+            <!-- Black shape = cut out (for those asking - yes I did use calculus to figure out the corners) -->
+            <path 
+              transform="scale(0.02, 0.02)"
+              d="M1 3 Q0 25 1 47 Q1.0417 48.9583 3 49 Q25 50 47 49 Q48.9583 48.9583 49 47 Q50 25 49 3 Q48.9583 1.0417 47 1 Q25 0 3 1 Q1.0417 1.0417 1 3 Z"
+            />
+          </mask>
+        </defs>
       </svg>
-    </dev>
-    <dev class="vignette"></dev>
+    </div>
     <h1>{frontmatter.title}</h1>
     {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
     {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
