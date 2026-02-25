@@ -1,6 +1,7 @@
 ---
 import '../styles/articles.css';
 import WiiButton from '../components/wii-button.astro';
+import FocusedBottomBar from '../components/focused-bottom-bar.astro';
 
 const { frontmatter } = Astro.props;
 ---
@@ -10,7 +11,10 @@ const { frontmatter } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    {frontmatter.dateWritten && <WiiButton href="/">Home</WiiButton>}
+    <!-- <dev class="background">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" width="24" height="24" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="2" d="M2 4Q1 12 2 20Q2 22 4 22Q12 23 20 22Q22 22 22 20Q23 12 22 4Q22 2 20 2Q12 1 4 2Q2 2 2 4"></path></svg>
+    </dev> -->
+    <dev class="vignette"></dev>
     <h1>{frontmatter.title}</h1>
     {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
     {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
@@ -19,5 +23,6 @@ const { frontmatter } = Astro.props;
     <article>
       <slot /> 
     </article>
+    {frontmatter.dateWritten && <FocusedBottomBar />}
   </body>
 </html>

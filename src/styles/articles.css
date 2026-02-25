@@ -3,6 +3,7 @@
   /* Primary Colors */
   --wii-blue: #1a9ebc;
   --wii-blue-dark: #009AC7;
+  --wii-blue-darker: #3c7f7f;
   --wii-white: #FFFFFF;
   
   /* Neutral Grays */
@@ -45,25 +46,29 @@
   font-style: normal;
 }
 
+
+
 body {
   font-family: 'Contm', sans-serif;
   line-height: 1;
   color: var(--text-primary);
   background-color: var(--wii-background);
   margin: 0;
+  padding: 5% 5% 20vh 5%;
 }
 
 /* Articles layout styles */
 h1 {
   font-family: 'Contb', sans-serif;
-  font-size: 2rem;
+  font-size: 4rem;
   color: var(--wii-blue-dark);
   margin: 0;
 }
 
+/* under the title */
 p {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -81,7 +86,7 @@ article img {
 article h5 {
   font-family: 'Contb', sans-serif;
 
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   color: var(--wii-blue-dark);
 }
 
@@ -91,8 +96,11 @@ article a {
 }
 
 article p {
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
   color: var(--text-secondary);
+  text-align: justify;
+
 }
 
 /* main page styling */
