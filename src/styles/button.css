@@ -3,7 +3,7 @@
   font-family: 'Contm', sans-serif;
   background: var(--button-background);
   color: var(--text-primary);
-  border: 2px;
+  border: 4px;
   border-style: solid;
   border-color: var(--wii-blue);
   border-radius: 40000px;

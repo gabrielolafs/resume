@@ -11,7 +11,7 @@ const { frontmatter } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <div class="vignette">
+    {frontmatter.dateWritten && <div class="vignette">
       <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
         <defs>
           <mask id="crt-mask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
@@ -26,6 +26,7 @@ const { frontmatter } = Astro.props;
         </defs>
       </svg>
     </div>
+    }
     <h1>{frontmatter.title}</h1>
     {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
     {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}

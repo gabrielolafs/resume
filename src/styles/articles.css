@@ -33,12 +33,14 @@
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Contm';
   src: url('../fonts/contm.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'digital-7';
   src: url('../fonts/digital-7 (mono).ttf') format('truetype');

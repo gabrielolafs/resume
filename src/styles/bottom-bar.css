@@ -46,7 +46,7 @@
 
 .left-curve, .right-curve {
   flex-shrink: 0;
-  width: 80px; 
+  width: 12vh; 
 }
 
 .center-line {
@@ -90,8 +90,15 @@
   letter-spacing: 0.1em;
 }
 
-/* hate how this is being done, but the display flex was messing with other stuff so this is the best solution that google could think of */
-.bottom-container > :first-child {
+/* it really wasnt that deep */
+.buttons-container {
+  position: fixed;
+  z-index: 101;
+  height: 100%;
+  width: 100%;
+}
+
+.resume-button .circle-button {
   position: absolute;
   left: 5%;
   top: 50%;
@@ -102,7 +109,35 @@
   aspect-ratio: 1 / 1; 
 }
 
-.bottom-container > :last-child {
+.resume-button .resume-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.resume-button .resume-background .fill-behind {
+  position: absolute;
+  left: 5%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 1 / 1; 
+}
+
+.resume-button .resume-background .fill-left {
+  position: absolute;
+  left: 0%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 8 / 13; 
+}
+
+.email-button .circle-button {
   position: absolute;
   right: 5%;
   top: 50%;
@@ -112,6 +147,45 @@
   width: auto;
   aspect-ratio: 1 / 1;
 }
+
+.email-button .email-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.email-button .email-background .fill-behind-right {
+  position: absolute;
+  right: 5%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.email-button .email-background .fill-right {
+  position: absolute;
+  right: 0%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 8 / 13;
+}
+
+/* .bottom-container > :last-child {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  height: 60%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+} */
 
 .slot {
   z-index: 20;

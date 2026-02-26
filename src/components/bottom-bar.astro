@@ -4,15 +4,57 @@ import CircleButton from './circle-button.astro';
 ---
 
 <div class="bottom-container">
-    <CircleButton>
+    <div></div>
 
-        <!-- with out outline -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 26">
-            <path stroke-linecap="round" stroke-width="2" fill="var(--round-button-content)" stroke="var(--round-button-content" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
-            <path stroke-linecap="round" fill="none" stroke-width="1" stroke="var(--text-secondary)" d="M13 0.5 L13 6 Q13 7 14 7 L19.5 7"></path>
-            <path stroke-linecap="round" stroke-width="1" stroke="var(--round-button-background)" d="M2 4L12 4M4 6L12 6M4 8L12 8M2 11L16 11M4 13L12 13M4 15L16 15M4 17L14 17M2 20L15 20M4 22L18 22"></path>
-        </svg>
-    </CircleButton>
+    <div class="resume-button">
+        <CircleButton href="./../../pdf/gabriel_olafsson_resume.pdf" download="gabriel_olafsson_resume">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 26">
+                <path stroke-linecap="round" stroke-width="2" fill="var(--round-button-content)" stroke="var(--round-button-content" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
+                <path stroke-linecap="round" fill="none" stroke-width="1" stroke="var(--text-secondary)" d="M13 0.5 L13 6 Q13 7 14 7 L19.5 7"></path>
+                <path stroke-linecap="round" stroke-width="1" stroke="var(--round-button-background)" d="M2 4L12 4M4 6L12 6M4 8L12 8M2 11L16 11M4 13L12 13M4 15L16 15M4 17L14 17M2 20L15 20M4 22L18 22"></path>
+            </svg>
+        </CircleButton>
+        <div class="resume-background">
+            <div class="fill-behind">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                    <path d="M0 1.4 L5.5 1.4 A1 1 0 0 1 5.5 11.4 L0 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M0 1 L5 1 A1 1.05 0 0 1 5 11 L0 11"  stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+            <div class="fill-left">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMinYMid meet">
+                    <path d="M0 1.4 L13 1.4 M13 11.4 L0 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M0 1 L13 1 M13 11 L0 11"  stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="email-button">
+        <CircleButton>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+                <path fill="var(--round-button-content)" stroke-width="0" 
+                    d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+                </path>
+            </svg>
+        </CircleButton>
+        <div class="email-background">
+            <div class="fill-behind-right">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                    <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+            <div class="fill-right">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
+                    <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    
 
     <!-- background pass -->
     <div class="bottom-container-background-pass">
@@ -55,14 +97,14 @@ import CircleButton from './circle-button.astro';
                 </defs>
 
                 <!-- apply the shadow -->
+                <!-- <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
                 <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
                 <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
                 <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
-                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
-                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" />
+                <path d="M0 1 L10 1 M10 30" stroke="black" stroke-width="4" fill="none" filter="url(#line-shadow)" /> -->
                 <!-- <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" /> -->
 
-                <!-- <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/> -->
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 1 L10 1"/>
                 <!-- <rect x="0" y="1" width="10" height="10" fill="url(#sg-ll)"/> -->
             </svg>
         </div>
@@ -76,10 +118,10 @@ import CircleButton from './circle-button.astro';
                     </filter>
                 </defs>
                 <!-- apply the shadow -->
-                <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
+                <!-- <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
                 <path d="M0 1 C4 1 4 7 9 7"stroke="black" stroke-width="4" fill="none"filter="url(#shadow)" />
 
-                <path d="M0 1 C4 1 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="1" fill="var(--wii-background)" />
+                <path d="M0 1 C4 1 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="1" fill="var(--wii-background)" /> -->
 
                 <!-- Main blue curve -->
                 <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 1 C4 1 4 7 9 7" />
@@ -93,8 +135,8 @@ import CircleButton from './circle-button.astro';
                         <stop offset="100%" stop-color="black" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
-                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 L10 7"/>
-                <rect x="0" y="7" width="10" height="10" fill="url(#sg-cl)"/>
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 7 L10 7"/>
+                <!-- <rect x="0" y="7" width="10" height="10" fill="url(#sg-cl)"/> -->
             </svg>
         </div>
         <div class="right-curve">
@@ -105,8 +147,8 @@ import CircleButton from './circle-button.astro';
                         <stop offset="100%" stop-color="black" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
-                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 7 C5 7 6 1 9 1"/>
-                <path fill="url(#sg-rc)" d="M0 7 C5 7 6 1 9 1 L9 11 C6 11 5 17 0 17 Z"/>
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 7 C5 7 6 1 9 1"/>
+                <!-- <path fill="url(#sg-rc)" d="M0 7 C5 7 6 1 9 1 L9 11 C6 11 5 17 0 17 Z"/> -->
             </svg>
         </div>
         <div class="right-line">
@@ -117,8 +159,8 @@ import CircleButton from './circle-button.astro';
                         <stop offset="100%" stop-color="black" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
-                <path stroke="var(--wii-blue)" stroke-width="2" fill="none" d="M0 1 L10 1"/>
-                <rect x="0" y="1" width="10" height="10" fill="url(#sg-rl)"/>
+                <path stroke="var(--wii-blue)" stroke-width="1" fill="none" d="M0 1 L10 1"/>
+                <!-- <rect x="0" y="1" width="10" height="10" fill="url(#sg-rl)"/> -->
             </svg>
         </div>
     </div>
@@ -207,11 +249,6 @@ import CircleButton from './circle-button.astro';
             </svg>
         </div>
     </div> -->
-
-
-    <!-- clean up and outline pass -->
-
-
     
     <div class="time-display">
         <span id="current-time">12:00</span>
@@ -221,13 +258,6 @@ import CircleButton from './circle-button.astro';
         <span id="current-date">Mon 2/15</span>
     </div>
 
-    <CircleButton>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
-            <path fill="var(--round-button-content)" stroke-width="0" 
-                d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
-            </path>
-        </svg>
-    </CircleButton>
 </div>
 <script>
     function updateTime() {
