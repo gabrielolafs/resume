@@ -1,16 +1,35 @@
 ---
 import "./../styles/global.css";
 import "./../styles/arrows.css";
+
+const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" viewBox="0 0 16 24">
+        <defs>
+            <radialGradient id="grad1" cx="85%" cy="5%" r="100%" fx="85%" fy="15%">
+                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+            <radialGradient id="grad2" cx="85%" cy="95%" r="90%" fx="85%" fy="95%">
+                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+        </defs>
+
+        <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"/>
+        <path stroke="none" fill="url(#grad1)" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        <path stroke="none" fill="url(#grad2)" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        </svg>`
 ---
 
 <!-- i really would like to animate them. that might be a back burner part of the project -->
 
 <!-- keep in mind that for the home page this must be called with knowledge of the space the bottom bar takes up - not sure how i will do that just yet -->
-<div class="arrows container">
-    <div class="left-arrow">
-
-    </div>
-    <div class="right-arrow">
-
-    </div>
+<!-- really keep that in mind - i am giving this an absolute possition and it will probably look weird with the home page (maybe i can just make it a little off center cause the other nav bar will be there too? idk it kinda feels like the lazy way out) -->
+<div class="arrows-container">
+    <div class="left-arrow" set:html={leftFacingArrow} />
+    <div class="right-arrow" set:html={leftFacingArrow} />
 </div>
