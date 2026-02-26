@@ -2,7 +2,7 @@
 import "./../styles/letter.css";
 import "./../styles/global.css";
 
-const { href, img, alt = "", pinColorInside = "", pinColorOutline = "", xpos = "30px", ypos = "20px" } = Astro.props;
+const { id = "none", href, img, alt = "", pinColorInside = "", pinColorOutline = "", xpos = "30px", ypos = "20px" } = Astro.props;
 ---
 
 <div class="letter-container" style=`left: ${xpos}; top: ${ypos}`>
@@ -15,7 +15,7 @@ const { href, img, alt = "", pinColorInside = "", pinColorOutline = "", xpos = "
                 <filter id="ballShadow" x="-50%" y="-50%" height="200%" width="200%">
                     <feDropShadow dx="0.3" dy="0.3" stdDeviation="0.15" flood-color="rgba(0,0,0,0.5)" />
                 </filter>
-                <radialGradient id="f4" cx="45%" cy="40%" r="60%" fx="25%" fy="25%">
+                <radialGradient id=`gradient-${ id }` cx="45%" cy="40%" r="60%" fx="25%" fy="25%">
                     <stop offset="0%" stop-color={ pinColorInside } />
                     <stop offset="70%" stop-color={ pinColorInside } />
                     <stop offset="100%" stop-color={ pinColorOutline } />
@@ -25,7 +25,7 @@ const { href, img, alt = "", pinColorInside = "", pinColorOutline = "", xpos = "
             <path fill="var(--letter-fill)" stroke-width="0.2" stroke="var(--letter-outline)" 
                 d="M0 2 L0 9 L10 9 L10 2 L0 2 M0 3 L4.375 4.75 Q5 5 5.625 4.75 L10 3">
             </path>
-            <path stroke="var(--red-outline)" stroke-width=".05" fill="url(#f4)" filter="url(#ballShadow)"
+            <path stroke={pinColorOutline} stroke-width=".05" fill=`url(#gradient-${ id })` filter="url(#ballShadow)"
                 d="M5 1.5 A1 1 0 0 1 5 3.5 A1 1 0 0 1 5 1.5"/>    
             <path stroke-linecap="round" stroke-linejoin="round" fill="white" stroke-width="2" filter="url(#f3)"
                 d="M5.5 1.8 Q4.6 1.4 4.2 2.3 Q4.8 2.4 5.5 1.8">

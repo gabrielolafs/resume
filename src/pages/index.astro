@@ -1,8 +1,6 @@
 ---
 import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
-import WiiButton from '../components/wii-button.astro';
-import CircleButton from '../components/circle-button.astro';
 import BottomBar from '../components/bottom-bar.astro';
 import '../styles/index.css';
 
@@ -10,9 +8,6 @@ const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true })
 ---
 <div class="container">
     <div class="content">
-        <WiiButton href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</WiiButton>
-        <WiiButton href="mailto:gabe@gabrielolafsson.com">Email</WiiButton>
-
         <Layout {...article} set:html={article.compiledContent()} />
 
         <p>Post Archive:</p>
