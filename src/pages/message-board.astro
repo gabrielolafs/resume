@@ -5,18 +5,19 @@ import "./../styles/global.css";
 
 import CircleButton from "../components/circle-button.astro";
 import Letter from "../components/letter.astro";
-import Arrows from "../components/arrows.astro";
 ---
 
 <a class="container">
-    <div class="shading"></div>
-<!-- const { href, img, alt = "", pinColorInside = "", pinColorOutside = "", xpos = "30px", ypos = "20px" } = Astro.props; -->
-    <Arrows></Arrows>
-    <Letter href="/" xpos = "50%" ypos = "5%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
+    <div class="shading" />
+    <Letter href="https://www.linkedin.com/in/gabriel-g-olafsson/" xpos = "50%" ypos = "5%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
         <img src="/public/svg/2005-Linkedin-Logo-Vector.svg" alt="LinkedIn"/>
     </Letter>
 
-    <!-- stolen from home page cause its like the exact same thing -->
+    <Letter href="mailto:gabe@gabrielolafsson.com" xpos = "10%" ypos = "35%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
+        <p>send me an email! </br> gabe@gabrielolafsson.com</p>
+    </Letter>
+
+    <!-- stolen from home page cause its like the exact same thing, the class names totaly make sence here -->
     <div class="bottom-container">
         <div class="email-button">
             <CircleButton href="/">
