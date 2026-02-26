@@ -8,6 +8,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;  
+  overflow: hidden;
 }
 
 .bottom-container-background-pass {
@@ -22,17 +23,33 @@
   z-index: 1;
 }
 
-.bottom-container-everything-else-pass {
+.bottom-container-shadow-pass {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   z-index: 2;
+  filter: blur(60px);
+  overflow: hidden;
+}
+
+.bottom-container-highlight-pass {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 3;
 }
 
 .bottom-container-background-pass svg,
-.bottom-container-everything-else-pass svg {
+.bottom-container-shadow-pass svg,
+.bottom-container-highlight-pass svg {
   width: 100%;
   height: 100%;
   display: block;
