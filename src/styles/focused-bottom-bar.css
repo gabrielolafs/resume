@@ -3,7 +3,8 @@
   left: 0;
   bottom: 0;
   width: 100vw;
-  height: min(40vw, 20vh);
+  height: min(25vw, 20vh);
+  min-height: 10vh;
   margin: 0;
   padding: 0;
   display: flex;
@@ -17,11 +18,11 @@
   width: 100vw;
   height: min(30vw, 90%);
   box-sizing: border-box;
-  justify-content: space-between;
+  justify-content: space-around;
   display: flex;
   padding: 0;
   z-index: 2;
-  padding: 1rem 10% 2rem 10%;
+  padding: 2rem 10% 3rem 10%;
 }
 
 .focused-bottom-container .coloring {
