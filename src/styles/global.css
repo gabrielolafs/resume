@@ -1,7 +1,7 @@
 /* Wii Color Palette (told claude to scape for wii styling - good start but some of them are not exactly correct)*/
 :root {
   /* Primary Colors */
-  --wii-blue: #1a9ebc;
+  --wii-blue: #08d8f8;
   --wii-blue-dark: #009AC7;
   --wii-blue-darker: #3c7f7f;
   --wii-white: #FFFFFF;
@@ -22,6 +22,7 @@
   --text-muted: #999999;
 
   --button-background: #e6e9ef;
+  --button-background: #e5ecf0;
 
   --round-button-background: #bcbcbc;
   --round-button-glare: #c3c3c3;
