@@ -3,8 +3,9 @@
   /* Primary Colors */
   --wii-blue: #08d8f8;
   --wii-blue-dark: #009AC7;
-  --wii-blue-darker: #3c7f7f;
+  --wii-blue-darker: #284f4f;
   --wii-white: #FFFFFF;
+
   /* for the sake of seeing*/
   --arrow-stroke: #0f5578;
   --arrow-fill-dark: #4ed5e7;
@@ -22,13 +23,19 @@
   --text-muted: #999999;
 
   --button-background: #e6e9ef;
-  --button-background: #e5ecf0;
 
   --round-button-background: #bcbcbc;
   --round-button-glare: #c3c3c3;
   --round-button-content: #7f7f7f;
 
   --background-color: #d3d3d3;
+
+  --red-inside: #cb3a37;
+  --red-outline: #c00b08;
+
+  --letter-fill: #fae289;
+  --letter-outline: #e8b93a;
+  /* --letter-outline: #e9e5d6; */
 }
 
 /* i found like the exact the font. I am so happy */

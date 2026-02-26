@@ -4,9 +4,20 @@ import "./../styles/bottom-bar.css";
 import "./../styles/global.css";
 
 import CircleButton from "../components/circle-button.astro";
+import Letter from "../components/letter.astro";
 ---
 
-<div class="container">
+<a class="container">
+    <div class="shading"></div>
+<!-- const { href, img, alt = "", pinColorInside = "", pinColorOutside = "", xpos = "30px", ypos = "20px" } = Astro.props; -->
+
+    <Letter href="/" xpos = "50%" ypos = "5%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
+        <img src="/public/svg/2005-Linkedin-Logo-Vector.svg" alt="LinkedIn"/>
+    </Letter>
+    <Letter xpos = "10%" ypos = "35%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
+        <img src="/public/svg/left-arrow.svg" alt="LinkedIn"/>
+    </Letter>
+
     <!-- stolen from home page cause its like the exact same thing -->
     <div class="bottom-container">
         <div class="email-button">
@@ -20,43 +31,21 @@ import CircleButton from "../components/circle-button.astro";
             <div class="email-background">
                 <div class="fill-behind-right">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
-                        <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab"></path>
-                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
+                        <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
+                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9" fill="none"></path>
                     </svg>
                 </div>
                 <div class="fill-right">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
-                        <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab"></path>
-                        <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                        <path d="M8 1.4 L-5 1.4 L-5 11.4 L8 11.4 Z" stroke-width=".3" stroke="none" fill="var(--background-color)"></path>
+                        <path d="M8 1 L-5 1 L-5 11 L8 11 Z" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
+
+                        <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
+                        <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9" fill="green"></path>
                     </svg>
                 </div>
             </div>
         </div>
     </div>
-    
-    <svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="24" height="24" viewBox="0 0 16 24">
-        <defs>
-            <radialGradient id="grad1" cx="85%" cy="5%" r="100%" fx="85%" fy="15%">
-            <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
-            <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
-            </radialGradient>
-            <radialGradient id="grad2" cx="85%" cy="95%" r="90%" fx="85%" fy="95%">
-            <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
-            <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
-            </radialGradient>
-        
-        </defs>
-        <!-- base blue fill -->
-        <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" d="M13 23 L2 12 L13 1 
-            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
-        <!-- top-right white glow -->
-        <path stroke="none" fill="url(#grad1)" d="M13 23 L2 12 L13 1 
-            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
-        <!-- bottom-right white glow -->
-        <path stroke="none" fill="url(#grad2)" d="M13 23 L2 12 L13 1 
-            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
-                <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" d="M13 23 L2 12 L13 1 
-            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path> 
-        </svg>
-
 </div>
