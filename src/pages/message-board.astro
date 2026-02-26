@@ -1,0 +1,61 @@
+---
+import "./../styles/message-board.css";
+import "./../styles/bottom-bar.css";
+import "./../styles/global.css";
+
+import CircleButton from "../components/circle-button.astro";
+---
+
+<div class="container">
+    <!-- stolen from home page cause its like the exact same thing -->
+    <div class="bottom-container">
+        <div class="email-button">
+            <CircleButton href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+                    <path fill="var(--round-button-content)" stroke-width="0" 
+                        d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+                    </path>
+                </svg>
+            </CircleButton>
+            <div class="email-background">
+                <div class="fill-behind-right">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                        <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab"></path>
+                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                    </svg>
+                </div>
+                <div class="fill-right">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
+                        <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab"></path>
+                        <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="24" height="24" viewBox="0 0 16 24">
+        <defs>
+            <radialGradient id="grad1" cx="85%" cy="5%" r="100%" fx="85%" fy="15%">
+            <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+            <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+            <radialGradient id="grad2" cx="85%" cy="95%" r="90%" fx="85%" fy="95%">
+            <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+            <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+        
+        </defs>
+        <!-- base blue fill -->
+        <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" d="M13 23 L2 12 L13 1 
+            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
+        <!-- top-right white glow -->
+        <path stroke="none" fill="url(#grad1)" d="M13 23 L2 12 L13 1 
+            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
+        <!-- bottom-right white glow -->
+        <path stroke="none" fill="url(#grad2)" d="M13 23 L2 12 L13 1 
+            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path>
+                <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" d="M13 23 L2 12 L13 1 
+            C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"></path> 
+        </svg>
+
+</div>

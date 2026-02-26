@@ -1,0 +1,53 @@
+/* Wii Color Palette (told claude to scape for wii styling - good start but some of them are not exactly correct)*/
+:root {
+  /* Primary Colors */
+  --wii-blue: #1a9ebc;
+  --wii-blue-dark: #009AC7;
+  --wii-blue-darker: #3c7f7f;
+  --wii-white: #FFFFFF;
+  /* for the sake of seeing*/
+  --arrow-stroke: #0f5578;
+  --arrow-fill-dark: #4ed5e7;
+  --arrow-fill-light: #c1fafa;
+  
+  /* Neutral Grays */
+  --wii-gray: #8B8B8B;
+  --wii-gray-light: #9A9A9A;
+  --wii-background: #E7E7E7;
+  --wii-background-light: #F2F2F2;
+  
+  /* Text Colors */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+
+  --button-background: #e6e9ef;
+
+  --round-button-background: #bcbcbc;
+  --round-button-glare: #c3c3c3;
+  --round-button-content: #7f7f7f;
+
+  --background-color: #d3d3d3;
+}
+
+/* i found like the exact the font. I am so happy */
+@font-face {
+  font-family: 'Contb';
+  src: url('../fonts/contb.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Contm';
+  src: url('../fonts/contm.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'digital-7';
+  src: url('../fonts/digital-7 (mono).ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
