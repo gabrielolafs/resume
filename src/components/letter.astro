@@ -62,7 +62,16 @@ const { id = "none", href, img, alt = "", pinColorInside = "", pinColorOutline =
     });
 
     document.addEventListener('mouseup', () => {
-        if (!hasMoved && isDragging) {
+        console.log("whatever");
+        if (!hasMoved) {
+            window.location.href = link.href;
+        }
+        isDragging = false;
+    });
+
+    document.addEventListener('mouseclick', () => {
+        console.log("whatever");
+        if (!hasMoved) {
             window.location.href = link.href;
         }
         isDragging = false;
