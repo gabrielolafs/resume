@@ -1,27 +1,29 @@
 ---
 import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
-import '../styles/articles.css';
-import WiiButton from '../components/wii-button.astro';
+import BottomBar from '../components/bottom-bar.astro';
+import '../styles/index.css';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
+<div class="container">
+    <div class="content">
+        <Layout {...article} set:html={article.compiledContent()} />
 
-<WiiButton href="https://www.linkedin.com/in/gabriel-g-olafsson/">LinkedIn</WiiButton>
-<WiiButton href="mailto:gabe@gabrielolafsson.com">Email</WiiButton>
+        <p>Post Archive:</p>
+        <ul>
+            <!-- all posts but primary - doing it this way because the home page will not be in astro and this is temp just for usability -->
+            {posts.map(post => 
+                (post.frontmatter.title !== "Gabriel G. Olafsson" && 
+                    <li>
+                        <a href={post.url}>
+                            {post.frontmatter.title}
+                        </a>
+                    </li>
+                )
+            )}
+        </ul>
+    </div>
 
-<Layout {...article} set:html={article.compiledContent()} />
-
-<p>Post Archive:</p>
-<ul>
-    <!-- all posts but primary - doing it this way because the home page will not be in astro and this is temp just for usability -->
-    {posts.map(post => 
-        (post.frontmatter.title !== "Gabriel G. Olafsson" && 
-            <li>
-                <a href={post.url}>
-                    {post.frontmatter.title}
-                </a>
-            </li>
-        )
-    )}
-</ul>
+    <BottomBar />
+</div>

@@ -1,36 +1,11 @@
-/* Wii Color Palette (told claude to scape for wii styling - good start but some of them are not exactly correct)*/
-:root {
-  /* Primary Colors */
-  --wii-blue: #34BEED;
-  --wii-blue-dark: #009AC7;
-  --wii-white: #FFFFFF;
-  
-  /* Neutral Grays */
-  --wii-gray: #8B8B8B;
-  --wii-gray-light: #9A9A9A;
-  --wii-background: #E7E7E7;
-  --wii-background-light: #F2F2F2;
-  
-  /* Text Colors */
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --text-muted: #999999;
-
-  --button-background: #e6e9ef;
-}
-
-/* i found like the exact the font. I am so happy */
-@font-face {
-  font-family: 'Contb';
-  src: url('../fonts/contb.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Contm';
-  src: url('../fonts/contm.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: black;
+  mask: url(#crt-mask);
+  mask-size: 100% 100%;
 }
 
 body {
@@ -39,21 +14,21 @@ body {
   color: var(--text-primary);
   background-color: var(--wii-background);
   margin: 0;
-  padding-left: 5%;
-  padding-right: 5%;
+  padding: 5% 5% 20vh 5%;
 }
 
 /* Articles layout styles */
 h1 {
   font-family: 'Contb', sans-serif;
-  font-size: 2rem;
+  font-size: 4rem;
   color: var(--wii-blue-dark);
   margin: 0;
 }
 
+/* under the title */
 p {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -71,7 +46,7 @@ article img {
 article h5 {
   font-family: 'Contb', sans-serif;
 
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   color: var(--wii-blue-dark);
 }
 
@@ -81,8 +56,11 @@ article a {
 }
 
 article p {
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
   color: var(--text-secondary);
+  text-align: justify;
+
 }
 
 /* main page styling */

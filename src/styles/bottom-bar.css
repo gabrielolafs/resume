@@ -1,0 +1,202 @@
+.bottom-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: min(25vw, 20vh);
+  min-height: 10vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;  
+  overflow: hidden;
+}
+
+.bottom-container-background-pass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 1;
+}
+
+.bottom-container-shadow-pass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 2;
+  filter: blur(8vmin);
+  overflow: hidden;
+}
+
+.bottom-container-highlight-pass {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  z-index: 3;
+}
+
+.bottom-container-background-pass svg,
+.bottom-container-shadow-pass svg,
+.bottom-container-highlight-pass svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.left-line, .right-line {
+  /* flex-grow: 1; */
+  min-width: 60px;
+  width: calc(round(up, 20%, 1px));
+}
+
+.left-curve, .right-curve {
+  flex-shrink: 0;
+  width: 12vmin; 
+}
+
+.center-line {
+  flex-grow: 1;
+}
+
+.rest-of-bottom-container {
+  width: 100%;
+  flex-grow: 1;
+  z-index: 0;
+}
+
+.rest-of-bottom-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.time-display {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  font-family: 'digital-7';
+  font-size: 2rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+.date-display {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+
+/* it really wasnt that deep. ok it was kinda deep - like a 14 year old */
+.resume-button .circle-button {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  height: 60%;
+  width: auto;
+  aspect-ratio: 1 / 1; 
+}
+
+.resume-button .resume-background .fill-behind {
+  position: absolute;
+  left: 5%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.resume-button .resume-background .fill-left {
+  position: absolute;
+  left: 0%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 8 / 13; 
+}
+
+.email-button .circle-button {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  height: 60%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.email-button .email-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
+
+.email-button .email-background .fill-behind-right {
+  position: absolute;
+  right: 5%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.email-button .email-background .fill-right {
+  position: absolute;
+  right: 0%;
+  top: 45%;
+  transform: translateY(-40%);
+  z-index: 99;
+  height: 90%;
+  width: auto;
+  aspect-ratio: 8 / 13;
+}
+
+/* apply that beautiful blur */
+.email-button .email-background,
+.resume-button .resume-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  filter: blur(.2vmin);
+}
+
+.resume-button .resume-background,
+.email-button .email-background {
+  pointer-events: none;
+}
+
+.slot {
+  z-index: 20;
+}

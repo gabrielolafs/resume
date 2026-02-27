@@ -1,0 +1,79 @@
+---
+import "./../styles/letter.css";
+import "./../styles/global.css";
+
+const { id = "none", href, img, alt = "", pinColorInside = "", pinColorOutline = "", xpos = "30px", ypos = "20px" } = Astro.props;
+---
+
+<div class="letter-container" style=`left: ${xpos}; top: ${ypos}`>
+    <a href={ href } class="letter-drawing">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 1.48 10.2 7.6" stroke-linecap="round" stroke-linejoin="round" >
+            <defs>
+                <filter id="f3" x="-50%" y="-50%" height="200%" width="200%" xmlns="http://www.w3/2000/svg">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation=".21" />
+                </filter>
+                <filter id="ballShadow" x="-50%" y="-50%" height="200%" width="200%">
+                    <feDropShadow dx="0.3" dy="0.3" stdDeviation="0.15" flood-color="rgba(0,0,0,0.5)" />
+                </filter>
+                <radialGradient id=`gradient-${ id }` cx="45%" cy="40%" r="60%" fx="25%" fy="25%">
+                    <stop offset="0%" stop-color={ pinColorInside } />
+                    <stop offset="70%" stop-color={ pinColorInside } />
+                    <stop offset="100%" stop-color={ pinColorOutline } />
+                </radialGradient>
+            </defs>
+
+            <path fill="var(--letter-fill)" stroke-width="0.2" stroke="var(--letter-outline)" 
+                d="M0 2 L0 9 L10 9 L10 2 L0 2 M0 3 L4.375 4.75 Q5 5 5.625 4.75 L10 3">
+            </path>
+            <path stroke={pinColorOutline} stroke-width=".05" fill=`url(#gradient-${ id })` filter="url(#ballShadow)"
+                d="M5 1.5 A1 1 0 0 1 5 3.5 A1 1 0 0 1 5 1.5"/>    
+            <path stroke-linecap="round" stroke-linejoin="round" fill="white" stroke-width="2" filter="url(#f3)"
+                d="M5.5 1.8 Q4.6 1.4 4.2 2.3 Q4.8 2.4 5.5 1.8">
+            </path>
+        </svg>
+        <span class="letter-content">
+            {img ? <img src={img} alt={alt}/> : <slot />}
+        </span>
+    </a>
+</div>
+
+<script>
+    const container = document.querySelector('.letter-container') as HTMLElement;
+    const link = container.querySelector('a') as HTMLAnchorElement;
+    
+    let isDragging = false;
+    let hasMoved = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        hasMoved = false;
+        offsetX = e.clientX - container.offsetLeft;
+        offsetY = e.clientY - container.offsetTop;
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        hasMoved = true;
+        container.style.left = `${e.clientX - offsetX}px`;
+        container.style.top = `${e.clientY - offsetY}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+        console.log("whatever");
+        if (!hasMoved) {
+            window.location.href = link.href;
+        }
+        isDragging = false;
+    });
+
+    document.addEventListener('mouseclick', () => {
+        console.log("whatever");
+        if (!hasMoved) {
+            window.location.href = link.href;
+        }
+        isDragging = false;
+    });
+</script>

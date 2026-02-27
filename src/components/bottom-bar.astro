@@ -1,0 +1,197 @@
+---
+import '../styles/bottom-bar.css'; 
+import CircleButton from './circle-button.astro';
+---
+
+<div class="bottom-container">
+    <div class="resume-button">
+        <CircleButton href="./../../pdf/gabriel_olafsson_resume.pdf" download="gabriel_olafsson_resume">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 26">
+                <path stroke-linecap="round" stroke-width="2" fill="var(--round-button-content)" stroke="var(--round-button-content" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
+                <path stroke-linecap="round" fill="none" stroke-width="1" stroke="var(--text-secondary)" d="M13 0.5 L13 6 Q13 7 14 7 L19.5 7"></path>
+                <path stroke-linecap="round" stroke-width="1" stroke="var(--round-button-background)" d="M2 4L12 4M4 6L12 6M4 8L12 8M2 11L16 11M4 13L12 13M4 15L16 15M4 17L14 17M2 20L15 20M4 22L18 22"></path>
+            </svg>
+        </CircleButton>
+        <div class="resume-background">
+            <div class="fill-behind">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                    <path d="M0 1.4 L5.5 1.4 A1 1 0 0 1 5.5 11.4 L0 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M0 1 L5 1 A1 1.05 0 0 1 5 11 L0 11"  stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+            <div class="fill-left">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMinYMid meet">
+                    <path d="M0 1.4 L13 1.4 M13 11.4 L0 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M0 1 L13 1 M13 11 L0 11"  stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="email-button">
+        <CircleButton href="./message-board">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+                <path fill="var(--round-button-content)" stroke-width="0" 
+                    d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+                </path>
+            </svg>
+        </CircleButton>
+        <div class="email-background">
+            <div class="fill-behind-right">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                    <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+            <div class="fill-right">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
+                    <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab"></path>
+                    <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- background pass -->
+    <div class="bottom-container-background-pass">
+        <div class="left-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="0" width="10" height="30" fill="var(--background-color)"/>
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path fill="var(--background-color)" d="M0 .25 C4 .25 4 7 9 7 L9 30 L0 30 Z" />
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="7" width="10" height="23" fill="var(--background-color)"/>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path fill="var(--background-color)" stroke="none" d="M0 7 C5 7 6 .25 9 .25 L9 30 L0 30 Z"/>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <rect x="0" y="0" width="10" height="30" fill="var(--background-color)"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- css blur handles making it look good -->
+    <div class="bottom-container-shadow-pass">
+        <div class="left-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none">
+                <path d="M-100 0 L0 0 L15 0 M10 30" stroke="black" stroke-width="10" fill="none" filter="url(#line-shadow)" />
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" >
+                <path d="M-2 .25 L0 .25 C4 1 4 7 9 7 L 13 7" stroke="black" stroke-width="7" fill="none"  />
+                
+                <path d="M0 .25 C4 .25 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="0" fill="var(--wii-background)" />
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="black" stroke-width="10" fill="none" d="M0 8 L10 8"/>
+
+                <path stroke="none" fill="var(--wii-background)" d="M0 8 L10 8 L10 0 L 0 0 Z"/>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="black" stroke-width="7" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
+
+                <path stroke="none" fill="var(--wii-background)" d="M0 8 C5 8 5 .25 9 .25 L9 0 L0 0 Z"/>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="black" stroke-width="10" fill="none" d="M0 .25 L100 .25"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="bottom-container-highlight-pass">
+        <div class="left-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 L10 .25"/>
+            </svg>
+        </div>
+        <div class="left-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="none" fill="var(--wii-background)" d="M0 .25 C4 .25 4 8 9 8 L9 0 L0 0 Z"/>
+
+                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 C4 .25 4 8 9 8" />
+            </svg>
+        </div>
+        <div class="center-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="none" fill="var(--wii-background)" d="M0 8 L10 8 L10 0 L 0 0 Z"/>
+
+                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 8 L10 8"/>
+            </svg>
+        </div>
+        <div class="right-curve">
+            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="none" fill="var(--wii-background)" d="M0 8 C5 8 5 .25 9 .25 L9 0 L0 0 Z"/>
+                
+                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
+            </svg>
+        </div>
+        <div class="right-line">
+            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
+                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 L10 .25"/>
+            </svg>
+        </div>
+    </div>
+    
+    <div class="time-display">
+        <span id="current-time">12:00</span>
+    </div>
+
+    <div class="date-display">
+        <span id="current-date">Mon 2/15</span>
+    </div>
+
+</div>
+<script>
+    function updateTime() {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds();
+
+        var timeString = '';
+
+        if (seconds % 3) {
+            timeString = `${hours} ${minutes}`;
+        }
+        else {
+            timeString = `${hours}:${minutes}`;
+        }
+        
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+
+        // Update date
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayName = days[now.getDay()];
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const dateString = `${dayName} ${month}/${day}`;
+        const dateElement = document.getElementById('current-date');
+        if (dateElement) {
+            dateElement.textContent = dateString;
+        }
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+</script>

@@ -1,26 +1,23 @@
 ---
-import '../styles/button.css'
+import '../styles/button.css';
+import '../styles/global.css';
+
 const { href } = Astro.props;
 ---
 
 <a href={href} class="wii-button">
-    <svg class="button-bg" viewBox="0 0 35 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path 
-            d="M 10 0 C 0 0 1 14 3 18 C 3 9 8 10 10 10 L 28 10 A 3 5 0 0 0 28 0 L 10 0 Z" 
-        />    
-    </svg>
+    <div class="glare">
+        <svg viewBox="0 0 93 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="f1" x="0" y="0" xmlns="http://www.w3/2000/svg">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation=".7" />
+                </filter>
+            </defs>
+            
+            <path filter="url(#f1)" fill="#ffffff" d="M 17 0 C 0 0 1 14 4 18 C 5 10 12 10 17 10 L 85 10 A1 .7 0 0 0 85 0" />
+        </svg>
+    </div>
     <span class="button-text">
         <slot />
     </span>
 </a>
-
-<!-- <a href={href} class="wii-button">
-    <svg class="button-bg" viewBox="0 0 37 18" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path 
-            d="M 10 0 C 0 0 1 14 7 18 C 7 9 12 10 14 10 L 28 10 A 5 5 0 0 0 28 0 L 10 0 Z" 
-        />    
-    </svg>
-    <span class="button-text">
-        <slot />
-    </span>
-</a> -->

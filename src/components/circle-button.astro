@@ -1,0 +1,19 @@
+---
+import '../styles/button.css'
+const { href, download } = Astro.props;
+---
+
+<a href={href} download={download} class="circle-button">
+    <svg class="circle-button-glare" viewBox="0 0 20 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="f2" x="0" y="0" xmlns="http://www.w3/2000/svg">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.55" />
+            </filter>
+        </defs>
+
+        <path fill="var(--round-button-glare)" d="M4 14 C-1 8 2 -2 14 2 C13 14 4 14 4 14 Z" filter="url(#f2)"></path>
+    </svg>
+    <span class="circle-button-content">
+        <slot/>
+    </span>
+</a>
