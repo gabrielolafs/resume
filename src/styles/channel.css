@@ -1,0 +1,47 @@
+.top-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: max(calc(100vh - 25vw), 80vh);
+  max-height: 90vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--wii-background);
+  flex-direction: row;
+  
+}
+
+.channel-button {
+    position: relative;
+    display: block;
+    height: 200px;
+    width: 50%;
+}
+
+.button-shaping {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  background: var(--wii-background);
+  mask: url(#crt-mask);
+  mask-size: 100% 100%;
+}
+
+a p {
+    background-color: green;
+    height: 100%;
+    width: 100%;
+}
+
+.left-tease {
+    width: 10%;
+    display: flex;
+    flex-direction: row
+
+}
+
+@media (max-width: 500px) {
+
+}
