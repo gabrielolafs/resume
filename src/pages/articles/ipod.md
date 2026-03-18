@@ -4,6 +4,8 @@ layout: ../../layouts/articles.astro
 title: 'iPod Modding'
 dateWritten: 'Jan 2025'
 timeSpan: 'Feb 2024 - Now'
+
+channelPageScanDir: '/examples/textured_mesh_lowpoly_obj'
 ---
 The first IPod that I ever used I stole from my dad. It was in the bottom of a bin of wires, buried under other old tech. Some of that old tech I have used for other things as well, for example one of his old computers (lovingly named "UTER" as it is a dell laptop from 2008 running windows 11, its not a very COMPetent compUTER) has a CD/RW drive, so it has been converted into my dedicated machine for cd ripping and burning, which is how I get flac files => cd quality mp3s => Music (rip iTunes) => IPod  
 

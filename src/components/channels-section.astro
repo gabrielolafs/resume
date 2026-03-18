@@ -1,17 +1,60 @@
 ---
-import Channel from "./channel.astro";
 import '../styles/channel.css';
 ---
 
 <div class="top-container">
-    <div class="left-tease">
-        <Channel />
-        <Channel />
-        <Channel />
-    </div>
-    <div class="center">
-        <Channel />
-    </div>
-    <div class="right-tease">
-    </div>
+    <canvas id="three-canvas"></canvas>
 </div>
+
+<script>
+    import * as THREE from 'three';
+
+    const cols = 4, rows = 3; // very important when it comes to mobile scaling. that is a future problem tho. only rows will change
+
+    const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
+    const container = canvas.parentElement!;
+
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(w, h);
+
+    // const camera = new THREE.PerspectiveCamera(45, w / h, 1, 500);
+    const camera = new THREE.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2);
+    camera.position.set(0, 0, 100);
+    camera.lookAt(0, 0, 0);
+
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0xE7E7E7)
+
+    const material = new THREE.LineBasicMaterial({ color: 0x000000 });
+
+    const points = [
+        new THREE.Vector3(-10, 0, 0),
+        new THREE.Vector3(10, 10, 0),
+        new THREE.Vector3(10, 0, 0),
+        new THREE.Vector3(-10, 0, 0),
+    ];
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const line = new THREE.Line(geometry, material);
+    scene.add(line);
+    renderer.render(scene, camera);
+    function resize() {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        renderer.setSize(w, h);
+
+        camera.left   = -w / 2;
+        camera.right  =  w / 2;
+        camera.top    =  h / 2;
+        camera.bottom = -h / 2;
+        camera.updateProjectionMatrix();
+
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', resize);
+</script>
