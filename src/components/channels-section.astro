@@ -197,7 +197,6 @@ const channelsJson = JSON.stringify(padded);
         console.log(ch);
 
         if (!ch?.scanDir) { // catches if there is no model
-            console.log('there is no mo');
             const geo = new THREE.IcosahedronGeometry(1, 0);
             const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
             const mesh = new THREE.Mesh(geo, mat);
