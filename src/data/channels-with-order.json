@@ -1,10 +1,18 @@
 [
     {
-        "title": "ipod",
+        "slug": "ipod",
         "model": {
-            "position": [0, -0.5, 0],
-            "rotation": [0, 1.2, 0],
-            "scale": 1.4
+            "position": [0, -30, 0],
+            "rotation": [0, 0, 0],
+            "scale": 1
+        }
+    },
+    {
+        "slug": "test",
+        "model": {
+            "position": [0, -30, 0],
+            "rotation": [0, 0, 0],
+            "scale": 1
         }
     } 
 ]
