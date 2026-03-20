@@ -4,6 +4,11 @@ import overrides from '../data/channels-with-order.json';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
+// gives either -1 or 1, used for spin direction
+function getRandomDirection() {
+    return Math.random() < 0.5 ? -1 : 1;
+}
+
 const channels = Object.entries(globbed)
 .map(([filepath, mod]: [string, any]) => {
     const slug = filepath.split('/').pop()!.replace(/\.md$/, '');
@@ -14,7 +19,14 @@ const channels = Object.entries(globbed)
         url:     `/articles/${slug}`,
         scanDir: mod.frontmatter.channelPageScanDir,
         order:   override.order ?? 999,
-        model:   override.model ?? { position: [0,0,0], rotation: [0,0,0], scale: 1 },
+        model:   { 
+            position: override.model?.position ?? [0,0,0], 
+            rotation: override.model?.rotation ?? [1,1,0], 
+            scale: override.model?.scale ?? 1,
+            direction: override.model?.direction ?? getRandomDirection(),
+            salt: Math.random(), 
+            saltBounce: Math.random()
+        }, 
     };
 })
 .filter(Boolean) // remove nulls
@@ -30,7 +42,7 @@ const padded = [
     url:     '',
     scanDir: '/scans/beer2',
     order:   999,
-    model:   { position: [0,0,0] as [number,number,number], rotation: [0,0,0] as [number,number,number], scale: 1 },
+    model:   { position: [0,0,0] as [number,number,number], rotation:  [1,1,23] as [number,number,number], scale: 1, direction: getRandomDirection(), salt: Math.random(), saltBounce: Math.random() },
 })),
 ];
 
@@ -62,7 +74,7 @@ const channelsJson = JSON.stringify(padded);
         title:   string;
         url:     string;
         scanDir: string;
-        model:   { position: [number,number,number]; rotation: [number,number,number]; scale: number };
+        model:   { position: [number,number,number]; rotation: [number,number,number]; scale: number, direction: number, salt: number, saltBounce: number };
     }[];
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -82,12 +94,12 @@ const channelsJson = JSON.stringify(padded);
 
     // lighting
 
-    const ambient = new THREE.AmbientLight(0xffffff, 4);
+    const ambient = new THREE.AmbientLight(0xffffff, 3);
     scene.add(ambient);
 
-    const sun = new THREE.DirectionalLight(0xffffff, 1);
-    sun.position.set(0, 0, 1); 
-    scene.add(sun); 
+    // const sun = new THREE.DirectionalLight(0xffffff, 1);
+    // sun.position.set(0, 0, 1); 
+    // scene.add(sun); 
 
     // const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 5.5);
     // scene.add(hemi);
@@ -102,30 +114,39 @@ const channelsJson = JSON.stringify(padded);
     function addBackground(index: number, colorArr?: [number, number, number]) {
         const [r, g, b] = colorArr ?? [250, 250, 250];
         const color = new THREE.Color(r / 255, g / 255, b / 255);
+        const outlineColor = new THREE.Color(0xafafaf);
 
-        const shape = new THREE.Shape();
-        shape.moveTo(1, 3);
-        shape.quadraticCurveTo(0, 25, 1, 47);
-        shape.quadraticCurveTo(1.0417, 48.9583, 3, 49);
-        shape.quadraticCurveTo(25, 50, 47, 49);
-        shape.quadraticCurveTo(48.9583, 48.9583, 49, 47);
-        shape.quadraticCurveTo(50, 25, 49, 3);
-        shape.quadraticCurveTo(48.9583, 1.0417, 47, 1);
-        shape.quadraticCurveTo(25, 0, 3, 1);
-        shape.quadraticCurveTo(1.0417, 1.0417, 1, 3);
+        function buildShape() {
+            const shape = new THREE.Shape();
+            shape.moveTo(1, 3);
+            shape.quadraticCurveTo(0, 25, 1, 47);
+            shape.quadraticCurveTo(1.0417, 48.9583, 3, 49);
+            shape.quadraticCurveTo(25, 50, 47, 49);
+            shape.quadraticCurveTo(48.9583, 48.9583, 49, 47);
+            shape.quadraticCurveTo(50, 25, 49, 3);
+            shape.quadraticCurveTo(48.9583, 1.0417, 47, 1);
+            shape.quadraticCurveTo(25, 0, 3, 1);
+            shape.quadraticCurveTo(1.0417, 1.0417, 1, 3);
+            return shape;
+        }
 
-        const geo = new THREE.ShapeGeometry(shape);
+        // Outline mesh — same shape, scaled up slightly, behind the main bg
+        const outlineGeo = new THREE.ShapeGeometry(buildShape());
+        outlineGeo.translate(-25, -25, 0);
+        const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
+        const outlineMesh = new THREE.Mesh(outlineGeo, outlineMat);
+        outlineMesh.position.z = -51;
+        outlineMesh.userData.isBackground = true;
+        outlineMesh.userData.isOutline = true;
+        cellGroups[index].add(outlineMesh);
 
-        // Center it — shape is in 0..50 space, center at 25,25
+        // Main background mesh
+        const geo = new THREE.ShapeGeometry(buildShape());
         geo.translate(-25, -25, 0);
-
         const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
         const mesh = new THREE.Mesh(geo, mat);
-
-        // Push it behind the model
         mesh.position.z = -50;
         mesh.userData.isBackground = true;
-
         cellGroups[index].add(mesh);
     }
 
@@ -182,10 +203,19 @@ const channelsJson = JSON.stringify(padded);
             }
         });
 
-        const backgrounds = group.children.find(c => c.userData.isBackground);
-        if (backgrounds) {
-            backgrounds.scale.set(cellW / 50, cellH / 100, 1);
-        }
+        const outlinePx = 3;
+        group.children.forEach(child => {
+            if (!child.userData.isBackground) return;
+            if (child.userData.isOutline) {
+                child.scale.set(cellW / 50, cellH / 100, 1);
+            } else {
+                child.scale.set(
+                    (cellW - outlinePx * 3) / 50,
+                    (cellH - outlinePx * 6) / 100,
+                    1
+                );
+            }
+        });
     }
 
     setup();
@@ -196,7 +226,7 @@ const channelsJson = JSON.stringify(padded);
 
         console.log(ch);
 
-        if (!ch?.scanDir) { // catches if there is no model
+        if (!ch?.scanDir) { // catches if there is no model - just for if you forget to add in the channels, itll break everying
             const geo = new THREE.IcosahedronGeometry(1, 0);
             const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
             const mesh = new THREE.Mesh(geo, mat);
@@ -222,7 +252,6 @@ const channelsJson = JSON.stringify(padded);
                 objPath,
                 (obj: THREE.Group) => {
                 obj.position.set(...ch.model.position);
-                obj.rotation.set(...ch.model.rotation);
                 cellGroups[index].add(obj);
                 scaleGroup(index);
                 },
@@ -235,7 +264,6 @@ const channelsJson = JSON.stringify(padded);
         );
         }
 
-    // replace channels.forEach with this
     for (let i = 0; i < cols * rows; i++) {
         loadModel(i);
     }
@@ -244,9 +272,13 @@ const channelsJson = JSON.stringify(padded);
         requestAnimationFrame(animate);
         const s = t * 0.001;
         cellGroups.forEach((group, i) => {
+            const ch = channels[i];
             group.children.forEach(child => {
                 if (child.userData.isBackground) return; // dont rotate the background
-                child.rotation.y = s * (0.5 + i * 0.03);
+                child.rotation.y = (s + .0005 * t * ch?.model?.salt) * ch?.model?.rotation?.[0] * ch?.model?.direction;
+                child.rotation.x = Math.cos(ch?.model?.salt * s * ch?.model?.rotation?.[0]) / 5 + .2;
+                child.position.y = Math.cos(t * + ch?.model?.saltBounce * .002) * 5 + 8;
+                console.log(ch?.model);
             });
         });
         renderer.render(scene, camera);

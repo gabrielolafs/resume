@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
     server: {
-        host: false, // true if you are at home and want to test mobile
+        host: true, // true if you are at home and want to test mobile
         port: 4321,
     }
 });
