@@ -4,7 +4,8 @@ import overrides from '../data/channels-with-order.json';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
-// gives either -1 or 1, used for spin direction
+let channelsPerPage = 12;
+
 function getRandomDirection() {
     return Math.random() < 0.5 ? -1 : 1;
 }
@@ -13,12 +14,11 @@ const channels = Object.entries(globbed)
 .map(([filepath, mod]: [string, any]) => {
     const slug = filepath.split('/').pop()!.replace(/\.md$/, '');
     const override = (overrides as any[]).find(o => o.slug === slug);
-    if (!override) return null; // not in json, skip it
+    if (!override) return null;
     return {
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
         scanDir: mod.frontmatter.channelPageScanDir,
-        order:   override.order ?? 999,
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             rotation: override.model?.rotation ?? [1,1,0], 
@@ -29,35 +29,40 @@ const channels = Object.entries(globbed)
         }, 
     };
 })
-.filter(Boolean) // remove nulls
+.filter(Boolean)
 .sort((a, b) => a.order - b.order)
 .slice(0, 12);
 
-
-// Pad to always have 12 entries — extras get the placeholder in loadModel
 const padded = [
-...channels,
-...Array.from({ length: Math.max(0, 12 - channels.length) }, () => ({
-    title:   'beer',
-    url:     '',
-    scanDir: '/scans/beer2',
-    order:   999,
-    model:   { position: [0,0,0] as [number,number,number], rotation:  [1,1,23] as [number,number,number], scale: 1, direction: getRandomDirection(), salt: Math.random(), saltBounce: Math.random() },
-})),
+    ...channels,
+    ...Array.from({ length: Math.max(0, 5 * channelsPerPage - channels.length) }, () => ({
+        title:   'beer',
+        url:     '',
+        model:   { 
+            position: [0,0,0] as [number,number,number], 
+            rotation:  [1,1,0] as [number,number,number], 
+            scale: .6, 
+            direction: getRandomDirection(), 
+            color: [9, 9, 9],
+            salt: Math.random(), 
+            saltBounce: Math.random()
+        }
+    })),
 ];
 
-const channelsJson = JSON.stringify(padded);
+const numPages = Math.ceil(padded.length / channelsPerPage);
+const pages = Array.from({ length: numPages }, (_, i) =>
+    padded.slice(i * channelsPerPage, (i + 1) * channelsPerPage)
+);
+
+const pagesJson = JSON.stringify(pages);
 ---
 
 <div class="top-container">
-  <canvas id="three-canvas" data-channels={channelsJson}></canvas>
-  <div class="channel-grid">
-    {padded.map((ch) => (
-      <a class="channel-cell" href={ch.url || '#'}>
-        {ch.title && <span>{ch.title}</span>}
-      </a>
-    ))}
-  </div>
+  <canvas id="three-canvas" data-pages={pagesJson}></canvas>
+  <button id="arrow-prev" class="page-arrow left">‹</button>
+  <button id="arrow-next" class="page-arrow right">›</button>
+  <div class="channel-grid" id="channel-grid"></div>
 </div>
 
 <script>
@@ -65,17 +70,15 @@ const channelsJson = JSON.stringify(padded);
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
+    let currentPage = 0;
+    let isFlipping = false;
+
     const BASE_NAME = 'mesh_lowpoly';
     const cols = 4, rows = 3;
 
     const canvas    = document.getElementById('three-canvas') as HTMLCanvasElement;
     const container = canvas.parentElement!;
-    const channels  = JSON.parse(canvas.dataset.channels ?? '[]') as {
-        title:   string;
-        url:     string;
-        scanDir: string;
-        model:   { position: [number,number,number]; rotation: [number,number,number]; scale: number, direction: number, salt: number, saltBounce: number };
-    }[];
+    const pages = JSON.parse(canvas.dataset.pages ?? '[]');
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setPixelRatio(devicePixelRatio);
@@ -83,7 +86,6 @@ const channelsJson = JSON.stringify(padded);
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xE7E7E7);
 
-    // camera
     const w0 = container.clientWidth;
     const h0 = container.clientHeight;
     const camera = new THREE.OrthographicCamera(-w0/2, w0/2, h0/2, -h0/2, 0.1, 1000);
@@ -92,26 +94,21 @@ const channelsJson = JSON.stringify(padded);
     renderer.setSize(w0, h0);
     scene.add(camera);
 
-    // lighting
-
     const ambient = new THREE.AmbientLight(0xffffff, 3);
     scene.add(ambient);
 
-    // const sun = new THREE.DirectionalLight(0xffffff, 1);
-    // sun.position.set(0, 0, 1); 
-    // scene.add(sun); 
-
-    // const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 5.5);
-    // scene.add(hemi);
-
-    const cellGroups: THREE.Group[] = [];
-    for (let i = 0; i < cols * rows; i++) {
-        const g = new THREE.Group();
-        scene.add(g);
-        cellGroups.push(g);
+    const cellGroups: THREE.Group[][] = [];
+    for (let p = 0; p < 2; p++) {
+        const page: THREE.Group[] = [];
+        for (let i = 0; i < cols * rows; i++) {
+            const g = new THREE.Group();
+            scene.add(g);
+            page.push(g);
+        }
+        cellGroups.push(page);
     }
 
-    function addBackground(index: number, colorArr?: [number, number, number]) {
+    function addBackground(pageIndex: number, cellIndex: number, colorArr?: [number, number, number]) {
         const [r, g, b] = colorArr ?? [250, 250, 250];
         const color = new THREE.Color(r / 255, g / 255, b / 255);
         const outlineColor = new THREE.Color(0xafafaf);
@@ -130,7 +127,6 @@ const channelsJson = JSON.stringify(padded);
             return shape;
         }
 
-        // Outline mesh — same shape, scaled up slightly, behind the main bg
         const outlineGeo = new THREE.ShapeGeometry(buildShape());
         outlineGeo.translate(-25, -25, 0);
         const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
@@ -138,16 +134,15 @@ const channelsJson = JSON.stringify(padded);
         outlineMesh.position.z = -51;
         outlineMesh.userData.isBackground = true;
         outlineMesh.userData.isOutline = true;
-        cellGroups[index].add(outlineMesh);
+        cellGroups[pageIndex][cellIndex].add(outlineMesh);
 
-        // Main background mesh
         const geo = new THREE.ShapeGeometry(buildShape());
         geo.translate(-25, -25, 0);
         const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.z = -50;
         mesh.userData.isBackground = true;
-        cellGroups[index].add(mesh);
+        cellGroups[pageIndex][cellIndex].add(mesh);
     }
 
     function setup() {
@@ -161,30 +156,33 @@ const channelsJson = JSON.stringify(padded);
         camera.bottom = -h / 2;
         camera.updateProjectionMatrix();
 
-        const cellW    = w / cols;
-        const cellH    = h / rows;
-        const cellSize = Math.min(cellW, cellH);
+        const padX = w * 0.08;
+        const usableW = w - padX * 2;
+        const cellW = usableW / cols;
+        const cellH = h / rows;
 
-        cellGroups.forEach((group, i) => {
-            const col = i % cols;
-            const row = Math.floor(i / cols);
-            group.position.set(
-                (col + 0.5) * cellW - w / 2,
-                h / 2 - (row + 0.5) * cellH,
-                0
-            );
-
-            scaleGroup(i);
-
+        cellGroups.forEach((page, p) => {
+            page.forEach((group, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                group.position.set(
+                    p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w,
+                    h / 2 - (row + 0.5) * cellH,
+                    0
+                );
+                scaleGroup(p, i);
+            });
         });
     }
 
-    function scaleGroup(index: number) {
-        const group = cellGroups[index];
-        const ch = channels[index];
+    function scaleGroup(pageIndex: number, cellIndex: number) {
+        const group = cellGroups[pageIndex][cellIndex];
+        const ch = pages[pageIndex][cellIndex];
         const w = container.clientWidth;
         const h = container.clientHeight;
-        const cellW = w / cols;
+        const padX = w * 0.08;
+        const usableW = w - padX * 2;
+        const cellW = usableW / cols;
         const cellH = h / rows;
         const cellSize = Math.min(cellW, cellH);
 
@@ -207,31 +205,73 @@ const channelsJson = JSON.stringify(padded);
         group.children.forEach(child => {
             if (!child.userData.isBackground) return;
             if (child.userData.isOutline) {
-                child.scale.set(cellW / 50, cellH / 100, 1);
+                child.scale.set(cellW / 50 - .5, cellH / 60, 1);
             } else {
                 child.scale.set(
-                    (cellW - outlinePx * 3) / 50,
-                    (cellH - outlinePx * 6) / 100,
+                    (cellW - outlinePx * 3) / 50 - .5,
+                    (cellH - outlinePx * 3 * 1.2) / 60,
                     1
                 );
             }
         });
     }
 
-    setup();
+    function renderGrid(pageIndex: number) {
+        const grid = document.getElementById('channel-grid')!;
+        grid.innerHTML = pages[pageIndex].map((ch: any) => `
+            <a class="channel-cell" href="${ch.url || '#'}"></a>
+        `).join('');
+    }
 
-    function loadModel(index: number) {
-        const ch = channels[index];
-        addBackground(index, ch?.model?.color);
+    function flipTo(targetPage: number) {
+        if (isFlipping) return;
+        if (targetPage < 0 || targetPage >= pages.length) return;
+        isFlipping = true;
 
-        console.log(ch);
+        const w = container.clientWidth;
+        const duration = 600;
+        const start = performance.now();
+        const from = currentPage * w * .84;
+        const to = targetPage * w * .84;
 
-        if (!ch?.scanDir) { // catches if there is no model - just for if you forget to add in the channels, itll break everying
+        function tick(now: number) {
+            const t = Math.min((now - start) / duration, 1);
+            const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            const offset = from + (to - from) * ease;
+
+            cellGroups.forEach((page, p) => {
+                page.forEach((group, i) => {
+                    const col = i % cols;
+                    const padX = w * 0.08;
+                    const usableW = w - padX * 2;
+                    const cellW = usableW / cols;
+                    const cellH = container.clientHeight / rows;
+                    group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
+                });
+            });
+
+            if (t < 1) {
+                requestAnimationFrame(tick);
+            } else {
+                currentPage = targetPage;
+                isFlipping = false;
+                renderGrid(targetPage);
+            }
+        }
+
+        requestAnimationFrame(tick);
+    }
+
+    function loadModel(pageIndex: number, cellIndex: number) {
+        const ch = pages[pageIndex][cellIndex];
+        addBackground(pageIndex, cellIndex, ch?.model?.color);
+
+        if (!ch?.scanDir) {
             const geo = new THREE.IcosahedronGeometry(1, 0);
             const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
             const mesh = new THREE.Mesh(geo, mat);
-            cellGroups[index].add(mesh);
-            scaleGroup(index);
+            cellGroups[pageIndex][cellIndex].add(mesh);
+            scaleGroup(pageIndex, cellIndex);
             return;
         }
 
@@ -245,40 +285,46 @@ const channelsJson = JSON.stringify(padded);
         mtlLoader.load(
             mtlPath,
             (materials: any) => {
-            materials.preload();
-            const objLoader = new OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.load(
-                objPath,
-                (obj: THREE.Group) => {
-                obj.position.set(...ch.model.position);
-                cellGroups[index].add(obj);
-                scaleGroup(index);
-                },
-                undefined,
-                (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
-            );
+                materials.preload();
+                const objLoader = new OBJLoader();
+                objLoader.setMaterials(materials);
+                objLoader.load(
+                    objPath,
+                    (obj: THREE.Group) => {
+                        obj.position.set(...ch.model.position);
+                        cellGroups[pageIndex][cellIndex].add(obj);
+                        scaleGroup(pageIndex, cellIndex);
+                    },
+                    undefined,
+                    (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
+                );
             },
             undefined,
             (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
         );
-        }
+    }
 
-    for (let i = 0; i < cols * rows; i++) {
-        loadModel(i);
+    setup();
+    renderGrid(0);
+
+    for (let p = 0; p < cellGroups.length; p++) {
+        for (let i = 0; i < cols * rows; i++) {
+            loadModel(p, i);
+        }
     }
 
     function animate(t: number) {
         requestAnimationFrame(animate);
         const s = t * 0.001;
-        cellGroups.forEach((group, i) => {
-            const ch = channels[i];
-            group.children.forEach(child => {
-                if (child.userData.isBackground) return; // dont rotate the background
-                child.rotation.y = (s + .0005 * t * ch?.model?.salt) * ch?.model?.rotation?.[0] * ch?.model?.direction;
-                child.rotation.x = Math.cos(ch?.model?.salt * s * ch?.model?.rotation?.[0]) / 5 + .2;
-                child.position.y = Math.cos(t * + ch?.model?.saltBounce * .002) * 5 + 8;
-                console.log(ch?.model);
+        cellGroups.forEach((page, p) => {
+            page.forEach((group, i) => {
+                const ch = pages[p][i];
+                group.children.forEach(child => {
+                    if (child.userData.isBackground) return;
+                    child.rotation.y = (s + .0005 * t * ch?.model?.salt) * ch?.model?.rotation?.[0] * ch?.model?.direction;
+                    child.rotation.x = Math.cos(ch?.model?.salt * s * ch?.model?.rotation?.[0]) / 5 + .2;
+                    child.position.y = Math.cos(t * + ch?.model?.saltBounce * .002) * 5 + 8;
+                });
             });
         });
         renderer.render(scene, camera);
@@ -286,4 +332,7 @@ const channelsJson = JSON.stringify(padded);
 
     requestAnimationFrame(animate);
     window.addEventListener('resize', setup);
+
+    document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(currentPage - 1));
+    document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(currentPage + 1));
 </script>
