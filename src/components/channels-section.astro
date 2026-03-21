@@ -35,7 +35,7 @@ const channels = Object.entries(globbed)
 
 const padded = [
     ...channels,
-    ...Array.from({ length: Math.max(0, 5 * channelsPerPage - channels.length) }, () => ({
+    ...Array.from({ length: Math.max(0, 2 * channelsPerPage - channels.length) }, () => ({
         title:   'beer',
         url:     '',
         model:   { 
@@ -56,12 +56,34 @@ const pages = Array.from({ length: numPages }, (_, i) =>
 );
 
 const pagesJson = JSON.stringify(pages);
+
+const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" viewBox="0 0 16 24">
+        <defs>
+            <radialGradient id="grad1" cx="85%" cy="5%" r="100%" fx="85%" fy="15%">
+                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+            <radialGradient id="grad2" cx="85%" cy="95%" r="90%" fx="85%" fy="95%">
+                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
+                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
+            </radialGradient>
+        </defs>
+
+        <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"/>
+        <path stroke="none" fill="url(#grad1)" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        <path stroke="none" fill="url(#grad2)" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" 
+            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
+        </svg>`
 ---
 
 <div class="top-container">
   <canvas id="three-canvas" data-pages={pagesJson}></canvas>
-  <button id="arrow-prev" class="page-arrow left">‹</button>
-  <button id="arrow-next" class="page-arrow right">›</button>
+  <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
+  <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
   <div class="channel-grid" id="channel-grid"></div>
 </div>
 
@@ -256,6 +278,7 @@ const pagesJson = JSON.stringify(pages);
                 currentPage = targetPage;
                 isFlipping = false;
                 renderGrid(targetPage);
+                updateArrows();
             }
         }
 
@@ -304,8 +327,16 @@ const pagesJson = JSON.stringify(pages);
         );
     }
 
+    function updateArrows() {
+        const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
+        const next = document.getElementById('arrow-next') as HTMLButtonElement;
+        prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+        next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
+    };
+
     setup();
     renderGrid(0);
+    updateArrows();
 
     for (let p = 0; p < cellGroups.length; p++) {
         for (let i = 0; i < cols * rows; i++) {
