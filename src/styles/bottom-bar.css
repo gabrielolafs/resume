@@ -3,7 +3,7 @@
   left: 0;
   bottom: 0;
   width: 100vw;
-  height: min(25vw, 20vh);
+  height: min(25dvw, 20dvh);
   min-height: 10vh;
   margin: 0;
   padding: 0;

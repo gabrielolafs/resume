@@ -4,8 +4,6 @@ import overrides from '../data/channels-with-order.json';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
-let channelsPerPage = 12;
-
 function getRandomDirection() {
     return Math.random() < 0.5 ? -1 : 1;
 }
@@ -30,32 +28,9 @@ const channels = Object.entries(globbed)
     };
 })
 .filter(Boolean)
-.sort((a, b) => a.order - b.order)
-.slice(0, 12);
+.sort((a, b) => a.order - b.order);
 
-const padded = [
-    ...channels,
-    ...Array.from({ length: Math.max(0, 2 * channelsPerPage - channels.length) }, () => ({
-        title:   'beer',
-        url:     '',
-        model:   { 
-            position: [0,0,0] as [number,number,number], 
-            rotation:  [1,1,0] as [number,number,number], 
-            scale: .6, 
-            direction: getRandomDirection(), 
-            color: [9, 9, 9],
-            salt: Math.random(), 
-            saltBounce: Math.random()
-        }
-    })),
-];
-
-const numPages = Math.ceil(padded.length / channelsPerPage);
-const pages = Array.from({ length: numPages }, (_, i) =>
-    padded.slice(i * channelsPerPage, (i + 1) * channelsPerPage)
-);
-
-const pagesJson = JSON.stringify(pages);
+const channelsJson = JSON.stringify(channels);
 
 const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" viewBox="0 0 16 24">
         <defs>
@@ -68,7 +43,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
             </radialGradient>
         </defs>
-
         <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" 
             d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"/>
         <path stroke="none" fill="url(#grad1)" 
@@ -81,7 +55,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 ---
 
 <div class="top-container">
-  <canvas id="three-canvas" data-pages={pagesJson}></canvas>
+  <canvas id="three-canvas" data-channels={channelsJson}></canvas>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
   <div class="channel-grid" id="channel-grid"></div>
@@ -96,11 +70,38 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     let isFlipping = false;
 
     const BASE_NAME = 'mesh_lowpoly';
-    const cols = 4, rows = 3;
+    let cols = 4;
+    let rows = 3;
+    let channelsPerPage = cols * rows;
 
     const canvas    = document.getElementById('three-canvas') as HTMLCanvasElement;
     const container = canvas.parentElement!;
-    const pages = JSON.parse(canvas.dataset.pages ?? '[]');
+
+    const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
+
+    function buildPages(cpp: number, chs: any[]) {
+        const padded = [
+            ...chs,
+            ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({
+                title: 'beer',
+                url: '',
+                model: {
+                    position: [0,0,0] as [number,number,number],
+                    rotation: [1,1,0] as [number,number,number],
+                    scale: .6,
+                    direction: Math.random() < 0.5 ? -1 : 1,
+                    color: [9,9,9],
+                    salt: Math.random(),
+                    saltBounce: Math.random()
+                }
+            }))
+        ];
+        return Array.from({ length: Math.ceil(padded.length / cpp) }, (_, i) =>
+            padded.slice(i * cpp, (i + 1) * cpp)
+        );
+    }
+
+    let pages = buildPages(channelsPerPage, allChannels);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setPixelRatio(devicePixelRatio);
@@ -119,10 +120,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     const ambient = new THREE.AmbientLight(0xffffff, 3);
     scene.add(ambient);
 
+    // always create 24 groups (max 4x3 * 2 pages lookahead) so we never need to rebuild
+    const MAX_COLS = 4;
+    const MAX_ROWS = 3;
+    const MAX_CPP = MAX_COLS * MAX_ROWS;
+
     const cellGroups: THREE.Group[][] = [];
     for (let p = 0; p < 2; p++) {
         const page: THREE.Group[] = [];
-        for (let i = 0; i < cols * rows; i++) {
+        for (let i = 0; i < MAX_CPP; i++) {
             const g = new THREE.Group();
             scene.add(g);
             page.push(g);
@@ -185,10 +191,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         cellGroups.forEach((page, p) => {
             page.forEach((group, i) => {
+                if (i >= channelsPerPage) {
+                    // hide unused groups off screen
+                    group.position.set(-99999, -99999, 0);
+                    return;
+                }
                 const col = i % cols;
                 const row = Math.floor(i / cols);
                 group.position.set(
-                    p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w,
+                    p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * .84,
                     h / 2 - (row + 0.5) * cellH,
                     0
                 );
@@ -240,9 +251,40 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
     function renderGrid(pageIndex: number) {
         const grid = document.getElementById('channel-grid')!;
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
         grid.innerHTML = pages[pageIndex].map((ch: any) => `
             <a class="channel-cell" href="${ch.url || '#'}"></a>
         `).join('');
+    }
+
+    function updateArrows() {
+        const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
+        const next = document.getElementById('arrow-next') as HTMLButtonElement;
+        prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+        next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
+    }
+
+    function switchLayout() {
+        const ratio = container.clientHeight / container.clientWidth;
+        const newCols = ratio > 1 ? 2 : 4;
+        const newRows = 3;
+        const newCpp = newCols * newRows;
+
+        if (newCols === cols && newRows === rows) return;
+
+        const firstChannelIndex = currentPage * channelsPerPage;
+
+        cols = newCols;
+        rows = newRows;
+        channelsPerPage = newCpp;
+
+        pages = buildPages(channelsPerPage, allChannels);
+        currentPage = Math.floor(firstChannelIndex / channelsPerPage);
+
+        setup();
+        renderGrid(currentPage);
+        updateArrows();
     }
 
     function flipTo(targetPage: number) {
@@ -263,11 +305,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
+                    if (i >= channelsPerPage) return;
                     const col = i % cols;
                     const padX = w * 0.08;
                     const usableW = w - padX * 2;
                     const cellW = usableW / cols;
-                    const cellH = container.clientHeight / rows;
                     group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
                 });
             });
@@ -327,19 +369,13 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         );
     }
 
-    function updateArrows() {
-        const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
-        const next = document.getElementById('arrow-next') as HTMLButtonElement;
-        prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
-        next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
-    };
-
+    switchLayout(); // firefox, your little Mozilliod.
     setup();
     renderGrid(0);
     updateArrows();
 
     for (let p = 0; p < cellGroups.length; p++) {
-        for (let i = 0; i < cols * rows; i++) {
+        for (let i = 0; i < MAX_CPP; i++) {
             loadModel(p, i);
         }
     }
@@ -362,7 +398,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     }
 
     requestAnimationFrame(animate);
-    window.addEventListener('resize', setup);
+
+    window.addEventListener('resize', () => {
+        switchLayout();
+        setup();
+    });
 
     document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(currentPage - 1));
     document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(currentPage + 1));
