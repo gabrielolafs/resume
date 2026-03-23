@@ -86,33 +86,33 @@ import CircleButton from './circle-button.astro';
     <div class="bottom-container-shadow-pass">
         <div class="left-line">
             <svg viewBox="0 0 10 30" preserveAspectRatio="none">
-                <path d="M-100 0 L0 0 L15 0 M10 30" stroke="black" stroke-width="10" fill="none" filter="url(#line-shadow)" />
+                <path d="M10 0 L0 0" stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none"/>
             </svg>
         </div>
         <div class="left-curve">
             <svg viewBox="0 0 9 30" preserveAspectRatio="none" >
-                <path d="M-2 .25 L0 .25 C4 1 4 7 9 7 L 13 7" stroke="black" stroke-width="7" fill="none"  />
+                <path d="M-2 .25 L0 .25 C4 1 4 7 9 7 L 13 7" stroke="black" stroke-width="calc(var(--shadow-weight) * 0.5)" fill="none"  />
                 
                 <path d="M0 .25 C4 .25 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="0" fill="var(--wii-background)" />
             </svg>
         </div>
         <div class="center-line">
             <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="10" fill="none" d="M0 8 L10 8"/>
+                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none" d="M0 8 L10 8"/>
 
                 <path stroke="none" fill="var(--wii-background)" d="M0 8 L10 8 L10 0 L 0 0 Z"/>
             </svg>
         </div>
         <div class="right-curve">
             <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="7" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
+                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.5)" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
 
                 <path stroke="none" fill="var(--wii-background)" d="M0 8 C5 8 5 .25 9 .25 L9 0 L0 0 Z"/>
             </svg>
         </div>
         <div class="right-line">
             <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="10" fill="none" d="M0 .25 L100 .25"/>
+                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none" d="M0 .25 L100 .25"/>
             </svg>
         </div>
     </div>
@@ -152,11 +152,11 @@ import CircleButton from './circle-button.astro';
     </div>
     
     <div class="time-display">
-        <span id="current-time">12:00</span>
+        <span id="current-time"></span>
     </div>
 
     <div class="date-display">
-        <span id="current-date">Mon 2/15</span>
+        <span id="current-date"></span>
     </div>
 
 </div>

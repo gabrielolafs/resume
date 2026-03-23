@@ -10,6 +10,7 @@
   background-color: var(--wii-background);
   flex-direction: row;
   overflow: hidden;
+  /* overscroll-behavior: none; */
 }
 
 .channel-grid {

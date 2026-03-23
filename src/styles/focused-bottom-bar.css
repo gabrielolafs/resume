@@ -2,7 +2,7 @@
   position: fixed;
   left: 0;
   bottom: 0;
-  width: 100vw;
+  width: 100%;
   height: min(25vw, 20vh);
   min-height: 10vh;
   margin: 0;
@@ -15,14 +15,16 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   height: min(30vw, 90%);
   box-sizing: border-box;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 10px;
   display: flex;
   padding: 0;
   z-index: 2;
-  padding: 2rem 10% 3rem 10%;
+  /* padding-top: min(5%, 3dvh); */
+  padding: min(5%, 3dvh) 0 min(15%, 3dvh) 0;
 }
 
 .focused-bottom-container .coloring {

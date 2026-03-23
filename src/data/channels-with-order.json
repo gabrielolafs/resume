@@ -2,17 +2,90 @@
     {
         "slug": "ipod",
         "model": {
+            "baseDir": "/scans/ipod",
             "scale": 1,
             "color": [9,9,9],
             "direction": -1
         }
     },
     {
+        "slug": "left-moonlander",
+        "model": {
+            "baseDir": "/scans/left-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": -1
+        }
+    },
+    {
+        "slug": "right-moonlander",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "thor",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,219,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "test4",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,19,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "test3",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,109,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "primary",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "scale": 1,
+            "color": [99,79,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "test2",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8,4.4,0],
+            "animatedRotation": [0, 0, 0],
+            "scale": 1,
+            "color": [99,189,189],
+            "direction": 1
+        }
+    },
+    {
         "slug": "test",
         "model": {
-            "rotation": [0, 0, 0],
+            "baseDir": "/scans/ipod",
+            "baseRotation": [0.8,4.4,0],
             "scale": 1,
-            "color": [99,99,99],
+            "color": [99,159,189],
             "direction": 1
         }
     }

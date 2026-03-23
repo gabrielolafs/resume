@@ -1,0 +1,41 @@
+---
+interface Props {
+  color?: string;
+}
+const { color = '#000' } = Astro.props;
+---
+
+<div id="whole-screen-scene" transition:persist data-color={color}></div>
+
+<style>
+  #whole-screen-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+</style>
+
+<script>
+  const el = document.getElementById('whole-screen-scene')!;
+  el.style.backgroundColor = el.dataset.color!;
+
+//   // fade out on load
+//   window.addEventListener('load', () => {
+//     el.style.opacity = '0';
+//   });
+
+  // fade in on navigation away
+  document.addEventListener('astro:before-preparation', () => {
+    el.style.opacity = '1';
+    el.style.pointerEvents = 'all';
+  });
+
+  // fade out on arrival
+  document.addEventListener('astro:page-load', () => {
+    el.style.opacity = '0.5';
+    el.style.pointerEvents = 'none';
+  });
+</script>

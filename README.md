@@ -71,86 +71,19 @@ i need to make a link to acticle's [title](/article/article#title-to-go-to)
 ```
 #### Note: make new lines in markdown correctly! Put two spaces at the end of a line to have a break
 
-### 2. Change the src/data/article-order.json (order will matter once paging is implemented):
-``` json
-{
-  "articles": [
-      "article"
-  ]
-}
-```
-To add an article after the first:
-``` json
-{
-  "articles": [
-      "article",
-      "artwocle"
-  ]
-}
-```
-
-### 3. Uploading files
-Keep in mind the file stucture! This is how I have set up my obsidian folder (minus the scans)
-``` markdown
-/portfolio_content
-  /public
-    /img
-      picture.png
-      ...
-    /scans
-      /
-      ...
-  /src
-    /pages
-      /articles
-        article.md
-        ...
-```
-Grab your markdown files and put them into /src/pages/articles/article.md
-Grab your photos and put them into /public/img
-
-## Scans
-### 1. Make the scan on Luma Ai
-About a 10-15 min process for your first time. It gets better with time. 
-Make sure you are in a well lit area and you dont have any dark spots. I like to do it during the day on my table by the window. this provides good light, but having another light source a few feet away pointing the same direction is also a good idea. Personally I use a 5 bulb lamp so it is even better distribution of light
-
-Export as a low poly obj
-
-### 2. Blender
-Transfer the file from your phone to computer
-
-Set the origin of obj to the center of the world
-  - Right click obj, Snap, Cursor to World Center
-  - Right click obj, Set Origin, Origin to Geometry
-  - Right click obj, Snap, Selection to Cursor
-
-Correct any oriantation issues with the rotation tool on the left
-
-Decrease quality of the materials (no need for this to be >6k for the scale it is at)
-
-export as obj in the public/scans/{ folder name }
-reminder to name the files as mesh_lowpoly, so name the file you are exporting as mesh_lowpoly.obj
-
-example of the file stuture that you will end with:
-/spinning 
-
-As long as it looks good, thats it! Just make a pr and merge it in, and cloudlflare will deploy!
-
-
-## Alter channels-with-order.json
+### 2. Alter /src/data/channels-with-order.json
 Order matters! Where the new article will be placed is based on the index position. It is done this way so that the order can easly be changed by just copy pasting sections around (I didnt like using numbers to indicate placement as if I wanted to add a new article at the start I would have to change every single value)
 Dont forget to do this! There is a block on the main page that will not accept or render the article if it is not in this json file. If you cant figure out why it is not displaying anything, this is almost definatly the cause
 
 Stucture and reasoning:
 ``` json
-// /src/data/channels-with-order.json
-
 [
     {
-        "slug": "ex", // file name of article minus the extention - this would lead to ex.md and subsiquently /articles/ex
+        "slug": "ex", // file name of article minus extention - this would lead to ex.md and subsiquently /articles/ex
         "model": {
-            "position": [0, 0, 0], // this is now redudent with the blender edits
-            "rotation": [0, 0, 0], // this too - i want to add something that will indicate its rotation
+            "baseDir": "/scans/ex", // base dir of the scan
+            "baseRotation": [0.8,4.4,0], // starting / default [x, y, z] values. Wanted more customizablitly than doing it hard coded in blender. 
+            "animatedRotation": [0, 0, 0], // [rotaion about the y, rotation about the x (bound by a cos()), "bouce" max height]
             "color": [250, 250, 250], // this is also the default color - it would be nice to have this 
             "scale": 1 // I think this will be safe to keep as 1 - unless Im scanning something massive (i dont ever WANT to this, but might have to for the network. i think it would look really cool, probably so much time spent scanning)
         }
@@ -158,7 +91,7 @@ Stucture and reasoning:
 ]
 ```
 
-Example of adding an article before :
+Example of adding an article before ex:
 ``` json 
 
 [
@@ -171,18 +104,17 @@ Example of adding an article before :
         "model": {...}
     }
 ]
-```
 
-Which would lead to the following (abstractly) main page:
-```
+// this would abstractly result in the following main page:
+/* 
 [ dx ] [ ex ] [ -- ] [ -- ]
 [ -- ] [ -- ] [ -- ] [ -- ]
-[ -- ] [ -- ] [ -- ] [ -- ]
+[ -- ] [ -- ] [ -- ] [ -- ] 
+ */
 ```
 
 Example of adding an article after and existing:
 ``` json 
-
 [
     {
         "slug": "ex",
@@ -193,13 +125,13 @@ Example of adding an article after and existing:
         "model": {...}
     }
 ]
-```
 
-Which would lead to the following (abstractly) main page:
-```
+// this would abstractly result in the following main page:
+/* 
 [ ex ] [ fx ] [ -- ] [ -- ]
 [ -- ] [ -- ] [ -- ] [ -- ]
 [ -- ] [ -- ] [ -- ] [ -- ]
+ */
 ```
 
 Or maybe you want to have something that goes right in the middle of serveral other articles:
@@ -240,16 +172,81 @@ Example of adding an article before :
         "model": {...}
     }
 ]
-```
 
-Which would lead to the following (abstractly) main page:
-```
+// this would abstractly result in the following main page:
+/* 
 [ dx ] [ ex ] [ lx ] [ fx ]
 [ gx ] [ hx ] [ ix ] [ jx ]
 [ jx ] [ kx ] [ -- ] [ -- ]
+ */
 ```
 
 hopefully I have demonstarted the versitility of this json file. I could keep going for days.
+
+### 4. Scans for main page
+#### 1. Make the scan on Luma Ai
+About a 10-15 min process for your first time. It gets better with time. 
+Make sure you are in a well lit area and you dont have any dark spots. I like to do it during the day on my table by the window. this provides good light, but having another light source a few feet away pointing the same direction is also a good idea. Personally I use a 5 bulb lamp so it is even better distribution of light
+
+Export as a low poly obj
+
+#### 2. Blender
+Transfer the file from your phone to computer
+
+Open Blender, delete the default square,
+File, import, wavefont (.obj)
+
+If you are now feaking out about the textures, dont worry. in the top right of the scene you should see 4 texturing circles. 
+
+Set the origin of obj to the center of the world
+  - Right click obj, Snap, Cursor to World Center
+  - Right click obj, Set Origin, Origin to Geometry
+  - Right click obj, Snap, Selection to Cursor
+
+Correct any oriantation issues with the rotation tool on the left
+
+If your model has some hanging polygons or some polygons you dont want to include - go into modeling tab on the top (should be to thr right of file by a little bit) and go thru and delete some ploys. Quick tip: hold shift and left click and drap an area that you want to get rid of, then middle mouse to move around and high light more. This is much better than deleting 15 times, time way you only really delete 3-4 times.
+
+export as obj in the public/scans/{ folder name }
+reminder to name the files as mesh_lowpoly, so name the file you are exporting as mesh_lowpoly.obj
+
+example of the file stuture that you will end with:
+/spinning 
+
+#### 3. Rescaling textures
+
+We dont need too much detail for the scans. couple things we want to change
+
+down scale each image by a factor of 2
+change this to be a web p file. (you have to change the references in the obj textures too from .png to .webp)
+
+### 4. Uploading files
+Keep in mind the file stucture! This is how I have set up my obsidian folder (minus the scans)
+``` markdown
+/portfolio_content
+  /public
+    /img
+      picture.png
+      ...
+    /scans
+      /a-scan
+        mesh_lowpoly_material0000_map_Kd.png
+        ...
+        mesh_lowpoly.obj
+        mesh_lowpoly.mtl
+      ...
+  /src
+    /pages
+      /articles
+        article.md
+        ...
+```
+
+Grab your markdown files and put them into /src/pages/articles/article.md
+Grab your photos and put them into /public/img
+Grab your scan folder and throw it into /public/scans
+
+As long as it looks good, thats it! Just make a pr and merge it in, and cloudlflare will deploy!
 
 # Current TODOs somewhat ordered by importance:
 - [ ] Make a logo for myself
@@ -319,7 +316,7 @@ hopefully I have demonstarted the versitility of this json file. I could keep go
 - [ ] change cursor (super small thing that will probably take less than an hour to do. i think this is something that would awesome to have before I do my v2 main push. the only thing that I think might complicate things is that the . nvm I just wont chnage on-hover - it doesnt do so on the real thing so why make it a thing?)
 
 this is for v3: mobile support. at this point I should not be doing much more than changing compatiblity and uploading articles. should be less than a week after v2. then adding all the content will be a gradual process that will take some weeks.
-- [ ] mobile support
+- [ ] mobile support - weird issue that mobile support caused. If you load on mobile and rescale, you loose articles. have to figure that one out
   - [ ] change clickable count (2 x 4 icons?) on main page (2x4 would almost definatly work - there is probably a lot more work in finding the comfortable values of 3 x 4 - i dont know if it would be worth it to even do the 3 x 4 - it seems to be over cloplicating things and the curent state looks pretty good)
   - [ ] move arrow buttons to a more comfortable place. edit: I dont know how big of a deal this will even end up being? it takes up maybe 10% total width and like 5% height. I feel like from the surface this feels like not too big of a deal. Edit: i feel like the best solution is just to hide the arrows when you scroll, then when you get to the bottom of the page then the arrows pop back up. I dont know how to do this at this current time, but I feel like that would be the best user exerience without sacrificing too much in the aesthetics
   - [ ] 

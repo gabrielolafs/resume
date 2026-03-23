@@ -1,6 +1,7 @@
 ---
 import '../styles/channel.css';
 import overrides from '../data/channels-with-order.json';
+import type { RGBA_ASTC_10x10_Format } from 'three';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
@@ -11,15 +12,21 @@ function getRandomDirection() {
 const channels = Object.entries(globbed)
 .map(([filepath, mod]: [string, any]) => {
     const slug = filepath.split('/').pop()!.replace(/\.md$/, '');
+    const overrideIndex = (overrides as any[]).findIndex(o => o.slug === slug);
     const override = (overrides as any[]).find(o => o.slug === slug);
+
     if (!override) return null;
     return {
+        order: overrideIndex,
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
-        scanDir: mod.frontmatter.channelPageScanDir,
+        scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
+        // scanDir: override.modelBaseDir ?? mod.frontmatter.channelPageScanDir,
         model:   { 
             position: override.model?.position ?? [0,0,0], 
-            rotation: override.model?.rotation ?? [1,1,0], 
+            baseRotation: override.model?.baseRotation ?? [0,0,0],
+            color: override.model?.color ?? [250,250,250],
+            animatedRotation: override.model?.animatedRotation ?? [1,1,0], 
             scale: override.model?.scale ?? 1,
             direction: override.model?.direction ?? getRandomDirection(),
             salt: Math.random(), 
@@ -65,6 +72,14 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     import * as THREE from 'three';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+    
+    declare global {
+        interface Window {
+            __modelCache: Map<string, THREE.Group>;
+        }
+    }
+
+    window.__modelCache = window.__modelCache ?? new Map();
 
     let currentPage = 0;
     let isFlipping = false;
@@ -87,7 +102,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 url: '',
                 model: {
                     position: [0,0,0] as [number,number,number],
-                    rotation: [1,1,0] as [number,number,number],
+                    animatedRotation: [1,1,0] as [number,number,number],
                     scale: .6,
                     direction: Math.random() < 0.5 ? -1 : 1,
                     color: [9,9,9],
@@ -331,6 +346,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         const ch = pages[pageIndex][cellIndex];
         addBackground(pageIndex, cellIndex, ch?.model?.color);
 
+        const cacheKey = ch.scanDir;
+        if (window.__modelCache.has(cacheKey)) {
+            const cached = window.__modelCache.get(cacheKey).clone();
+            cached.position.set(...ch.model.position);
+            cellGroups[pageIndex][cellIndex].add(cached);
+            scaleGroup(pageIndex, cellIndex);
+            return;
+        }
+
         if (!ch?.scanDir) {
             const geo = new THREE.IcosahedronGeometry(1, 0);
             const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
@@ -359,6 +383,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         obj.position.set(...ch.model.position);
                         cellGroups[pageIndex][cellIndex].add(obj);
                         scaleGroup(pageIndex, cellIndex);
+                        window.__modelCache.set(cacheKey, obj.clone());
                     },
                     undefined,
                     (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
@@ -367,6 +392,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             undefined,
             (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
         );
+        
     }
 
     switchLayout(); // firefox, your little Mozilliod.
@@ -388,9 +414,13 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 const ch = pages[p][i];
                 group.children.forEach(child => {
                     if (child.userData.isBackground) return;
-                    child.rotation.y = (s + .0005 * t * ch?.model?.salt) * ch?.model?.rotation?.[0] * ch?.model?.direction;
-                    child.rotation.x = Math.cos(ch?.model?.salt * s * ch?.model?.rotation?.[0]) / 5 + .2;
-                    child.position.y = Math.cos(t * + ch?.model?.saltBounce * .002) * 5 + 8;
+                    child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
+                    // child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
+                    child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
+                    child.position.y = Math.cos(t * ch?.model?.animatedRotation?.[1] * ch?.model?.saltBounce * .002) * 5 + 8;
+
+                    // child.rotation.y = ch?.model?.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
+                    // child.rotation.x = ch?.model?.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
                 });
             });
         });

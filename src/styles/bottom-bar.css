@@ -1,4 +1,12 @@
 .bottom-container {
+  /* --bar-size: max(25dvw, 50dvh);
+  --shadow-weight: calc(var(--bar-size) * 0.08); */
+
+  --bar-size: min(25dvw, 20dvh);
+  --shadow-weight: clamp(10px, calc(var(--bar-size) * 0.08), 12px);
+  --shadow-blur: clamp(8px, calc(var(--bar-size) * 0.3), 100px);
+  /* --shadow-blur: 0; */
+
   position: fixed;
   left: 0;
   bottom: 0;
@@ -34,7 +42,7 @@
   flex-direction: row;
   align-items: stretch;
   z-index: 2;
-  filter: blur(8vmin);
+  filter: blur(var(--shadow-blur));
   overflow: hidden;
 }
 
@@ -56,19 +64,54 @@
   display: block;
 }
 
-.left-line, .right-line {
-  /* flex-grow: 1; */
-  min-width: 60px;
-  width: calc(round(up, 20%, 1px));
+.bottom-container-background-pass,
+.bottom-container-shadow-pass,
+.bottom-container-highlight-pass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.left-curve, .right-curve {
-  flex-shrink: 0;
-  width: 12vmin; 
+.left-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: max(60px, 20%);
+}
+
+.right-line {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: max(60px, 20%);
+}
+
+.left-curve {
+  position: absolute;
+  left: max(60px, 20%);
+  top: 0;
+  height: 100%;
+  width: calc(12vmin + 1px);
+}
+
+.right-curve {
+  position: absolute;
+  right: max(60px, 20%);
+  top: 0;
+  height: 100%;
+  width: calc(12vmin + 1px);
 }
 
 .center-line {
-  flex-grow: 1;
+  position: absolute;
+  left: calc(max(60px, 20%) + 12vmin);
+  right: calc(max(60px, 20%) + 12vmin);
+  top: 0;
+  height: 100%;
 }
 
 .rest-of-bottom-container {
@@ -85,14 +128,18 @@
 
 .time-display {
   position: absolute;
-  top: 10%;
+  top: max(calc(-25dvw * .025), calc(-20dvh * .025));
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   z-index: 10;
   font-family: 'digital-7';
-  font-size: 2rem;
+  /* font-size: 10cqi;   */
+  /* font-size: clamp(.1rem, 30vw, 2rem); */
+  font-size: min(calc(25dvw * .35), calc(20dvh * .35)); /* ~48% of container's min(25dvw, 20dvh) */
+
   color: var(--text-secondary);
   letter-spacing: 0.1em;
+
 }
 
 .date-display {

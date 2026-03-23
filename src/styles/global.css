@@ -39,6 +39,7 @@
   --letter-fill: #fae289;
   --letter-outline: #e8b93a;
   /* --letter-outline: #e9e5d6; */
+  overscroll-behavior-y: none;
 }
 
 /* i found like the exact the font. I am so happy */
