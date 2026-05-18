@@ -61,6 +61,14 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         </svg>`
 ---
 
+<div id="loading-overlay" style="
+    position: fixed;
+    inset: 0;
+    background: purple;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+"></div>
+
 <div class="top-container">
   <canvas id="three-canvas" data-channels={channelsJson}></canvas>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
@@ -72,7 +80,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     import * as THREE from 'three';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-    
+
     declare global {
         interface Window {
             __modelCache: Map<string, THREE.Group>;
@@ -81,359 +89,412 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
     window.__modelCache = window.__modelCache ?? new Map();
 
-    let currentPage = 0;
-    let isFlipping = false;
+    let animFrameId: number;
 
-    const BASE_NAME = 'mesh_lowpoly';
-    let cols = 4;
-    let rows = 3;
-    let channelsPerPage = cols * rows;
+    document.addEventListener('astro:page-load', () => {
+        const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
+        if (!canvas) return;
 
-    const canvas    = document.getElementById('three-canvas') as HTMLCanvasElement;
-    const container = canvas.parentElement!;
+        cancelAnimationFrame(animFrameId);
 
-    const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
+        let currentPage = 0;
+        let isFlipping = false;
 
-    function buildPages(cpp: number, chs: any[]) {
-        const padded = [
-            ...chs,
-            ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({
-                title: 'beer',
-                url: '',
-                model: {
-                    position: [0,0,0] as [number,number,number],
-                    animatedRotation: [1,1,0] as [number,number,number],
-                    scale: .6,
-                    direction: Math.random() < 0.5 ? -1 : 1,
-                    color: [9,9,9],
-                    salt: Math.random(),
-                    saltBounce: Math.random()
-                }
-            }))
-        ];
-        return Array.from({ length: Math.ceil(padded.length / cpp) }, (_, i) =>
-            padded.slice(i * cpp, (i + 1) * cpp)
-        );
-    }
+        const BASE_NAME = 'mesh_lowpoly';
+        let cols = 4;
+        let rows = 3;
+        let channelsPerPage = cols * rows;
 
-    let pages = buildPages(channelsPerPage, allChannels);
+        const container = canvas.parentElement!;
+        const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(devicePixelRatio);
+        const overlay = document.getElementById('loading-overlay');
+        
+        const minWait = new Promise(resolve => setTimeout(resolve, 1000));
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xE7E7E7);
+        // reuse the compile idea but tied to a load counter
+        let loadCount = 0;
+        const totalLoads = channelsPerPage * 2;
 
-    const w0 = container.clientWidth;
-    const h0 = container.clientHeight;
-    const camera = new THREE.OrthographicCamera(-w0/2, w0/2, h0/2, -h0/2, 0.1, 1000);
-    camera.position.set(0, 0, 200);
-    camera.lookAt(0, 0, 0);
-    renderer.setSize(w0, h0);
-    scene.add(camera);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 3);
-    scene.add(ambient);
-
-    // always create 24 groups (max 4x3 * 2 pages lookahead) so we never need to rebuild
-    const MAX_COLS = 4;
-    const MAX_ROWS = 3;
-    const MAX_CPP = MAX_COLS * MAX_ROWS;
-
-    const cellGroups: THREE.Group[][] = [];
-    for (let p = 0; p < 2; p++) {
-        const page: THREE.Group[] = [];
-        for (let i = 0; i < MAX_CPP; i++) {
-            const g = new THREE.Group();
-            scene.add(g);
-            page.push(g);
-        }
-        cellGroups.push(page);
-    }
-
-    function addBackground(pageIndex: number, cellIndex: number, colorArr?: [number, number, number]) {
-        const [r, g, b] = colorArr ?? [250, 250, 250];
-        const color = new THREE.Color(r / 255, g / 255, b / 255);
-        const outlineColor = new THREE.Color(0xafafaf);
-
-        function buildShape() {
-            const shape = new THREE.Shape();
-            shape.moveTo(1, 3);
-            shape.quadraticCurveTo(0, 25, 1, 47);
-            shape.quadraticCurveTo(1.0417, 48.9583, 3, 49);
-            shape.quadraticCurveTo(25, 50, 47, 49);
-            shape.quadraticCurveTo(48.9583, 48.9583, 49, 47);
-            shape.quadraticCurveTo(50, 25, 49, 3);
-            shape.quadraticCurveTo(48.9583, 1.0417, 47, 1);
-            shape.quadraticCurveTo(25, 0, 3, 1);
-            shape.quadraticCurveTo(1.0417, 1.0417, 1, 3);
-            return shape;
+        function onModelLoaded() {
+            loadCount++;
+            if (loadCount >= totalLoads) {
+                Promise.all([minWait]).then(() => {
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.remove(), 500);
+                    }
+                    renderer.compile(scene, camera);
+                });
+            }
         }
 
-        const outlineGeo = new THREE.ShapeGeometry(buildShape());
-        outlineGeo.translate(-25, -25, 0);
-        const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
-        const outlineMesh = new THREE.Mesh(outlineGeo, outlineMat);
-        outlineMesh.position.z = -51;
-        outlineMesh.userData.isBackground = true;
-        outlineMesh.userData.isOutline = true;
-        cellGroups[pageIndex][cellIndex].add(outlineMesh);
+        function buildPages(cpp: number, chs: any[]) {
+            const padded = [
+                ...chs,
+                ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({
+                    title: 'beer',
+                    url: '',
+                    model: {
+                        position: [0,0,0] as [number,number,number],
+                        animatedRotation: [1,1,0] as [number,number,number],
+                        scale: .6,
+                        direction: Math.random() < 0.5 ? -1 : 1,
+                        color: [9,9,9],
+                        salt: Math.random(),
+                        saltBounce: Math.random()
+                    }
+                }))
+            ];
+            return Array.from({ length: Math.ceil(padded.length / cpp) }, (_, i) =>
+                padded.slice(i * cpp, (i + 1) * cpp)
+            );
+        }
 
-        const geo = new THREE.ShapeGeometry(buildShape());
-        geo.translate(-25, -25, 0);
-        const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.z = -50;
-        mesh.userData.isBackground = true;
-        cellGroups[pageIndex][cellIndex].add(mesh);
-    }
+        let pages = buildPages(channelsPerPage, allChannels);
 
-    function setup() {
-        const w = container.clientWidth;
-        const h = container.clientHeight;
-        renderer.setSize(w, h);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setPixelRatio(devicePixelRatio);
 
-        camera.left   = -w / 2;
-        camera.right  =  w / 2;
-        camera.top    =  h / 2;
-        camera.bottom = -h / 2;
-        camera.updateProjectionMatrix();
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xE7E7E7);
 
-        const padX = w * 0.08;
-        const usableW = w - padX * 2;
-        const cellW = usableW / cols;
-        const cellH = h / rows;
+        const w0 = container.clientWidth;
+        const h0 = container.clientHeight;
+        const camera = new THREE.OrthographicCamera(-w0/2, w0/2, h0/2, -h0/2, 0.1, 1000);
+        camera.position.set(0, 0, 200);
+        camera.lookAt(0, 0, 0);
+        renderer.setSize(w0, h0);
+        scene.add(camera);
 
-        cellGroups.forEach((page, p) => {
-            page.forEach((group, i) => {
-                if (i >= channelsPerPage) {
-                    // hide unused groups off screen
-                    group.position.set(-99999, -99999, 0);
-                    return;
-                }
-                const col = i % cols;
-                const row = Math.floor(i / cols);
-                group.position.set(
-                    p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * .84,
-                    h / 2 - (row + 0.5) * cellH,
-                    0
-                );
-                scaleGroup(p, i);
-            });
-        });
-    }
+        const ambient = new THREE.AmbientLight(0xffffff, 3);
+        scene.add(ambient);
 
-    function scaleGroup(pageIndex: number, cellIndex: number) {
-        const group = cellGroups[pageIndex][cellIndex];
-        const ch = pages[pageIndex][cellIndex];
-        const w = container.clientWidth;
-        const h = container.clientHeight;
-        const padX = w * 0.08;
-        const usableW = w - padX * 2;
-        const cellW = usableW / cols;
-        const cellH = h / rows;
-        const cellSize = Math.min(cellW, cellH);
+        const MAX_COLS = 4;
+        const MAX_ROWS = 3;
+        const MAX_CPP = MAX_COLS * MAX_ROWS;
 
-        group.children.forEach(child => {
-            if (child.userData.isBackground) return;
-            if (!ch) return;
-
-            child.scale.set(1,1,1);
-
-            const box = new THREE.Box3().setFromObject(child);
-            const size = new THREE.Vector3();
-            box.getSize(size);
-            const longest = Math.max(size.x, size.y, size.z);
-            if (longest > 0 && isFinite(longest)) {
-                child.scale.setScalar((cellSize * 0.55 * ch.model.scale) / longest);
+        const cellGroups: THREE.Group[][] = [];
+        for (let p = 0; p < 2; p++) {
+            const page: THREE.Group[] = [];
+            for (let i = 0; i < MAX_CPP; i++) {
+                const g = new THREE.Group();
+                scene.add(g);
+                page.push(g);
             }
-        });
+            cellGroups.push(page);
+        }
 
-        const outlinePx = 3;
-        group.children.forEach(child => {
-            if (!child.userData.isBackground) return;
-            if (child.userData.isOutline) {
-                child.scale.set(cellW / 50 - .5, cellH / 60, 1);
-            } else {
-                child.scale.set(
-                    (cellW - outlinePx * 3) / 50 - .5,
-                    (cellH - outlinePx * 3 * 1.2) / 60,
-                    1
-                );
+        function addBackground(pageIndex: number, cellIndex: number, colorArr?: [number, number, number]) {
+            const [r, g, b] = colorArr ?? [250, 250, 250];
+            const color = new THREE.Color(r / 255, g / 255, b / 255);
+            const outlineColor = new THREE.Color(0xafafaf);
+
+            function buildShape() {
+                const shape = new THREE.Shape();
+                shape.moveTo(1, 3);
+                shape.quadraticCurveTo(0, 25, 1, 47);
+                shape.quadraticCurveTo(1.0417, 48.9583, 3, 49);
+                shape.quadraticCurveTo(25, 50, 47, 49);
+                shape.quadraticCurveTo(48.9583, 48.9583, 49, 47);
+                shape.quadraticCurveTo(50, 25, 49, 3);
+                shape.quadraticCurveTo(48.9583, 1.0417, 47, 1);
+                shape.quadraticCurveTo(25, 0, 3, 1);
+                shape.quadraticCurveTo(1.0417, 1.0417, 1, 3);
+                return shape;
             }
-        });
-    }
 
-    function renderGrid(pageIndex: number) {
-        const grid = document.getElementById('channel-grid')!;
-        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-        grid.innerHTML = pages[pageIndex].map((ch: any) => `
-            <a class="channel-cell" href="${ch.url || '#'}"></a>
-        `).join('');
-    }
+            const outlineGeo = new THREE.ShapeGeometry(buildShape());
+            outlineGeo.translate(-25, -25, 0);
+            const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
+            const outlineMesh = new THREE.Mesh(outlineGeo, outlineMat);
+            outlineMesh.position.z = -51;
+            outlineMesh.userData.isBackground = true;
+            outlineMesh.userData.isOutline = true;
+            cellGroups[pageIndex][cellIndex].add(outlineMesh);
 
-    function updateArrows() {
-        const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
-        const next = document.getElementById('arrow-next') as HTMLButtonElement;
-        prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
-        next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
-    }
+            const geo = new THREE.ShapeGeometry(buildShape());
+            geo.translate(-25, -25, 0);
+            const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.z = -50;
+            mesh.userData.isBackground = true;
+            cellGroups[pageIndex][cellIndex].add(mesh);
+        }
 
-    function switchLayout() {
-        const ratio = container.clientHeight / container.clientWidth;
-        const newCols = ratio > 1 ? 2 : 4;
-        const newRows = 3;
-        const newCpp = newCols * newRows;
+        function setup() {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            renderer.setSize(w, h);
 
-        if (newCols === cols && newRows === rows) return;
+            camera.left   = -w / 2;
+            camera.right  =  w / 2;
+            camera.top    =  h / 2;
+            camera.bottom = -h / 2;
+            camera.updateProjectionMatrix();
 
-        const firstChannelIndex = currentPage * channelsPerPage;
-
-        cols = newCols;
-        rows = newRows;
-        channelsPerPage = newCpp;
-
-        pages = buildPages(channelsPerPage, allChannels);
-        currentPage = Math.floor(firstChannelIndex / channelsPerPage);
-
-        setup();
-        renderGrid(currentPage);
-        updateArrows();
-    }
-
-    function flipTo(targetPage: number) {
-        if (isFlipping) return;
-        if (targetPage < 0 || targetPage >= pages.length) return;
-        isFlipping = true;
-
-        const w = container.clientWidth;
-        const duration = 600;
-        const start = performance.now();
-        const from = currentPage * w * .84;
-        const to = targetPage * w * .84;
-
-        function tick(now: number) {
-            const t = Math.min((now - start) / duration, 1);
-            const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-            const offset = from + (to - from) * ease;
+            const padX = w * 0.08;
+            const usableW = w - padX * 2;
+            const cellW = usableW / cols;
+            const cellH = h / rows;
 
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
-                    if (i >= channelsPerPage) return;
+                    if (i >= channelsPerPage) {
+                        group.position.set(-99999, -99999, 0);
+                        return;
+                    }
                     const col = i % cols;
-                    const padX = w * 0.08;
-                    const usableW = w - padX * 2;
-                    const cellW = usableW / cols;
-                    group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
+                    const row = Math.floor(i / cols);
+                    group.position.set(
+                        p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * .84,
+                        h / 2 - (row + 0.5) * cellH,
+                        0
+                    );
+                    scaleGroup(p, i);
                 });
             });
+        }
 
-            if (t < 1) {
-                requestAnimationFrame(tick);
-            } else {
-                currentPage = targetPage;
-                isFlipping = false;
-                renderGrid(targetPage);
-                updateArrows();
+        function scaleGroup(pageIndex: number, cellIndex: number) {
+            const group = cellGroups[pageIndex][cellIndex];
+            const ch = pages[pageIndex][cellIndex];
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            const padX = w * 0.08;
+            const usableW = w - padX * 2;
+            const cellW = usableW / cols;
+            const cellH = h / rows;
+            const cellSize = Math.min(cellW, cellH);
+
+            group.children.forEach(child => {
+                if (child.userData.isBackground) return;
+                if (!ch) return;
+
+                child.scale.set(1,1,1);
+
+                const box = new THREE.Box3().setFromObject(child);
+                const size = new THREE.Vector3();
+                box.getSize(size);
+                const longest = Math.max(size.x, size.y, size.z);
+                if (longest > 0 && isFinite(longest)) {
+                    child.scale.setScalar((cellSize * 0.55 * ch.model.scale) / longest);
+                }
+            });
+
+            const outlinePx = 3;
+            group.children.forEach(child => {
+                if (!child.userData.isBackground) return;
+                if (child.userData.isOutline) {
+                    child.scale.set(cellW / 50 - .5, cellH / 60, 1);
+                } else {
+                    child.scale.set(
+                        (cellW - outlinePx * 3) / 50 - .5,
+                        (cellH - outlinePx * 3 * 1.2) / 60,
+                        1
+                    );
+                }
+            });
+        }
+
+        function renderGrid(pageIndex: number) {
+            const grid = document.getElementById('channel-grid')!;
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+            grid.innerHTML = pages[pageIndex].map((ch: any) => `
+                <a class="channel-cell" href="${ch.url || '#'}"></a>
+            `).join('');
+        }
+
+        function updateArrows() {
+            const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
+            const next = document.getElementById('arrow-next') as HTMLButtonElement;
+            prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+            next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
+        }
+
+        function teardownModels() {
+            cellGroups.forEach(page => {
+                page.forEach(group => {
+                    while (group.children.length > 0) {
+                        const child = group.children[0];
+                        group.remove(child);
+                        if (child instanceof THREE.Mesh) {
+                            child.geometry.dispose();
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach((m: THREE.Material) => m.dispose());
+                            } else {
+                                (child.material as THREE.Material).dispose();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function switchLayout() {
+            const ratio = container.clientHeight / container.clientWidth;
+            const newCols = ratio > 1 ? 2 : 4;
+            const newRows = 3;
+            const newCpp = newCols * newRows;
+
+            if (newCols === cols && newRows === rows) return;
+
+            const firstChannelIndex = currentPage * channelsPerPage;
+
+            cols = newCols;
+            rows = newRows;
+            channelsPerPage = newCpp;
+
+            pages = buildPages(channelsPerPage, allChannels);
+            currentPage = Math.floor(firstChannelIndex / channelsPerPage);
+
+            teardownModels();
+
+            setup();
+            renderGrid(currentPage);
+            updateArrows();
+
+            for (let p = 0; p < cellGroups.length; p++) {
+                for (let i = 0; i < channelsPerPage; i++) {
+                    loadModel(p, i);
+                }
             }
         }
 
-        requestAnimationFrame(tick);
-    }
+        function flipTo(targetPage: number) {
+            if (isFlipping) return;
+            if (targetPage < 0 || targetPage >= pages.length) return;
+            isFlipping = true;
 
-    function loadModel(pageIndex: number, cellIndex: number) {
-        const ch = pages[pageIndex][cellIndex];
-        addBackground(pageIndex, cellIndex, ch?.model?.color);
+            const w = container.clientWidth;
+            const duration = 600;
+            const start = performance.now();
+            const from = currentPage * w * .84;
+            const to = targetPage * w * .84;
 
-        const cacheKey = ch.scanDir;
-        if (window.__modelCache.has(cacheKey)) {
-            const cached = window.__modelCache.get(cacheKey).clone();
-            cached.position.set(...ch.model.position);
-            cellGroups[pageIndex][cellIndex].add(cached);
-            scaleGroup(pageIndex, cellIndex);
-            return;
-        }
+            function tick(now: number) {
+                const t = Math.min((now - start) / duration, 1);
+                const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                const offset = from + (to - from) * ease;
 
-        if (!ch?.scanDir) {
-            const geo = new THREE.IcosahedronGeometry(1, 0);
-            const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
-            const mesh = new THREE.Mesh(geo, mat);
-            cellGroups[pageIndex][cellIndex].add(mesh);
-            scaleGroup(pageIndex, cellIndex);
-            return;
-        }
-
-        const dir     = ch.scanDir.replace(/\/$/, '');
-        const mtlPath = `${dir}/${BASE_NAME}.mtl`;
-        const objPath = `${dir}/${BASE_NAME}.obj`;
-        const texPath = `${dir}/`;
-
-        const mtlLoader = new MTLLoader();
-        mtlLoader.setResourcePath(texPath);
-        mtlLoader.load(
-            mtlPath,
-            (materials: any) => {
-                materials.preload();
-                const objLoader = new OBJLoader();
-                objLoader.setMaterials(materials);
-                objLoader.load(
-                    objPath,
-                    (obj: THREE.Group) => {
-                        obj.position.set(...ch.model.position);
-                        cellGroups[pageIndex][cellIndex].add(obj);
-                        scaleGroup(pageIndex, cellIndex);
-                        window.__modelCache.set(cacheKey, obj.clone());
-                    },
-                    undefined,
-                    (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
-                );
-            },
-            undefined,
-            (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
-        );
-        
-    }
-
-    switchLayout(); // firefox, your little Mozilliod.
-    setup();
-    renderGrid(0);
-    updateArrows();
-
-    for (let p = 0; p < cellGroups.length; p++) {
-        for (let i = 0; i < MAX_CPP; i++) {
-            loadModel(p, i);
-        }
-    }
-
-    function animate(t: number) {
-        requestAnimationFrame(animate);
-        const s = t * 0.001;
-        cellGroups.forEach((page, p) => {
-            page.forEach((group, i) => {
-                const ch = pages[p][i];
-                group.children.forEach(child => {
-                    if (child.userData.isBackground) return;
-                    child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
-                    // child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
-                    child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
-                    child.position.y = Math.cos(t * ch?.model?.animatedRotation?.[1] * ch?.model?.saltBounce * .002) * 5 + 8;
-
-                    // child.rotation.y = ch?.model?.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
-                    // child.rotation.x = ch?.model?.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
+                cellGroups.forEach((page, p) => {
+                    page.forEach((group, i) => {
+                        if (i >= channelsPerPage) return;
+                        const col = i % cols;
+                        const padX = w * 0.08;
+                        const usableW = w - padX * 2;
+                        const cellW = usableW / cols;
+                        group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
+                    });
                 });
-            });
-        });
-        renderer.render(scene, camera);
-    }
 
-    requestAnimationFrame(animate);
+                if (t < 1) {
+                    requestAnimationFrame(tick);
+                } else {
+                    currentPage = targetPage;
+                    isFlipping = false;
+                    renderGrid(targetPage);
+                    updateArrows();
+                }
+            }
 
-    window.addEventListener('resize', () => {
+            requestAnimationFrame(tick);
+        }
+
+        function loadModel(pageIndex: number, cellIndex: number) {
+            const ch = pages[pageIndex]?.[cellIndex];
+            if (!ch) return;
+
+            addBackground(pageIndex, cellIndex, ch?.model?.color);
+
+            const cacheKey = ch.scanDir;
+            if (window.__modelCache.has(cacheKey)) {
+                const cached = window.__modelCache.get(cacheKey)!.clone();
+                cached.position.set(...ch.model.position);
+                cellGroups[pageIndex][cellIndex].add(cached);
+                scaleGroup(pageIndex, cellIndex);
+                onModelLoaded();
+                return;
+            }
+
+            if (!ch?.scanDir) {
+                const geo = new THREE.IcosahedronGeometry(1, 0);
+                const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
+                const mesh = new THREE.Mesh(geo, mat);
+                cellGroups[pageIndex][cellIndex].add(mesh);
+                scaleGroup(pageIndex, cellIndex);
+                onModelLoaded();
+                return;
+            }
+
+            const dir     = ch.scanDir.replace(/\/$/, '');
+            const mtlPath = `${dir}/${BASE_NAME}.mtl`;
+            const objPath = `${dir}/${BASE_NAME}.obj`;
+            const texPath = `${dir}/`;
+
+            const mtlLoader = new MTLLoader();
+            mtlLoader.setResourcePath(texPath);
+            mtlLoader.load(
+                mtlPath,
+                (materials: any) => {
+                    materials.preload();
+                    const objLoader = new OBJLoader();
+                    objLoader.setMaterials(materials);
+                    objLoader.load(
+                        objPath,
+                        (obj: THREE.Group) => {
+                            obj.position.set(...ch.model.position);
+                            cellGroups[pageIndex][cellIndex].add(obj);
+                            scaleGroup(pageIndex, cellIndex);
+                            window.__modelCache.set(cacheKey, obj.clone());
+                            onModelLoaded();
+                        },
+                        undefined,
+                        (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
+                    );
+                },
+                undefined,
+                (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
+            );
+        }
+
         switchLayout();
         setup();
-    });
+        renderGrid(0);
+        updateArrows();
 
-    document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(currentPage - 1));
-    document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(currentPage + 1));
+        for (let p = 0; p < cellGroups.length; p++) {
+            for (let i = 0; i < channelsPerPage; i++) {
+                loadModel(p, i);
+            }
+        }
+
+        function animate(t: number) {
+            animFrameId = requestAnimationFrame(animate);
+            const s = t * 0.001;
+            cellGroups.forEach((page, p) => {
+                page.forEach((group, i) => {
+                    const ch = pages[p][i];
+                    group.children.forEach(child => {
+                        if (child.userData.isBackground) return;
+                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
+                        child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
+                        child.position.y = Math.cos(t * ch?.model?.animatedRotation?.[1] * ch?.model?.saltBounce * .002) * 5 + 8;
+                    });
+                });
+            });
+            renderer.render(scene, camera);
+        }
+
+        animFrameId = requestAnimationFrame(animate);
+
+        window.addEventListener('resize', () => {
+            switchLayout();
+            setup();
+        });
+
+        document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(currentPage - 1));
+        document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(currentPage + 1));
+    });
 </script>

@@ -5,7 +5,19 @@ interface Props {
 const { color = '#000' } = Astro.props;
 ---
 
-<div id="whole-screen-scene" transition:persist data-color={color}></div>
+<div id="whole-screen-scene" transition:persist data-color={color}>
+  <div class="crt-scanlines"></div>
+  <div class="crt-vignette"></div>
+  <div class="crt-flicker"></div>
+  <svg class="crt-noise" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noise)" opacity="0.08"/>
+  </svg>
+</div>
 
 <style>
   #whole-screen-scene {
@@ -14,28 +26,116 @@ const { color = '#000' } = Astro.props;
     z-index: 100;
     pointer-events: none;
     opacity: 1;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.2s ease;
+    overflow: hidden;
+  }
+
+  /* Horizontal scanlines */
+  .crt-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.18) 2px,
+      rgba(0, 0, 0, 0.18) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Vignette darkening at edges */
+  .crt-vignette {
+    /* position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 55%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+    pointer-events: none; */
+  }
+
+  /* Subtle flicker animation */
+  .crt-flicker {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    pointer-events: none;
+    animation: crt-flicker 0.15s infinite steps(1);
+    opacity: 0;
+  }
+
+  @keyframes crt-flicker {
+    0%   { opacity: 0; }
+    5%   { opacity: 0.03; }
+    10%  { opacity: 0; }
+    50%  { opacity: 0.02; }
+    75%  { opacity: 0; }
+    90%  { opacity: 0.025; }
+    100% { opacity: 0; }
+  }
+
+  /* Noise overlay */
+  .crt-noise {
+    position: absolute;
+    inset: -2%;
+    width: 104%;
+    height: 104%;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    animation: crt-noise-shift 0.5s steps(1) infinite;
+  }
+
+  @keyframes crt-noise-shift {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(-1%, 1%); }
+    50%  { transform: translate(1%, -1%); }
+    75%  { transform: translate(-1%, -1%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Horizontal scan roll — subtle bright line sweeping down */
+  #whole-screen-scene::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.02),
+      transparent
+    );
+    animation: crt-scan-roll 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes crt-scan-roll {
+    from { top: -6px; }
+    to   { top: 100%; }
   }
 </style>
 
 <script>
   const el = document.getElementById('whole-screen-scene')!;
-  el.style.backgroundColor = el.dataset.color!;
 
-//   // fade out on load
-//   window.addEventListener('load', () => {
-//     el.style.opacity = '0';
-//   });
-
-  // fade in on navigation away
   document.addEventListener('astro:before-preparation', () => {
     el.style.opacity = '1';
     el.style.pointerEvents = 'all';
+    el.style.backgroundColor = el.dataset.color!;
+    el.style.zIndex = '100';
   });
 
-  // fade out on arrival
   document.addEventListener('astro:page-load', () => {
-    el.style.opacity = '0.5';
+    el.style.backgroundColor = 'transparent';
     el.style.pointerEvents = 'none';
+    
+    // Drop below canvas while it initializes, then restore
+    el.style.zIndex = '-1';
+    setTimeout(() => {
+      el.style.zIndex = '100';
+    }, 100);
   });
 </script>

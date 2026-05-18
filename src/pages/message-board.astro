@@ -5,50 +5,64 @@ import "./../styles/global.css";
 
 import CircleButton from "../components/circle-button.astro";
 import Letter from "../components/letter.astro";
+import { ClientRouter } from "astro:transitions";
+import WholeScreenScene from "../components/whole-screen-scene.astro";
 ---
 
-<a class="container">
-    <div class="shading" />
-    <Letter id="linkedin" href="https://www.linkedin.com/in/gabriel-g-olafsson/" xpos = "50%" ypos = "5%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
-        <img src="/public/svg/2005-Linkedin-Logo-Vector.svg" alt="LinkedIn"/>
-    </Letter>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <ClientRouter />
+    </head>
+    <body> 
+        <WholeScreenScene/>
 
-    <Letter id="email" href="mailto:gabe@gabrielolafsson.com" xpos = "10%" ypos = "35%" pinColorInside="var(--orange-inside)" pinColorOutline="var(--orange-outline)">
-        <p>send me an email! </br> gabe@gabrielolafsson.com</p>
-    </Letter>
-
-    <Letter id="github" href="https://github.com/gabrielolafs" xpos = "40%" ypos = "65%" pinColorInside="var(--orange-inside)" pinColorOutline="var(--orange-outline)">
-        <img src="/public/svg/github-logo.svg" alt="github"/>
-    </Letter>
-
-    <!-- stolen from home page cause its like the exact same thing, the class names totaly make sence here -->
-    <div class="bottom-container">
-        <div class="email-button">
-            <CircleButton href="/">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
-                    <path fill="var(--round-button-content)" stroke-width="0" 
-                        d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
-                    </path>
-                </svg>
-            </CircleButton>
-            <div class="email-background">
-                <div class="fill-behind-right">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
-                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
-                        <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
-                        <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9" fill="none"></path>
+        <!-- stolen from home page cause its like the exact same thing, the class names totaly make sence here -->
+        <div class="bottom-container">
+            <div class="email-button">
+                <CircleButton href="/">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 18">
+                        <path fill="var(--round-button-content)" stroke-width="0" 
+                            d="M0 3 L0 0 L24 0 L24 3 L12 8 L0 3 M0 4 L12 9 L24 4 L24 14 L0 14 L0 6">
+                        </path>
                     </svg>
-                </div>
-                <div class="fill-right">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
-                        <path d="M8 1.4 L-5 1.4 L-5 11.4 L8 11.4 Z" stroke-width=".3" stroke="none" fill="var(--background-color)"></path>
-                        <path d="M8 1 L-5 1 L-5 11 L8 11 Z" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
+                </CircleButton>
+                <div class="email-background">
+                    <div class="fill-behind-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
+                            <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
+                            <path d="M13 1.4 L7.5 1.4 A1 1 0 0 0 7.5 11.4 L13 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
+                            <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="#c9c9c9" fill="none"></path>
+                        </svg>
+                    </div>
+                    <div class="fill-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 8 14" preserveAspectRatio="xMaxYMid meet">
+                            <path d="M8 1.4 L-5 1.4 L-5 11.4 L8 11.4 Z" stroke-width=".3" stroke="none" fill="var(--background-color)"></path>
+                            <path d="M8 1 L-5 1 L-5 11 L8 11 Z" stroke-width=".2" stroke="none" fill="var(--background-color)"></path>
 
-                        <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
-                        <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9" fill="green"></path>
-                    </svg>
+                            <path d="M8 1.4 L-5 1.4 M-5 11.4 L8 11.4" stroke-width=".3" stroke="#ababab" fill="var(--background-color)"></path>
+                            <path d="M8 1 L-5 1 M-5 11 L8 11" stroke-width=".2" stroke="#c9c9c9" fill="green"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+        
+        <div class="container">
+            <div class="shading" />
+            <!-- <Letter id="linkedin" href="https://www.linkedin.com/in/gabriel-g-olafsson/" xpos = "50%" ypos = "5%" pinColorInside="var(--red-inside)" pinColorOutline="var(--red-outline)">
+                <img src="/public/svg/2005-Linkedin-Logo-Vector.svg" alt="LinkedIn"/>
+            </Letter> -->
+
+            <Letter id="email" href="mailto:gabe@gabrielolafsson.com" xpos = "10%" ypos = "35%" pinColorInside="var(--orange-inside)" pinColorOutline="var(--orange-outline)">
+                <p>send me an email! </br> gabe@gabrielolafsson.com</p>
+            </Letter>
+
+            <!-- <Letter id="github" href="https://github.com/gabrielolafs" xpos = "40%" ypos = "65%" pinColorInside="var(--orange-inside)" pinColorOutline="var(--orange-outline)">
+                <img src="/public/svg/github-logo.svg" alt="github"/>
+            </Letter> -->
+
+        </div>
+    </body> 
+</html>
