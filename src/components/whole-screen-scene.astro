@@ -9,6 +9,7 @@ const { color = '#000' } = Astro.props;
   <div class="crt-scanlines"></div>
   <div class="crt-vignette"></div>
   <div class="crt-flicker"></div>
+  <div class="crt-scan-roll"></div>
   <svg class="crt-noise" xmlns="http://www.w3.org/2000/svg">
     <filter id="noise">
       <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
@@ -26,8 +27,13 @@ const { color = '#000' } = Astro.props;
     z-index: 100;
     pointer-events: none;
     opacity: 1;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
     overflow: hidden;
+  }
+
+  #whole-screen-scene.crt-hidden {
+    opacity: 0;
+    visibility: hidden;
   }
 
   /* Horizontal scanlines */
@@ -44,19 +50,10 @@ const { color = '#000' } = Astro.props;
     pointer-events: none;
   }
 
-  /* Vignette darkening at edges */
   .crt-vignette {
-    /* position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 55%,
-      rgba(0, 0, 0, 0.55) 100%
-    );
-    pointer-events: none; */
+    /* disabled */
   }
 
-  /* Subtle flicker animation */
   .crt-flicker {
     position: absolute;
     inset: 0;
@@ -76,7 +73,6 @@ const { color = '#000' } = Astro.props;
     100% { opacity: 0; }
   }
 
-  /* Noise overlay */
   .crt-noise {
     position: absolute;
     inset: -2%;
@@ -95,9 +91,8 @@ const { color = '#000' } = Astro.props;
     100% { transform: translate(0, 0); }
   }
 
-  /* Horizontal scan roll — subtle bright line sweeping down */
-  #whole-screen-scene::after {
-    content: '';
+  /* Scan roll as a real element */
+  .crt-scan-roll {
     position: absolute;
     left: 0;
     right: 0;
@@ -121,6 +116,26 @@ const { color = '#000' } = Astro.props;
 <script>
   const el = document.getElementById('whole-screen-scene')!;
 
+  // Apply persisted toggle state immediately on load
+  function applyCrtState() {
+    const hidden = localStorage.getItem('crt-hidden') === 'true';
+    el.classList.toggle('crt-hidden', hidden);
+  }
+
+  // Call once on first load
+  applyCrtState();
+
+  // Re-apply after each Astro page transition
+  document.addEventListener('astro:page-load', () => {
+    applyCrtState();
+    el.style.backgroundColor = 'transparent';
+    el.style.pointerEvents = 'none';
+    el.style.zIndex = '-1';
+    setTimeout(() => {
+      el.style.zIndex = '100';
+    }, 100);
+  });
+
   document.addEventListener('astro:before-preparation', () => {
     el.style.opacity = '1';
     el.style.pointerEvents = 'all';
@@ -128,14 +143,17 @@ const { color = '#000' } = Astro.props;
     el.style.zIndex = '100';
   });
 
-  document.addEventListener('astro:page-load', () => {
-    el.style.backgroundColor = 'transparent';
-    el.style.pointerEvents = 'none';
-    
-    // Drop below canvas while it initializes, then restore
-    el.style.zIndex = '-1';
-    setTimeout(() => {
-      el.style.zIndex = '100';
-    }, 100);
+  // Expose toggle globally so any button anywhere can call it
+  (window as any).toggleCrt = () => {
+    const nowHidden = !el.classList.contains('crt-hidden');
+    el.classList.toggle('crt-hidden', nowHidden);
+    localStorage.setItem('crt-hidden', String(nowHidden));
+  };
+
+  // Optional: keyboard shortcut
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'V') {
+      (window as any).toggleCrt();
+    }
   });
 </script>

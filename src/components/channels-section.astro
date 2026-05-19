@@ -64,10 +64,21 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 <div id="loading-overlay" style="
     position: fixed;
     inset: 0;
-    background: purple;
+    background: black;
     z-index: 9999;
     transition: opacity 0.5s ease;
-"></div>
+">
+    <div style="
+        position: absolute;
+        bottom: 60px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        margin: 0;
+    ">
+        <p style={{color: "white"}}>@Gabriel Olafsson 2026</p>
+    </div>
+</div>
 
 <div class="top-container">
   <canvas id="three-canvas" data-channels={channelsJson}></canvas>
@@ -109,8 +120,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
 
         const overlay = document.getElementById('loading-overlay');
-        
-        const minWait = new Promise(resolve => setTimeout(resolve, 1000));
+
+        const minWait = new Promise(resolve => setTimeout(resolve, 500));
 
         // reuse the compile idea but tied to a load counter
         let loadCount = 0;
