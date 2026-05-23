@@ -44,8 +44,8 @@ const { color = '#000' } = Astro.props;
       to bottom,
       transparent,
       transparent 2px,
-      rgba(0, 0, 0, 0.18) 2px,
-      rgba(0, 0, 0, 0.18) 4px
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
     );
     pointer-events: none;
   }
@@ -91,7 +91,6 @@ const { color = '#000' } = Astro.props;
     100% { transform: translate(0, 0); }
   }
 
-  /* Scan roll as a real element */
   .crt-scan-roll {
     position: absolute;
     left: 0;
@@ -100,7 +99,7 @@ const { color = '#000' } = Astro.props;
     background: linear-gradient(
       to bottom,
       transparent,
-      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.1),
       transparent
     );
     animation: crt-scan-roll 8s linear infinite;
@@ -149,11 +148,4 @@ const { color = '#000' } = Astro.props;
     el.classList.toggle('crt-hidden', nowHidden);
     localStorage.setItem('crt-hidden', String(nowHidden));
   };
-
-  // Optional: keyboard shortcut
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'V') {
-      (window as any).toggleCrt();
-    }
-  });
 </script>
