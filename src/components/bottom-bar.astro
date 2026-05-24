@@ -174,4 +174,8 @@ import CircleButton from './circle-button.astro';
 
     updateTime();
     setInterval(updateTime, 60000);
+
+    document.addEventListener('astro:page-load', () => {
+        updateTime();
+    });
 </script>
