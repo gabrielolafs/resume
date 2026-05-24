@@ -4,7 +4,7 @@
         "model": {
             "baseDir": "/scans/ipod",
             "scale": 1,
-            "color": [9,9,9],
+            "color": [180, 150, 30],
             "direction": -1
         }
     },
