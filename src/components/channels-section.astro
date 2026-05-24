@@ -20,7 +20,6 @@ const channels = Object.entries(globbed)
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
         scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
-        // scanDir: override.modelBaseDir ?? mod.frontmatter.channelPageScanDir,
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             baseRotation: override.model?.baseRotation ?? [0,0,0],
@@ -143,8 +142,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const padded = [
                 ...chs,
                 ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({
-                    title: 'beer',
-                    url: '',
+                    title: 'notebook',
+                    url: '/articles/test',
                     model: {
                         position: [0,0,0] as [number,number,number],
                         animatedRotation: [1,1,0] as [number,number,number],
@@ -482,15 +481,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         function animate(t: number) {
             animFrameId = requestAnimationFrame(animate);
-            const s = t * 0.001;
+            const s = t * 0.0005;
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
                     const ch = pages[p][i];
                     group.children.forEach(child => {
                         if (child.userData.isBackground) return;
-                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .0005 * t * ch?.model?.salt) * ch?.model?.animatedRotation?.[0] * ch?.model?.direction;
+                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .00001 * t * ch?.model?.salt) * ch?.model?.direction;
                         child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
-                        child.position.y = Math.cos(t * ch?.model?.animatedRotation?.[1] * ch?.model?.saltBounce * .002) * 5 + 8;
+                        child.position.y = ch?.model?.baseRotation?.[2] + Math.cos(t * ch?.model?.saltBounce * .002) * 6 ;
                     });
                 });
             });

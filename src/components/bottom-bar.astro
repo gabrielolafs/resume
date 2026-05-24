@@ -152,7 +152,9 @@ import CircleButton from './circle-button.astro';
     </div>
     
     <div class="time-display">
-        <span id="current-time"></span>
+        <span id="current-time">
+            <span id="time-hours"></span><span class="colon">:</span><span id="time-minutes"></span>
+        </span>
     </div>
 
     <div class="date-display">
@@ -163,36 +165,13 @@ import CircleButton from './circle-button.astro';
 <script>
     function updateTime() {
         const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds();
+        document.getElementById('time-hours').textContent = now.getHours();
+        document.getElementById('time-minutes').textContent = now.getMinutes().toString().padStart(2, '0');
 
-        var timeString = '';
-
-        if (seconds % 3) {
-            timeString = `${hours} ${minutes}`;
-        }
-        else {
-            timeString = `${hours}:${minutes}`;
-        }
-        
-        const timeElement = document.getElementById('current-time');
-        if (timeElement) {
-            timeElement.textContent = timeString;
-        }
-
-        // Update date
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const dayName = days[now.getDay()];
-        const month = now.getMonth() + 1;
-        const day = now.getDate();
-        const dateString = `${dayName} ${month}/${day}`;
-        const dateElement = document.getElementById('current-date');
-        if (dateElement) {
-            dateElement.textContent = dateString;
-        }
+        document.getElementById('current-date').textContent = `${days[now.getDay()]} ${now.getMonth() + 1}/${now.getDate()}`;
     }
 
     updateTime();
-    setInterval(updateTime, 1000);
+    setInterval(updateTime, 60000);
 </script>

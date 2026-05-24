@@ -138,7 +138,7 @@
   font-size: min(calc(25dvw * .35), calc(20dvh * .35)); /* ~48% of container's min(25dvw, 20dvh) */
 
   color: var(--text-secondary);
-  letter-spacing: 0.1em;
+  /* letter-spacing: 0.1em; */
 
 }
 
@@ -152,7 +152,7 @@
   font-size: 1.8rem;
   color: var(--text-primary);
   font-weight: bold;
-  letter-spacing: 0.1em;
+  /* letter-spacing: 0.1em; */
 }
 
 /* it really wasnt that deep. ok it was kinda deep - like a 14 year old */
@@ -246,4 +246,35 @@
 
 .slot {
   z-index: 20;
+}
+
+#current-time {
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+}
+
+#time-hours {
+    min-width: 2ch;
+    text-align: right;
+}
+
+#time-minutes {
+    min-width: 2ch;
+    text-align: left;
+}
+
+.colon {
+    display: inline-block;
+    width: 0.5em;
+    text-align: center;
+    animation: blink-colon 3s step-end infinite;
+    margin: 0 -0.15em;
+
+}
+
+@keyframes blink-colon {
+    0%     { opacity: 1; }
+    33.4%  { opacity: 0; }
+    100%   { opacity: 0; }
 }
