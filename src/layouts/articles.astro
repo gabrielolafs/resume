@@ -31,9 +31,15 @@ const { frontmatter } = Astro.props;
         />
       </svg>
     </div>}
-    <h1>{frontmatter.title}</h1>
-    {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
-    {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
+    <div class="top">
+      <div class="title">
+        <h1>{frontmatter.title}</h1>
+      </div>
+      <div class="dates">
+        {frontmatter.dateWritten && <p>Written: {frontmatter.dateWritten}</p>}
+        {frontmatter.timeSpan && <p>Active: {frontmatter.timeSpan}</p>}
+      </div>
+    </div>
 
     <br/>
     <article>

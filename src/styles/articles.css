@@ -64,10 +64,39 @@ article p {
   margin-bottom: 2.5rem;
   color: var(--text-secondary);
   text-align: justify;
-
 }
 
 /* main page styling */
 ul li a {
   color: var(--wii-blue-dark)
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80vw;
+  max-height: 70vh;
+  width: auto !important;
+  height: auto !important;
+
+  color: var(--wii-blue-dark);
+
+  box-shadow: 0 0 .75em var(--wii-blue-dark);
+}
+
+/* .top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+} */
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 1em;
+  gap: 0.25rem;
+  white-space: nowrap;
 }
