@@ -64,7 +64,6 @@ article p {
   margin-bottom: 2.5rem;
   color: var(--text-secondary);
   text-align: justify;
-
 }
 
 /* main page styling */
@@ -84,4 +83,20 @@ img {
   color: var(--wii-blue-dark);
 
   box-shadow: 0 0 .75em var(--wii-blue-dark);
+}
+
+/* .top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+} */
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 1em;
+  gap: 0.25rem;
+  white-space: nowrap;
 }

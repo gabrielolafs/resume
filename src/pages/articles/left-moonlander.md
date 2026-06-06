@@ -6,7 +6,7 @@ dateWritten: 'Jan 2025'
 timeSpan: 'Feb 2024 - Now'
 ---
 
-I gave this to myself as a graduation gift after high school. I was obsessed with the (moonlander)[https://www.zsa.io/moonlander] for some time before this. I wanted to buy my end game keyboard as my first expensive keyboard, and with that I have succeeded.
+I gave this to myself as a graduation gift after high school. I was obsessed with the [moonlander](https://www.zsa.io/moonlander) for some time before this. I wanted to buy my end game keyboard as my first expensive keyboard, and with that I have succeeded.
 
 I chose an ortholinear keyboard with the [Dvorak](https://en.wikipedia.org/wiki/Dvorak_keyboard_layout) keyboard layout because I knew my future would consist of mostly deskwork, and with a computer science degree, I knew I would be spending much of the rest of my life typing away. Dvorak is specifically made so that you don't have to move your fingers from the home row as often, resulting in less potential for carpal tunnel syndrome. The ortholinear arrangement is also supposed to reduce the risk for carpal tunnel. I've heard war stories about dealing with carpal tunnel syndrome from the person who gave me and my sister a free switch as a result, so not all bad for us.
 
