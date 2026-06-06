@@ -1,0 +1,62 @@
+.top-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: max(calc(100dvh - 25vw), 80dvh);
+  max-height: 90vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--wii-background);
+  flex-direction: row;
+  overflow: hidden;
+  /* overscroll-behavior: none; */
+}
+
+.channel-grid {
+  padding: 0 8%;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+}
+
+.channel-cell {
+  pointer-events: all;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12px;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.channel-cell:hover {
+  transform: scale(1.05);
+}
+
+.page-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: none;
+    border: none;
+    font-size: 3rem;
+    cursor: pointer;
+}
+
+.page-arrow.left {
+    left: 1rem;
+    height: 100px;
+    width: 50px;
+}
+
+.page-arrow.right {
+    right: 1rem;
+    height: 100px;
+    width: 50px;
+    transform: translateY(-50%) scaleX(-1);
+}

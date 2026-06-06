@@ -2,6 +2,8 @@
 import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
 import BottomBar from '../components/bottom-bar.astro';
+import ChannelsSection from '../components/channels-section.astro';
+import '../styles/global.css'
 import '../styles/index.css';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
@@ -9,21 +11,9 @@ const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true })
 <div class="container">
     <div class="content">
         <Layout {...article} set:html={article.compiledContent()} />
-
-        <p>Post Archive:</p>
-        <ul>
-            <!-- all posts but primary - doing it this way because the home page will not be in astro and this is temp just for usability -->
-            {posts.map(post => 
-                (post.frontmatter.title !== "Gabriel G. Olafsson" && 
-                    <li>
-                        <a href={post.url}>
-                            {post.frontmatter.title}
-                        </a>
-                    </li>
-                )
-            )}
-        </ul>
     </div>
-
+    
+    <ChannelsSection />
+    <!-- oh no. this is a big issue... the js loop i have in the bottom bar causing a slight like re render or something so   -->
     <BottomBar />
 </div>

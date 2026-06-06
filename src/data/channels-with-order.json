@@ -1,0 +1,41 @@
+[
+    {
+        "slug": "ipod",
+        "model": {
+            "baseDir": "/scans/ipod",
+            "scale": 1,
+            "color": [180, 150, 30],
+            "direction": -1
+        }
+    },
+    {
+        "slug": "thor",
+        "model": {
+            "baseDir": "/scans/thor",
+            "baseRotation": [0.65, 4.4, -10],
+            "scale": 0.85,
+            "color": [99,219,189],
+            "direction": 1
+        }
+    },
+    {
+        "slug": "left-moonlander",
+        "model": {
+            "baseDir": "/scans/left-moonlander",
+            "baseRotation": [0.8, 4.4, 0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": -1
+        }
+    },
+    {
+        "slug": "right-moonlander",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8, 3.8, 0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": -1
+        }
+    }
+]

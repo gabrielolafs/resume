@@ -9,12 +9,10 @@
 }
 
 .left-arrow {
-
     height: 100px;
 }
 
 .right-arrow {
-
     height: 100px;
     transform: scaleX(-1);
 }
