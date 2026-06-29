@@ -14,11 +14,10 @@ body {
   background-color: var(--wii-background);
   margin: 0;
   padding: 5% 5% 20dvh 5%;
-  min-height: 100%;
+  min-height: 100vh;
 
   isolation: isolate;
   position: relative;
-
 }
 
 /* Articles layout styles */

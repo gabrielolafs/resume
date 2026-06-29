@@ -3,7 +3,7 @@ import * as article from './articles/primary.md';
 import Layout from '../layouts/articles.astro';
 import BottomBar from '../components/bottom-bar.astro';
 import ChannelsSection from '../components/channels-section.astro';
-import '../styles/global.css'
+
 import '../styles/index.css';
 
 const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
