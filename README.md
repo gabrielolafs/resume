@@ -195,13 +195,13 @@ File, import, wavefont (.obj)
 If you are now feaking out about the textures, dont worry. in the top right of the scene you should see 4 texturing circles. 
 
 Set the origin of obj to the center of the world
-  - Right click obj, Snap, Cursor to World Center
+  - Right click obj, Snap, Cursor to World Origin
   - Right click obj, Set Origin, Origin to Geometry
   - Right click obj, Snap, Selection to Cursor
 
 Correct any oriantation issues with the rotation tool on the left
 
-If your model has some hanging polygons or some polygons you dont want to include - go into modeling tab on the top (should be to thr right of file by a little bit) and go thru and delete some ploys. Quick tip: hold shift and left click and drap an area that you want to get rid of, then middle mouse to move around and high light more. This is much better than deleting 15 times, time way you only really delete 3-4 times.
+If your model has some hanging polygons or some polygons you dont want to include - go into modeling tab on the top (should be to the right of file by a little bit) and go thru and delete some ploys. Quick tip: hold shift and left click and drap an area that you want to get rid of, then middle mouse to move around and high light more. This is much better than deleting 15 times, time way you only really delete 3-4 times.
 
 export as obj in the public/scans/{ folder name }
 reminder to name the files as mesh_lowpoly, so name the file you are exporting as mesh_lowpoly.obj

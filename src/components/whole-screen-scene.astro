@@ -20,6 +20,8 @@ const { color = '#000' } = Astro.props;
   </svg>
 </div>
 
+<div id="custom-cursor"></div>
+
 <style>
   #whole-screen-scene {
     position: fixed;
@@ -110,21 +112,48 @@ const { color = '#000' } = Astro.props;
     from { top: -6px; }
     to   { top: 100%; }
   }
+
+  #custom-cursor {
+    position: fixed;
+    pointer-events: none;
+    width: 48px;
+    height: 48px;
+    background: url('/cursors/point.png') no-repeat center / contain;
+    transform: translate(-10px, -2px);
+    z-index: 9999;
+    opacity: 1;
+    left: -100px;
+    top: -100px;
+  }
 </style>
 
 <script>
+  let lastX = parseFloat(sessionStorage.getItem('cursor-x') || '-100');
+  let lastY = parseFloat(sessionStorage.getItem('cursor-y') || '-100');
+
+  function getCursor() {
+    return document.getElementById('custom-cursor');
+  }
+
+  function applyPosition(cursor: HTMLElement, x: number, y: number) {
+    cursor.style.left = x + 'px';
+    cursor.style.top  = y + 'px';
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const cursor = getCursor();
+    applyPosition(cursor, lastX, lastY);
+  });
+
   const el = document.getElementById('whole-screen-scene')!;
 
-  // Apply persisted toggle state immediately on load
   function applyCrtState() {
     const hidden = localStorage.getItem('crt-hidden') === 'true';
     el.classList.toggle('crt-hidden', hidden);
   }
 
-  // Call once on first load
   applyCrtState();
 
-  // Re-apply after each Astro page transition
   document.addEventListener('astro:page-load', () => {
     applyCrtState();
     el.style.backgroundColor = 'transparent';
@@ -142,10 +171,38 @@ const { color = '#000' } = Astro.props;
     el.style.zIndex = '100';
   });
 
-  // Expose toggle globally so any button anywhere can call it
   (window as any).toggleCrt = () => {
     const nowHidden = !el.classList.contains('crt-hidden');
     el.classList.toggle('crt-hidden', nowHidden);
     localStorage.setItem('crt-hidden', String(nowHidden));
   };
+
+  document.addEventListener('mousemove', (e) => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+    sessionStorage.setItem('cursor-x', String(lastX));
+    sessionStorage.setItem('cursor-y', String(lastY));
+    const cursor = getCursor();
+    applyPosition(cursor, lastX, lastY);
+  });
+
+  document.addEventListener('mousedown', () => {
+    getCursor().style.backgroundImage = "url('/cursors/closed.png')";
+  });
+
+  document.addEventListener('mouseup', () => {
+    getCursor().style.backgroundImage = "url('/cursors/point.png')";
+  });
+
+  document.addEventListener('mouseleave', () => {
+    getCursor().style.opacity = '0';
+  });
+
+  document.addEventListener('mouseenter', (e) => {
+    lastX = 10;
+    lastY = 10;
+    const cursor = getCursor();
+    applyPosition(cursor, lastX, lastY);
+    cursor.style.opacity = '1';
+  });
 </script>

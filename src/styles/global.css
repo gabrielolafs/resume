@@ -63,3 +63,7 @@
   font-weight: normal;
   font-style: normal;
 }
+
+body, a, button, input, select, textarea, label, [role="button"], [onclick], .circle-button, .arrow-next, .arrow-prev, .buttons, .wii-button, .top-container {
+  cursor: none;
+}
