@@ -124,12 +124,14 @@ const { color = '#000' } = Astro.props;
     opacity: 1;
     left: -100px;
     top: -100px;
+    transition: none;
   }
 </style>
 
 <script>
   let lastX = parseFloat(sessionStorage.getItem('cursor-x') || '-100');
   let lastY = parseFloat(sessionStorage.getItem('cursor-y') || '-100');
+  let fadeTimeout: ReturnType<typeof setTimeout>;
 
   function getCursor() {
     return document.getElementById('custom-cursor');
@@ -140,10 +142,16 @@ const { color = '#000' } = Astro.props;
     cursor.style.top  = y + 'px';
   }
 
-  document.addEventListener('astro:page-load', () => {
-    const cursor = getCursor();
-    applyPosition(cursor, lastX, lastY);
-  });
+  function resetFadeTimer(cursor: HTMLElement) {
+    cursor.style.opacity = '1';
+    cursor.style.transition = 'opacity 0.06s ease-in';
+
+    clearTimeout(fadeTimeout);
+    fadeTimeout = setTimeout(() => {
+      cursor.style.transition = 'opacity 0.3s ease-out';
+      cursor.style.opacity = '0';
+    }, 1500);
+  }
 
   const el = document.getElementById('whole-screen-scene')!;
 
@@ -155,6 +163,10 @@ const { color = '#000' } = Astro.props;
   applyCrtState();
 
   document.addEventListener('astro:page-load', () => {
+    const cursor = getCursor();
+    applyPosition(cursor, lastX, lastY);
+    resetFadeTimer(cursor);
+
     applyCrtState();
     el.style.backgroundColor = 'transparent';
     el.style.pointerEvents = 'none';
@@ -184,18 +196,22 @@ const { color = '#000' } = Astro.props;
     sessionStorage.setItem('cursor-y', String(lastY));
     const cursor = getCursor();
     applyPosition(cursor, lastX, lastY);
+    resetFadeTimer(cursor);
   });
 
   document.addEventListener('mousedown', () => {
     getCursor().style.backgroundImage = "url('/cursors/closed.png')";
+    resetFadeTimer(cursor);
   });
 
   document.addEventListener('mouseup', () => {
     getCursor().style.backgroundImage = "url('/cursors/point.png')";
+    resetFadeTimer(cursor);
   });
 
   document.addEventListener('mouseleave', () => {
     getCursor().style.opacity = '0';
+    resetFadeTimer(cursor);
   });
 
   document.addEventListener('mouseenter', (e) => {
@@ -204,5 +220,6 @@ const { color = '#000' } = Astro.props;
     const cursor = getCursor();
     applyPosition(cursor, lastX, lastY);
     cursor.style.opacity = '1';
+    resetFadeTimer(cursor);
   });
 </script>
