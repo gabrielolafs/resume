@@ -198,7 +198,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             }
 
             const outlineGeo = new THREE.ShapeGeometry(buildShape());
-            outlineGeo.translate(-25, -25, 0);
+            outlineGeo.translate(-25, -25, -10);
             const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
             const outlineMesh = new THREE.Mesh(outlineGeo, outlineMat);
             outlineMesh.position.z = -51;
@@ -207,7 +207,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             cellGroups[pageIndex][cellIndex].add(outlineMesh);
 
             const geo = new THREE.ShapeGeometry(buildShape());
-            geo.translate(-25, -25, 0);
+            geo.translate(-25, -25, -10);
             const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
             const mesh = new THREE.Mesh(geo, mat);
             mesh.position.z = -50;
