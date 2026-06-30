@@ -6,23 +6,28 @@ import '../styles/global.css';
     position: fixed;
     inset: 0;
     background: black;
-    z-index: 9999;
+    z-index: 999;
     transition: opacity 0.7s ease;
 ">
     <div style="
         position: absolute;
-        top: 100px;
+        top: 15vh;
         width: 100%;
         text-align: center;
         color: white;
         margin: 0;
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        gap: 20px;
     ">
-        <!-- <img src="/svg/github-logo.svg" alt="github"/>
-        <p style={{color: "white", fontSize: "35px"}}>BEFORE VIEWING, READ THE PROVIDED<br/>RESUME FOR IMPORTANT INFORMATION<br/>ABOUT GABRIEL'S QUALIFICATIONSsntohsntehu</p> -->
+        <img src="/svg/warning.svg" style="width: 32px; " />
+        <p style={{color: "white", fontSize: "35px"}}>PORTFOLIO ADVISORY</p>
     </div>
     <div style="
         position: absolute;
-        bottom: 500px;
+        bottom: 40vh;
         width: 100%;
         text-align: center;
         color: white;
@@ -33,11 +38,11 @@ import '../styles/global.css';
         <br/>
         <br/>
         <p style={{color: "white", fontSize: "20px"}}>Also within the webpage or at</p>
-        <a href="/pdf/gabriel_olafsson_resume.pdf" style={{color: "var(--wii-blue)", fontSize: "20px", textDecoration: "underline"}}>/pdf/gabriel_olafsson_resume.pdf</p>
+        <a href="/pdf/gabriel_olafsson_resume.pdf" target="_blank" style={{color: "var(--wii-blue)", fontSize: "20px", textDecoration: "underline"}}>/pdf/gabriel_olafsson_resume.pdf</p>
     </div>
     <div style="
         position: absolute;
-        bottom: 150px;
+        bottom: 10vh;
         width: 100%;
         text-align: center;
         color: white;

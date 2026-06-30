@@ -64,6 +64,7 @@
   font-style: normal;
 }
 
+/* removal of the original mouse */
 *, *::before, *::after {
   cursor: none !important;
 }

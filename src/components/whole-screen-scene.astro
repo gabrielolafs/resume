@@ -199,8 +199,8 @@ const { color = '#000' } = Astro.props;
   });
 
   document.addEventListener('mouseenter', (e) => {
-    lastX = 10;
-    lastY = 10;
+    lastX = e.clientX;
+    lastY = e.clientY;
     const cursor = getCursor();
     applyPosition(cursor, lastX, lastY);
     cursor.style.opacity = '1';
