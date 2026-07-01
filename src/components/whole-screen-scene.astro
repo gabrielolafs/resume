@@ -124,7 +124,6 @@ const { color = '#000' } = Astro.props;
     opacity: 1;
     left: -100px;
     top: -100px;
-    transition: none;
   }
 </style>
 
@@ -138,8 +137,8 @@ const { color = '#000' } = Astro.props;
   }
 
   function applyPosition(cursor: HTMLElement, x: number, y: number) {
-    cursor.style.left = x + 'px';
-    cursor.style.top  = y + 'px';
+    cursor.style.left = x - 7 + 'px';
+    cursor.style.top  = y - 5 + 'px';
   }
 
   function resetFadeTimer(cursor: HTMLElement) {
@@ -209,19 +208,20 @@ const { color = '#000' } = Astro.props;
   });
 
   document.addEventListener('mousedown', () => {
-    getCursor().style.backgroundImage = "url('/cursors/closed.svg')";
+    const cursor = getCursor();
+    cursor.style.backgroundImage = "url('/cursors/closed.svg')";
     resetFadeTimer(cursor);
   });
 
   document.addEventListener('mouseup', () => {
-    getCursor().style.backgroundImage = "url('/cursors/point.svg')";
+    const cursor = getCursor();
+    cursor.style.backgroundImage = "url('/cursors/point.svg')";
     resetFadeTimer(cursor);
   });
 
-  document.addEventListener('mouseleave', () => {
-    getCursor().style.opacity = '0';
-    resetFadeTimer(cursor);
-  });
+  // document.addEventListener('mouseleave', () => {
+  //   getCursor().style.opacity = '0';
+  // });
 
   document.addEventListener('mouseenter', (e) => {
     lastX = e.clientX;
