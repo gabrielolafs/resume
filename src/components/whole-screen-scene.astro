@@ -118,7 +118,7 @@ const { color = '#000' } = Astro.props;
     pointer-events: none;
     width: 64px;
     height: 64px;
-    background: url('/cursors/point.png') no-repeat center / contain;
+    background: url('/cursors/point.svg') no-repeat center / contain;
     transform: translate(-10px, -2px);
     z-index: 9999;
     opacity: 1;
@@ -152,6 +152,15 @@ const { color = '#000' } = Astro.props;
       cursor.style.opacity = '0';
     }, 1500);
   }
+
+  // Preload cursor images so first click doesn't flash
+  const preloadCursors = () => {
+    ['point', 'closed'].forEach(name => {
+      const img = new Image();
+      img.src = `/cursors/${name}.svg`;
+    });
+  };
+  preloadCursors();
 
   const el = document.getElementById('whole-screen-scene')!;
 
@@ -200,12 +209,12 @@ const { color = '#000' } = Astro.props;
   });
 
   document.addEventListener('mousedown', () => {
-    getCursor().style.backgroundImage = "url('/cursors/closed.png')";
+    getCursor().style.backgroundImage = "url('/cursors/closed.svg')";
     resetFadeTimer(cursor);
   });
 
   document.addEventListener('mouseup', () => {
-    getCursor().style.backgroundImage = "url('/cursors/point.png')";
+    getCursor().style.backgroundImage = "url('/cursors/point.svg')";
     resetFadeTimer(cursor);
   });
 
