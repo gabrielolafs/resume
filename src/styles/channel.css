@@ -25,6 +25,7 @@
 }
 
 .channel-cell {
+  margin: 10%;
   pointer-events: all;
   display: flex;
   align-items: flex-end;

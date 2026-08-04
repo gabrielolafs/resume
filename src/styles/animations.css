@@ -8,6 +8,7 @@
 
 .grid-mover {
     position: absolute;
+    margin-bottom: 50%;
     width: 200%;
     height: 200%;
     top: -100%;
@@ -17,6 +18,7 @@
     linear-gradient(90deg, rgba(0,0,0,1) 2px, transparent 1px);
     background-size: 20px 20px;
     animation: drift 3s linear infinite;
+    overflow: hidden;
 }
 
 @keyframes drift {
@@ -24,3 +26,10 @@
     to   { transform: translate(60px, 60px); }
 }
 
+.static-noise {
+    position: absolute;
+    inset: -50%;
+    background-image: url("/img/noise.png");
+    opacity: 50%;
+    z-index: 0;
+}
