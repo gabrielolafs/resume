@@ -7,9 +7,10 @@
   max-height: 90vh;
   margin: 0;
   padding: 0;
-  background-color: var(--wii-background);
+  background-color: var(--wii-background) ;
   flex-direction: row;
   overflow: hidden;
+  z-index: -1;
   /* overscroll-behavior: none; */
 }
 
@@ -60,3 +61,4 @@
     width: 50px;
     transform: translateY(-50%) scaleX(-1);
 }
+

@@ -1,5 +1,6 @@
 ---
 import '../styles/channel.css';
+import '../styles/animations.css';
 import overrides from '../data/channels-with-order.json';
 import LoadingScreen from './loading-screen.astro';
 
@@ -66,7 +67,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
   <canvas id="three-canvas" data-channels={channelsJson}></canvas>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
-  <div class="channel-grid" id="channel-grid"></div>
+  <div class="channel-grid" id="channel-grid" style="box-sizing: border-box; padding: 0 8%"></div>
 </div>
 
 <script>
@@ -146,11 +147,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         let pages = buildPages(channelsPerPage, allChannels);
 
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(devicePixelRatio);
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xE7E7E7);
+        // scene.background = new THREE.Color(0xE7E7E7);
 
         const w0 = container.clientWidth;
         const h0 = container.clientHeight;
@@ -276,17 +277,16 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             });
 
             const outlinePx = 3;
+            const cardGap = 25; 
+
             group.children.forEach(child => {
                 if (!child.userData.isBackground) return;
-                if (child.userData.isOutline) {
-                    child.scale.set(cellW / 50 - .5, cellH / 60, 1);
-                } else {
-                    child.scale.set(
-                        (cellW - outlinePx * 3) / 50 - .5,
-                        (cellH - outlinePx * 3 * 1.2) / 60,
-                        1
-                    );
-                }
+                const shrink = child.userData.isOutline ? cardGap : cardGap + outlinePx * 3;
+                child.scale.set(
+                    (cellW - shrink) / 50,
+                    (cellH - shrink) / 50,  
+                    1
+                );
             });
         }
 
@@ -295,7 +295,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
             grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
             grid.innerHTML = pages[pageIndex].map((ch: any) => `
-                <a class="channel-cell" href="${ch.url || '#'}"></a>
+                <a class="channel-cell" href="${ch.url || '#'}" style="padding: 10%;">
+                    <div class="grid-wrap">
+                        <div class="grid-mover"></div>
+                    </div>
+                </a>
             `).join('');
         }
 
@@ -399,7 +403,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const ch = pages[pageIndex]?.[cellIndex];
             if (!ch) return;
 
-            addBackground(pageIndex, cellIndex, ch?.model?.color);
+            // addBackground(pageIndex, cellIndex, ch?.model?.color); // want to get rid of and replace with css cause its easier and better to animate that way
 
             const cacheKey = ch.scanDir;
             if (window.__modelCache.has(cacheKey)) {
