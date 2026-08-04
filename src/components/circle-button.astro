@@ -2,10 +2,10 @@
 import '../styles/button.css';
 import '../styles/global.css';
 
-const { href, download } = Astro.props;
+const { href, download, openInNewTab } = Astro.props;
 ---
 
-<a href={href} download={download} class="circle-button">
+<a href={href} download={download} class="circle-button" target={openInNewTab? "_blank" : undefined}>
     <svg class="circle-button-glare" viewBox="0 0 20 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <filter id="f2" x="0" y="0" xmlns="http://www.w3/2000/svg">

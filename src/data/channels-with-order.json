@@ -37,5 +37,15 @@
             "color": [99,159,189],
             "direction": -1
         }
+    },
+    {
+        "slug": "test",
+        "model": {
+            "baseDir": "/scans/right-moonlander",
+            "baseRotation": [0.8, 3.8, 0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": -1
+        }
     }
 ]

@@ -63,3 +63,17 @@
   font-weight: normal;
   font-style: normal;
 }
+
+/* removal of the original mouse */
+*, *::before, *::after {
+  cursor: none !important;
+}
+
+/* romoval of scrollbar (for the style) */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/old Edge */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, newer Edge */
+}
