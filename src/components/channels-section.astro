@@ -327,9 +327,16 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     <div class="grid-wrap">
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
-                        : `<div class="grid-mover"></div>`
+                        : `<div class="grid-mover"></div>
+                        <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
+                            ${ ch.title }
+                        </div>
+                        <div class="channel-name">
+                            ${ ch.title }
+                        </div>`
                     }
                     </div>
+
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" width="100%" height="100%">
                         <defs>
                             <mask id="mask01">
@@ -351,7 +358,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         </defs>
                         <g mask="url(#mask01)">
                             <path fill="var(--wii-background)" fill-opacity="1"
-                            d="M-100 -100L200 -100L200 50L-100 50Z" />
+                            d="M -100 -100
+                            L200 -100
+                            L200 100
+                            L-100 100
+                            Z" /> 
                         </g>
                         <path
                             class="cell-outline"

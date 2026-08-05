@@ -1,6 +1,7 @@
 [
     {
         "slug": "ipod",
+        "channelName": "IPod Mods",
         "model": {
             "baseDir": "/scans/ipod",
             "scale": 1,
