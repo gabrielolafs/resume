@@ -220,7 +220,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const ch = pages[pageIndex][cellIndex];
             const w = container.clientWidth;
             const h = container.clientHeight;
-            const padX = w * 0.08;
+            const padX = w * 0.05;
             const usableW = w - padX * 2;
             const cellW = usableW / cols;
             const cellH = h / rows;
@@ -307,7 +307,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const isDefaultColor = ch.model.color.every((v, i) => v === [9, 9, 9][i]);
 
             return `
-                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}">
+                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M 1 3
@@ -481,7 +481,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     page.forEach((group, i) => {
                         if (i >= channelsPerPage) return;
                         const col = i % cols;
-                        const padX = w * 0.08;
+                        const padX = w * 0.05;
                         const usableW = w - padX * 2;
                         const cellW = usableW / cols;
                         group.position.x = p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - offset;
@@ -567,8 +567,16 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             }
         }
 
+        let lastRenderTime = 0;
+        const targetFPS = 60;
+        const frameInterval = 1000 / targetFPS;
+
         function animate(t: number) {
             animFrameId = requestAnimationFrame(animate);
+
+            if (t - lastRenderTime < frameInterval) return;
+            lastRenderTime = t;
+
             const s = t * 0.0005;
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {

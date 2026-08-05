@@ -8,22 +8,20 @@
 
 .grid-mover {
     position: absolute;
-    margin-bottom: 50%;
     width: 200%;
     height: 200%;
     top: -100%;
-    left: -100%;
-    background-image:
-    linear-gradient(rgba(0,0,0,1) 2px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,1) 2px, transparent 1px);
-    background-size: 20px 20px;
-    animation: drift 3s linear infinite;
+    left: -50%;
+    background-image: url("/svg/ipod-mask.svg");
+    background-size: auto 5dvh;
+    animation: drift2 5s linear infinite; /* if the animations get choppy, this might be too high */
     overflow: hidden;
 }
 
-@keyframes drift {
-    from { transform: translate(0, 0); }
-    to   { transform: translate(60px, 60px); }
+@keyframes drift2 {
+    0% { transform: translate(-7dvh, 0); }
+    50% { transform: translate(7dvh, 5dvh); }
+    100% { transform: translate(-7dvh, 10dvh); }
 }
 
 .static-noise {

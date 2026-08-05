@@ -1,4 +1,6 @@
 .bottom-container {
+  --edge-w: max(60px, 20%);
+  --curve-w: 12vmin;
   /* --bar-size: max(25dvw, 50dvh);
   --shadow-weight: calc(var(--bar-size) * 0.08); */
 
@@ -21,40 +23,30 @@
 
   z-index: 1;
 }
-
-.bottom-container-background-pass {
+.bottom-container-background-pass,
+.bottom-container-shadow-pass,
+.bottom-container-highlight-pass {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: var(--edge-w) var(--curve-w) 1fr var(--curve-w) var(--edge-w);
   align-items: stretch;
+}
+
+.bottom-container-background-pass {
   z-index: 1;
 }
 
 .bottom-container-shadow-pass {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
   z-index: 2;
   filter: blur(var(--shadow-blur));
   overflow: hidden;
 }
 
 .bottom-container-highlight-pass {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
   z-index: 3;
 }
 
@@ -66,55 +58,18 @@
   display: block;
 }
 
-.bottom-container-background-pass,
-.bottom-container-shadow-pass,
-.bottom-container-highlight-pass {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+.left-line, .left-curve, .center-line, .right-curve, .right-line {
+  position: static;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
 }
 
-.left-line {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: max(60px, 20%);
-}
-
-.right-line {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: max(60px, 20%);
-}
-
-.left-curve {
-  position: absolute;
-  left: max(60px, 20%);
-  top: 0;
-  height: 100%;
-  width: calc(12vmin + 1px);
-}
-
-.right-curve {
-  position: absolute;
-  right: max(60px, 20%);
-  top: 0;
-  height: 100%;
-  width: calc(12vmin + 1px);
-}
-
-.center-line {
-  position: absolute;
-  left: calc(max(60px, 20%) + 12vmin);
-  right: calc(max(60px, 20%) + 12vmin);
-  top: 0;
-  height: 100%;
-}
+.left-line   { grid-column: 1; }
+.left-curve  { grid-column: 2; }
+.center-line { grid-column: 3; }
+.right-curve { grid-column: 4; }
+.right-line  { grid-column: 5; }
 
 .rest-of-bottom-container {
   width: 100%;
