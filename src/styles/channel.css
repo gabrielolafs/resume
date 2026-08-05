@@ -3,9 +3,9 @@
   left: 0;
   top: 0;
   width: 100vw;
-  height: max(calc(100dvh - 25vw), 80dvh);
-  max-height: 90vh;
-  margin: 0;
+  height: calc(max(calc(100dvh - 25vw), 80dvh) - 4rem);
+  max-height: calc(90vh - 4rem);
+  margin: 2rem 0 0 0;
   padding: 0;
   background-color: var(--wii-background) ;
   flex-direction: row;
@@ -16,30 +16,30 @@
 
 .page-track {
   position:absolute; 
-  width:100%; 
-  height:100%; 
+  width: 100%; 
+  height: 100%; 
   top: 0; 
   overflow:hidden; 
   z-index: -1;
+  margin: 10px 0 0 0;
 }
 
 .channel-grid {
-  padding: 0 8%;
+  box-sizing:border-box; 
+  padding: 0 5%;
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
   pointer-events: none;
 }
 
+
 .channel-cell {
-  margin: 10%;
+  margin: 0 6%;
   pointer-events: all;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 12px;
   text-decoration: none;
   transition: transform 0.3s ease;
 }

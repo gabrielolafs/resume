@@ -190,7 +190,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             camera.bottom = -h / 2;
             camera.updateProjectionMatrix();
 
-            const padX = w * 0.08;
+            const padX = w * 0.05;
             const usableW = w - padX * 2;
             const cellW = usableW / cols;
             const cellH = h / rows;
@@ -204,14 +204,14 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     const col = i % cols;
                     const row = Math.floor(i / cols);
                     group.position.set(
-                        p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * .84,
+                        p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * 0.9,
                         h / 2 - (row + 0.5) * cellH,
                         0
                     );
                     scaleGroup(p, i);
                 });
             });
-
+            renderPageTrack();
             layoutPageTrack();
         }
 
@@ -375,7 +375,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const track = document.getElementById('page-track')!;
             track.innerHTML = pages.map((pageChannels, p) => `
                 <div class="channel-grid channel-page" data-page="${p}"
-                    style="position:absolute; top:0; left:0; width:100%; height:100%; box-sizing:border-box; padding:0 8%; display:grid; grid-template-columns:repeat(${cols}, 1fr); grid-template-rows:repeat(${rows}, 1fr);">
+                    style="grid-template-columns:repeat(${cols}, 1fr); grid-template-rows:repeat(${rows}, 1fr);">
                     ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
                 </div>
             `).join('');
@@ -383,10 +383,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         function layoutPageTrack(offset?: number) {
             const w = container.clientWidth;
-            const resolvedOffset = offset ?? currentPage * w * .84;
+            const resolvedOffset = offset ?? currentPage * w * 0.9;
             document.querySelectorAll('#page-track .channel-page').forEach((el) => {
                 const p = Number((el as HTMLElement).dataset.page);
-                (el as HTMLElement).style.transform = `translateX(${p * w * .84 - resolvedOffset}px)`;
+                (el as HTMLElement).style.transform = `translateX(${p * w * 0.9 - resolvedOffset}px)`;
             });
         }
 
@@ -455,8 +455,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const w = container.clientWidth;
             const duration = 600;
             const start = performance.now();
-            const from = currentPage * w * .84;
-            const to = targetPage * w * .84;
+            const from = currentPage * w * 0.9;
+            const to = targetPage * w * 0.9;
 
             function tick(now: number) {
                 const t = Math.min((now - start) / duration, 1);
@@ -470,7 +470,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         const padX = w * 0.08;
                         const usableW = w - padX * 2;
                         const cellW = usableW / cols;
-                        group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
+                        group.position.x = p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - offset;
                     });
                 });
 
