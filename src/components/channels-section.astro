@@ -65,10 +65,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 <LoadingScreen/>
 
 <div class="top-container">
-  <canvas id="three-canvas" data-channels={channelsJson}></canvas>
+  <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
+  <div class="page-track" id="page-track"></div>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
-  <div class="channel-grid" id="channel-grid" style="box-sizing: border-box; padding: 0 8%"></div>
 </div>
 
 <script>
@@ -152,7 +152,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         renderer.setPixelRatio(devicePixelRatio);
 
         const scene = new THREE.Scene();
-        // scene.background = new THREE.Color(0xE7E7E7);
 
         const w0 = container.clientWidth;
         const h0 = container.clientHeight;
@@ -212,6 +211,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     scaleGroup(p, i);
                 });
             });
+
+            layoutPageTrack();
         }
 
         function scaleGroup(pageIndex: number, cellIndex: number) {
@@ -299,12 +300,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 `;
         }
 
-
-        function renderGrid(pageIndex: number) {
-            const grid = document.getElementById('channel-grid')!;
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-            grid.innerHTML = pages[pageIndex].map((ch: any) => `
+        function cellMarkup(ch: any) {
+            return `
                 <a class="channel-cell" href="${ch.url || '#'}">
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -350,7 +347,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         <g mask="url(#mask01)">
                             <path fill="var(--wii-background)" fill-opacity="1"
                             d="M-100 -100L200 -100L200 50L-100 50Z" />
-
                         </g>
                         <path
                             d="M 1 3
@@ -369,7 +365,26 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         />
                     </svg>
                 </a>
+            `;
+        }
+
+        function renderPageTrack() {
+            const track = document.getElementById('page-track')!;
+            track.innerHTML = pages.map((pageChannels, p) => `
+                <div class="channel-grid channel-page" data-page="${p}"
+                    style="position:absolute; top:0; left:0; width:100%; height:100%; box-sizing:border-box; padding:0 8%; display:grid; grid-template-columns:repeat(${cols}, 1fr); grid-template-rows:repeat(${rows}, 1fr);">
+                    ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
+                </div>
             `).join('');
+        }
+
+        function layoutPageTrack(offset?: number) {
+            const w = container.clientWidth;
+            const resolvedOffset = offset ?? currentPage * w * .84;
+            document.querySelectorAll('#page-track .channel-page').forEach((el) => {
+                const p = Number((el as HTMLElement).dataset.page);
+                (el as HTMLElement).style.transform = `translateX(${p * w * .84 - resolvedOffset}px)`;
+            });
         }
 
         function updateArrows() {
@@ -418,7 +433,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             teardownModels();
 
             setup();
-            renderGrid(currentPage);
+            renderPageTrack();
+            layoutPageTrack();
             updateArrows();
 
             for (let p = 0; p < cellGroups.length; p++) {
@@ -455,12 +471,13 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     });
                 });
 
+                layoutPageTrack(offset);
+
                 if (t < 1) {
                     requestAnimationFrame(tick);
                 } else {
                     currentPage = targetPage;
                     isFlipping = false;
-                    renderGrid(targetPage);
                     updateArrows();
                 }
             }
@@ -525,7 +542,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         switchLayout();
         setup();
-        renderGrid(0);
         updateArrows();
 
         for (let p = 0; p < cellGroups.length; p++) {
