@@ -30,6 +30,6 @@
     position: absolute;
     inset: -50%;
     background-image: url("/img/noise.png");
-    opacity: 30%;
+    opacity: 20%;
     z-index: 0;
 }

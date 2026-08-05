@@ -304,8 +304,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         function cellMarkup(ch: any) {
+            const isDefaultColor = ch.model.color.every((v, i) => v === [9, 9, 9][i]);
+
             return `
-                <a class="channel-cell" href="${ch.url || '#'}">
+                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}">
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M 1 3
@@ -323,7 +325,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         />
                     </svg>
                     <div class="grid-wrap">
-                    ${ch.model.color.every((v, i) => v === [9, 9, 9][i])
+                    ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
                         : `<div class="grid-mover"></div>`
                     }
@@ -352,6 +354,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                             d="M-100 -100L200 -100L200 50L-100 50Z" />
                         </g>
                         <path
+                            class="cell-outline"
                             d="M 1 3
                             Q 0 25 1 47
                             Q 1.0417 48.9583 3 49
@@ -364,7 +367,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                             Z"
                             fill="none"
                             stroke="#afafaf"
-                            stroke-width="0.6"
+                            stroke-width=".8"
                         />
                     </svg>
                 </a>

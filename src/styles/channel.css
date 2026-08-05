@@ -65,10 +65,16 @@
   z-index: -1;
 }
 
-/* going to have to figure out the z fighting on this or just remove it */
-/* .channel-cell:hover {
-  transform: scale(1.05);
-} */
+.cell-outline {
+    stroke: #afafaf;
+    transition: stroke 0.15s ease;
+}
+
+/* only hover-highlight cells that AREN'T the [9,9,9] color */
+.channel-cell:hover:not(.is-default-color) .cell-outline {
+    stroke: var(--wii-blue);
+    stroke-width: 1.2;
+}
 
 .page-arrow {
     position: absolute;
