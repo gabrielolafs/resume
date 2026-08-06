@@ -4,7 +4,7 @@
   height: 100%;
   inset: 0;
   z-index: 1000;
-  overflow: hidden;
+  /* filter: blur(6px); */
 }
 
 body {
@@ -28,6 +28,53 @@ h1 {
   margin: 0;
 }
 
+h2 {
+  font-family: 'Contb', sans-serif;
+  font-size: 3.5rem;
+  color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+h3 {
+  font-family: 'Contb', sans-serif;
+  font-size: 2.5rem;
+  color: var(--wii-blue-dark);
+  -webkit-text-stroke: 1px;
+  /* -webkit-text-stroke-color: var(--wii-blue); */
+  margin: 0;
+}
+
+h4 {
+  font-family: 'Contb', sans-serif;
+  font-size: 4rem;
+  color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+h5 {
+  font-family: 'Contb', sans-serif;
+  font-size: 4rem;
+  color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+h6 {
+  font-family: 'Contb', sans-serif;
+  font-size: 1.5rem;
+  color: var(--wii-blue-dark);
+  margin: 0;
+}
+
+del {
+  text-decoration-thickness: 0.2rem;
+}
+
+h1 del, h2 del, h3 del, h4 del, h6 del, h5 del {
+  color: var(--wii-blue-dark);
+  text-decoration-color: var(--text-primary);
+  text-decoration-thickness: 0.4rem;
+}
+
 /* under the title */
 p {
   font-size: 1rem;
@@ -37,7 +84,7 @@ p {
 
 /* Style all content inside article */
 article * {
-  color: var(--text-primary);
+  /* color: var(--text-primary); */
   margin: 0;
 }
 
@@ -76,26 +123,33 @@ article img {
   margin-right: auto;
   max-width: 80vw;
   max-height: 70vh;
-  width: auto !important;
-  height: auto !important;
+  width: auto;
+  height: auto;
 
   color: var(--wii-blue-dark);
 
   box-shadow: 0 0 .75em var(--wii-blue-dark);
 }
 
-/* .top {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-} */
-
-.dates {
+.top {
+  margin: 3dvh 0 5dvh 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-left: 1em;
-  gap: 0.25rem;
-  white-space: nowrap;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  color: black;
+  gap: 10%;
+}
+
+.timeline b {
+  color: var(--wii-blue-dark);
+  font-weight: 600;
 }
