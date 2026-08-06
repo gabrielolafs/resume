@@ -12,16 +12,16 @@
     height: 200%;
     top: -100%;
     left: -50%;
-    background-image: url("/svg/ipod-mask.svg");
+    background-image: url("/svg/star-mask.svg");
     background-size: auto 5dvh;
     animation: drift2 5s linear infinite; /* if the animations get choppy, this might be too high */
     overflow: hidden;
 }
 
 @keyframes drift2 {
-    0% { transform: translate(-7dvh, 0); }
-    50% { transform: translate(7dvh, 5dvh); }
-    100% { transform: translate(-7dvh, 10dvh); }
+    0% { transform: translate(-8dvh, 0); }
+    50% { transform: translate(8dvh, 5dvh); }
+    100% { transform: translate(-8dvh, 10dvh); }
 }
 
 .static-noise {

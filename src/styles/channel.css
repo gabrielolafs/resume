@@ -84,7 +84,7 @@
   bottom: 5%;
   text-align: center;
   font-weight: 600;
-  font-size: clamp(min(10px, 2dvh), 5dvw, 20px);
+  font-size: clamp(min(10px, 2dvh), 5dvw, 20px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
 }
 
 .channel-name-shadow {
