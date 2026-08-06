@@ -219,10 +219,6 @@ const { color = '#000' } = Astro.props;
     resetFadeTimer(cursor);
   });
 
-  // document.addEventListener('mouseleave', () => {
-  //   getCursor().style.opacity = '0';
-  // });
-
   document.addEventListener('mouseenter', (e) => {
     lastX = e.clientX;
     lastY = e.clientY;

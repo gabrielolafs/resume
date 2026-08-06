@@ -1,5 +1,7 @@
 ---
 import '../styles/channel.css';
+import '../styles/animations.css';
+import '../styles/global.css'
 import overrides from '../data/channels-with-order.json';
 import LoadingScreen from './loading-screen.astro';
 
@@ -21,6 +23,7 @@ const channels = Object.entries(globbed)
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
         scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
+        animationSvg: override.animationSvgDir ? override.animationSvgDir : `/svg/mask-star.svg`,
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             baseRotation: override.model?.baseRotation ?? [0,0,0],
@@ -63,10 +66,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 <LoadingScreen/>
 
 <div class="top-container">
-  <canvas id="three-canvas" data-channels={channelsJson}></canvas>
+  <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
+  <div class="page-track" id="page-track"></div>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
-  <div class="channel-grid" id="channel-grid"></div>
 </div>
 
 <script>
@@ -146,11 +149,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         let pages = buildPages(channelsPerPage, allChannels);
 
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(devicePixelRatio);
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xE7E7E7);
 
         const w0 = container.clientWidth;
         const h0 = container.clientHeight;
@@ -178,43 +180,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             cellGroups.push(page);
         }
 
-        function addBackground(pageIndex: number, cellIndex: number, colorArr?: [number, number, number]) {
-            const [r, g, b] = colorArr ?? [250, 250, 250];
-            const color = new THREE.Color(r / 255, g / 255, b / 255);
-            const outlineColor = new THREE.Color(0xafafaf);
-
-            function buildShape() {
-                const shape = new THREE.Shape();
-                shape.moveTo(1, 3);
-                shape.quadraticCurveTo(0, 25, 1, 47);
-                shape.quadraticCurveTo(1.0417, 48.9583, 3, 49);
-                shape.quadraticCurveTo(25, 50, 47, 49);
-                shape.quadraticCurveTo(48.9583, 48.9583, 49, 47);
-                shape.quadraticCurveTo(50, 25, 49, 3);
-                shape.quadraticCurveTo(48.9583, 1.0417, 47, 1);
-                shape.quadraticCurveTo(25, 0, 3, 1);
-                shape.quadraticCurveTo(1.0417, 1.0417, 1, 3);
-                return shape;
-            }
-
-            const outlineGeo = new THREE.ShapeGeometry(buildShape());
-            outlineGeo.translate(-25, -25, -10);
-            const outlineMat = new THREE.MeshBasicMaterial({ color: outlineColor, side: THREE.DoubleSide });
-            const outlineMesh = new THREE.Mesh(outlineGeo, outlineMat);
-            outlineMesh.position.z = -51;
-            outlineMesh.userData.isBackground = true;
-            outlineMesh.userData.isOutline = true;
-            cellGroups[pageIndex][cellIndex].add(outlineMesh);
-
-            const geo = new THREE.ShapeGeometry(buildShape());
-            geo.translate(-25, -25, -10);
-            const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.z = -50;
-            mesh.userData.isBackground = true;
-            cellGroups[pageIndex][cellIndex].add(mesh);
-        }
-
         function setup() {
             const w = container.clientWidth;
             const h = container.clientHeight;
@@ -226,7 +191,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             camera.bottom = -h / 2;
             camera.updateProjectionMatrix();
 
-            const padX = w * 0.08;
+            const padX = w * 0.05;
             const usableW = w - padX * 2;
             const cellW = usableW / cols;
             const cellH = h / rows;
@@ -240,13 +205,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     const col = i % cols;
                     const row = Math.floor(i / cols);
                     group.position.set(
-                        p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * .84,
+                        p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * 0.9,
                         h / 2 - (row + 0.5) * cellH,
                         0
                     );
                     scaleGroup(p, i);
                 });
             });
+            renderPageTrack();
+            layoutPageTrack();
         }
 
         function scaleGroup(pageIndex: number, cellIndex: number) {
@@ -254,7 +221,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const ch = pages[pageIndex][cellIndex];
             const w = container.clientWidth;
             const h = container.clientHeight;
-            const padX = w * 0.08;
+            const padX = w * 0.05;
             const usableW = w - padX * 2;
             const cellW = usableW / cols;
             const cellH = h / rows;
@@ -276,27 +243,166 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             });
 
             const outlinePx = 3;
+            const cardGap = 25; 
+
             group.children.forEach(child => {
                 if (!child.userData.isBackground) return;
-                if (child.userData.isOutline) {
-                    child.scale.set(cellW / 50 - .5, cellH / 60, 1);
-                } else {
-                    child.scale.set(
-                        (cellW - outlinePx * 3) / 50 - .5,
-                        (cellH - outlinePx * 3 * 1.2) / 60,
-                        1
-                    );
-                }
+                const shrink = child.userData.isOutline ? cardGap : cardGap + outlinePx * 3;
+                child.scale.set(
+                    (cellW - shrink) / 50,
+                    (cellH - shrink) / 50,  
+                    1
+                );
             });
         }
 
-        function renderGrid(pageIndex: number) {
-            const grid = document.getElementById('channel-grid')!;
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-            grid.innerHTML = pages[pageIndex].map((ch: any) => `
-                <a class="channel-cell" href="${ch.url || '#'}"></a>
+        // hope this works
+        function mulberry32(seed: number) {
+            let state = Math.floor(seed * 0xFFFFFFFF) >>> 0;
+
+            return function () {
+                state = (state + 0x6D2B79F5) | 0;
+                let t = state;
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        function buildNoiseAnimation(salt: number) {
+            const rand = mulberry32(salt);
+
+            const animation = `noise_shift_${salt.toString(36).replace(/\./g, "_")}`;
+
+            const frames = 120; 
+            const range = 100;       // ±px movement
+
+            const keyframes = [];
+
+            for (let i = 0; i <= frames; i++) {
+                const pct = (i / frames) * 100;
+
+                const x = Math.round((rand() * 2 - 1) * range / 2);
+                const y = Math.round((rand() * 2 - 1) * range);
+
+                keyframes.push(`${pct}%{transform:translate(${x}px,${y}px);}`);
+                keyframes.push(`${pct - (1 / frames) * 100 + .00001}%{transform:translate(${x}px,${y}px);}`);
+                
+            }
+
+            return `
+                <style>
+                @keyframes ${animation}{
+                ${keyframes.join("")}
+                }
+                </style>
+
+                <div
+                    class="static-noise"
+                    style="animation: ${animation} linear 15s infinite;">
+                </div>
+                `;
+        }
+
+        function cellMarkup(ch: any) {
+            const isDefaultColor = ch.model.color.every((v, i) => v === [9, 9, 9][i]);
+
+            return `
+                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
+                    <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M 1 3
+                            Q 0 25 1 47
+                            Q 1.0417 48.9583 3 49
+                            Q 25 50 47 49
+                            Q 48.9583 48.9583 49 47
+                            Q 50 25 49 3
+                            Q 48.9583 1.0417 47 1
+                            Q 25 0 3 1
+                            Q 1.0417 1.0417 1 3
+                            Z"
+                            fill="rgb(${ch.model.color[0]}, ${ch.model.color[1]}, ${ch.model.color[2]})"
+                            stroke="none"
+                        />
+                    </svg>
+                    <div class="grid-wrap">
+                    ${isDefaultColor
+                        ? buildNoiseAnimation(ch.model.salt)
+                        : `<div class="grid-mover" style="background-image: url('${ ch.animationSvg }');"></div>
+                        <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
+                            ${ ch.title }
+                        </div>
+                        <div class="channel-name">
+                            ${ ch.title }
+                        </div>`
+                    }
+                    </div>
+
+                    <svg viewBox="0 0 50 50" preserveAspectRatio="none" width="100%" height="100%">
+                        <defs>
+                            <mask id="mask01">
+                                <rect width="100" height="100" fill="white"/>
+                                <path
+                                    d="M 1 3
+                                    Q 0 25 1 47
+                                    Q 1.0417 48.9583 3 49
+                                    Q 25 50 47 49
+                                    Q 48.9583 48.9583 49 47
+                                    Q 50 25 49 3
+                                    Q 48.9583 1.0417 47 1
+                                    Q 25 0 3 1
+                                    Q 1.0417 1.0417 1 3
+                                    Z"
+                                    fill="black"
+                                />
+                            </mask>
+                        </defs>
+                        <g mask="url(#mask01)">
+                            <path fill="var(--wii-background)" fill-opacity="1"
+                            d="M -100 -100
+                            L200 -100
+                            L200 100
+                            L-100 100
+                            Z" /> 
+                        </g>
+                        <path
+                            class="cell-outline"
+                            d="M 1 3
+                            Q 0 25 1 47
+                            Q 1.0417 48.9583 3 49
+                            Q 25 50 47 49
+                            Q 48.9583 48.9583 49 47
+                            Q 50 25 49 3
+                            Q 48.9583 1.0417 47 1
+                            Q 25 0 3 1
+                            Q 1.0417 1.0417 1 3
+                            Z"
+                            fill="none"
+                            stroke="#afafaf"
+                            stroke-width=".8"
+                        />
+                    </svg>
+                </a>
+            `;
+        }
+
+        function renderPageTrack() {
+            const track = document.getElementById('page-track')!;
+            track.innerHTML = pages.map((pageChannels, p) => `
+                <div class="channel-grid channel-page" data-page="${p}"
+                    style="grid-template-columns:repeat(${cols}, 1fr); grid-template-rows:repeat(${rows}, 1fr);">
+                    ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
+                </div>
             `).join('');
+        }
+
+        function layoutPageTrack(offset?: number) {
+            const w = container.clientWidth;
+            const resolvedOffset = offset ?? currentPage * w * 0.9;
+            document.querySelectorAll('#page-track .channel-page').forEach((el) => {
+                const p = Number((el as HTMLElement).dataset.page);
+                (el as HTMLElement).style.transform = `translateX(${p * w * 0.9 - resolvedOffset}px)`;
+            });
         }
 
         function updateArrows() {
@@ -345,7 +451,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             teardownModels();
 
             setup();
-            renderGrid(currentPage);
+            renderPageTrack();
+            layoutPageTrack();
             updateArrows();
 
             for (let p = 0; p < cellGroups.length; p++) {
@@ -363,8 +470,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const w = container.clientWidth;
             const duration = 600;
             const start = performance.now();
-            const from = currentPage * w * .84;
-            const to = targetPage * w * .84;
+            const from = currentPage * w * 0.9;
+            const to = targetPage * w * 0.9;
 
             function tick(now: number) {
                 const t = Math.min((now - start) / duration, 1);
@@ -375,19 +482,20 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     page.forEach((group, i) => {
                         if (i >= channelsPerPage) return;
                         const col = i % cols;
-                        const padX = w * 0.08;
+                        const padX = w * 0.05;
                         const usableW = w - padX * 2;
                         const cellW = usableW / cols;
-                        group.position.x = p * w * .84 + padX + (col + 0.5) * cellW - w / 2 - offset;
+                        group.position.x = p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - offset;
                     });
                 });
+
+                layoutPageTrack(offset);
 
                 if (t < 1) {
                     requestAnimationFrame(tick);
                 } else {
                     currentPage = targetPage;
                     isFlipping = false;
-                    renderGrid(targetPage);
                     updateArrows();
                 }
             }
@@ -398,8 +506,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         function loadModel(pageIndex: number, cellIndex: number) {
             const ch = pages[pageIndex]?.[cellIndex];
             if (!ch) return;
-
-            addBackground(pageIndex, cellIndex, ch?.model?.color);
 
             const cacheKey = ch.scanDir;
             if (window.__modelCache.has(cacheKey)) {
@@ -454,7 +560,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         switchLayout();
         setup();
-        renderGrid(0);
         updateArrows();
 
         for (let p = 0; p < cellGroups.length; p++) {
@@ -463,8 +568,16 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             }
         }
 
+        let lastRenderTime = 0;
+        const targetFPS = 60;
+        const frameInterval = 1000 / targetFPS;
+
         function animate(t: number) {
             animFrameId = requestAnimationFrame(animate);
+
+            if (t - lastRenderTime < frameInterval) return;
+            lastRenderTime = t;
+
             const s = t * 0.0005;
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {

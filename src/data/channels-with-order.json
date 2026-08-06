@@ -1,21 +1,12 @@
 [
     {
         "slug": "ipod",
+        "animationSvgDir": "/svg/mask-ipod.svg",
         "model": {
             "baseDir": "/scans/ipod",
             "scale": 1,
-            "color": [180, 150, 30],
+            "color": [255, 204, 0],
             "direction": -1
-        }
-    },
-    {
-        "slug": "thor",
-        "model": {
-            "baseDir": "/scans/thor",
-            "baseRotation": [0.65, 4.4, -10],
-            "scale": 0.85,
-            "color": [99,219,189],
-            "direction": 1
         }
     },
     {
@@ -39,10 +30,22 @@
         }
     },
     {
-        "slug": "test",
+        "slug": "woo-network",
+        "animationSvgDir": "/svg/mask-internet.svg",
         "model": {
-            "baseDir": "/scans/right-moonlander",
-            "baseRotation": [0.8, 3.8, 0],
+            "baseDir": "/scans/woo-network",
+            "baseRotation": [0.1, 3.8, 0],
+            "scale": 1,
+            "color": [99,159,189],
+            "direction": -1
+        }
+    },
+    {
+        "slug": "prorm",
+        "animationSvgDir": "/svg/mask-gpu.svg",
+        "model": {
+            "baseDir": "/scans/prorm5",
+            "baseRotation": [0.1, 0.0, 0],
             "scale": 1,
             "color": [99,159,189],
             "direction": -1
