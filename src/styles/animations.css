@@ -13,7 +13,7 @@
     top: -100%;
     left: -50%;
     background-image: url("/svg/star-mask.svg");
-    background-size: auto 5dvh;
+    background-size: auto 2.5dvh;
     animation: drift2 5s linear infinite; /* if the animations get choppy, this might be too high */
     overflow: hidden;
 }

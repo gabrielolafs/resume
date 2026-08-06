@@ -1,0 +1,56 @@
+<svg viewBox="0 0 240 79" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <mask id="gpu-masking">
+                        <path stroke="white" stroke-width="2" fill="none" stroke-linecap="round"
+                            d="M 3 7
+                            L 5 7
+                            Q 7 7 7 9
+                            L 7 39"
+                        />
+
+                        <path stroke="white" stroke-width="3" fill="white" 
+                            d="M 10 13
+                            L 60 13
+                            Q 62 13 62 15
+                            L 62 34
+                            Q 62 36 60 36
+                            L 10 36
+                            Z"
+                        />
+
+                        <rect x="15" y="38" width="4" height="2" fill="white"/>
+                        <rect x="21" y="38" width="20" height="2" fill="white"/>
+
+                        <!-- fan 1 -->
+                        <g transform="translate(24,24.5)">
+                            <circle r="10.5" fill="black" stroke="white" stroke-width="2"/>
+                            <g fill="white">
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(90)"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(180)"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(270)"/>
+                            </g>
+                            <circle r=".5" fill="black" stroke="black" stroke-width="2"/>
+                        </g>
+
+                        <!-- fan 2 -->
+                        <g transform="translate(48,24.5)">
+                            <circle r="10.5" fill="black" stroke="white" stroke-width="2"/>
+                            <g fill="white">
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(90)"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(180)"/>
+                            <path d="M0,-8 C2.8,-8 4.6,-5.7 4.6,-3.2 C4.6,-1.2 2.6,0 0,0 Z" transform="rotate(270)"/>
+                            </g>
+                            <circle r=".5" fill="black" stroke="black" stroke-width="2"/>
+                        </g>
+                    </mask>
+                </defs>
+
+                <g mask="url(#gpu-masking)" transform="translate(-2 -6)" opacity=".2">
+                    <rect width="100" height="100" fill="black"/>
+                </g>
+                <g mask="url(#gpu-masking)" transform="translate(121 36.5)" opacity=".2">
+                    <rect width="100" height="100" fill="black"/>
+                </g>
+            </svg>

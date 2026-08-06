@@ -1,7 +1,7 @@
 [
     {
         "slug": "ipod",
-        "animation": "/svg/ipod-mask.svg",
+        "animationSvgDir": "/svg/mask-ipod.svg",
         "model": {
             "baseDir": "/scans/ipod",
             "scale": 1,
@@ -31,6 +31,7 @@
     },
     {
         "slug": "woo-network",
+        "animationSvgDir": "/svg/mask-internet.svg",
         "model": {
             "baseDir": "/scans/woo-network",
             "baseRotation": [0.1, 3.8, 0],
@@ -41,9 +42,10 @@
     },
     {
         "slug": "prorm",
+        "animationSvgDir": "/svg/mask-gpu.svg",
         "model": {
-            "baseDir": "/scans/prorm",
-            "baseRotation": [0, 3.8, 0],
+            "baseDir": "/scans/prorm5",
+            "baseRotation": [0.1, 0.0, 0],
             "scale": 1,
             "color": [99,159,189],
             "direction": -1

@@ -23,6 +23,7 @@ const channels = Object.entries(globbed)
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
         scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
+        animationSvg: override.animationSvgDir ? override.animationSvgDir : `/svg/mask-star.svg`,
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             baseRotation: override.model?.baseRotation ?? [0,0,0],
@@ -327,7 +328,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     <div class="grid-wrap">
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
-                        : `<div class="grid-mover"></div>
+                        : `<div class="grid-mover" style="background-image: url('${ ch.animationSvg }');"></div>
                         <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
                             ${ ch.title }
                         </div>
