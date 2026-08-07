@@ -102,7 +102,8 @@ article h5 {
 
 article a {
   color: var(--wii-blue-dark);
-  text-decoration: underline;
+  text-decoration: underline .2rem;
+  text-underline-offset: .07rem;
 }
 
 article p {
