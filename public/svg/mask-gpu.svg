@@ -47,10 +47,10 @@
                     </mask>
                 </defs>
 
-                <g mask="url(#gpu-masking)" transform="translate(-2 -6)" opacity=".2">
-                    <rect width="100" height="100" fill="black"/>
+                <g mask="url(#gpu-masking)" transform="translate(-2 -6)" opacity=".5">
+                    <rect width="100" height="100" fill="white"/>
                 </g>
-                <g mask="url(#gpu-masking)" transform="translate(121 36.5)" opacity=".2">
-                    <rect width="100" height="100" fill="black"/>
+                <g mask="url(#gpu-masking)" transform="translate(121 36.5)" opacity=".5">
+                    <rect width="100" height="100" fill="white"/>
                 </g>
             </svg>

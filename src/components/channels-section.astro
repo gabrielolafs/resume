@@ -24,6 +24,7 @@ const channels = Object.entries(globbed)
         url:     `/articles/${slug}`,
         scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
         animationSvg: override.animationSvgDir ? override.animationSvgDir : `/svg/mask-star.svg`,
+        animationSvgDimentions: override.animationSvgDimentions ? override.animationSvgDimentions : [90.45, 43.61], // default to size of mask-star.svg. this could have its own json with options if i get around to making more default svgs
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             baseRotation: override.model?.baseRotation ?? [0,0,0],
@@ -269,6 +270,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             };
         }
 
+        // called by the blank channels - garentees unique static look per channel
         function buildNoiseAnimation(salt: number) {
             const rand = mulberry32(salt);
 
@@ -304,8 +306,29 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 `;
         }
 
+        // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
+        function buildChannelSection ( salt: number, title: string, animationSvg: string, svgDimentions: any[] | undefined ) {
+            const aspectRatio = svgDimentions[0] / svgDimentions[1];
+            return `<style>
+                @keyframes drift_${ title.replaceAll(" ", "_") } {
+                    0% { transform: translate(0, 0); }
+                    100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * 2}dvh); }
+                }
+            </style>
+            <div class="grid-mover" 
+                style="background-image: url('${ animationSvg }'); animation: drift_${ title.replaceAll(" ", "_") } ${4 + salt}s linear infinite; "
+            >
+            </div>
+            <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
+                ${ title }
+            </div>
+            <div class="channel-name">
+                ${ title }
+            </div>`;
+        }
+
         function cellMarkup(ch: any) {
-            const isDefaultColor = ch.model.color.every((v, i) => v === [9, 9, 9][i]);
+            const isDefaultColor = ch.model.color.every((v: number, i: string | number) => v === [9, 9, 9][i]);
 
             return `
                 <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
@@ -328,13 +351,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     <div class="grid-wrap">
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
-                        : `<div class="grid-mover" style="background-image: url('${ ch.animationSvg }');"></div>
-                        <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
-                            ${ ch.title }
-                        </div>
-                        <div class="channel-name">
-                            ${ ch.title }
-                        </div>`
+                        : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions)
                     }
                     </div>
 
