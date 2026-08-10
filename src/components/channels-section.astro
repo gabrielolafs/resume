@@ -299,20 +299,26 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 }
                 </style>
 
+                <div class="little-logo">
+                    GGO
+                </div>
+
                 <div
                     class="static-noise"
                     style="animation: ${animation} linear 15s infinite;">
                 </div>
+                
                 `;
         }
 
         // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
         function buildChannelSection ( salt: number, title: string, animationSvg: string, svgDimentions: any[] | undefined ) {
             const aspectRatio = svgDimentions[0] / svgDimentions[1];
+            const offSetYTimes = Math.trunc(aspectRatio); // cast to int basically, has to be whole number for y offset to line up (this only aprox. gets diagonal motion)
             return `<style>
                 @keyframes drift_${ title.replaceAll(" ", "_") } {
                     0% { transform: translate(0, 0); }
-                    100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * 2}dvh); }
+                    100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * offSetYTimes }dvh); }
                 }
             </style>
             <div class="grid-mover" 

@@ -89,11 +89,7 @@ canvas {
   bottom: 5%;
   text-align: center;
   font-weight: 600;
-  font-size: clamp(min(10px, 2dvh), 5dvw, 20px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
-}
-
-.channel-name-shadow {
-  background-color: pink;
+  font-size: clamp(10px, 3.5dvw, 30px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
 }
 
 .page-arrow {
