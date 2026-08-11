@@ -25,10 +25,11 @@ const channels = Object.entries(globbed)
         scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
         animationSvg: override.animationSvgDir ? override.animationSvgDir : `/svg/mask-star.svg`,
         animationSvgDimentions: override.animationSvgDimentions ? override.animationSvgDimentions : [90.45, 43.61], // default to size of mask-star.svg. this could have its own json with options if i get around to making more default svgs
+        imgPaths: override.imgPaths ? override.imgPaths : [],
         model:   { 
             position: override.model?.position ?? [0,0,0], 
             baseRotation: override.model?.baseRotation ?? [0,0,0],
-            color: override.model?.color ?? [250,250,250],
+            color: override.color ?? [250,250,250],
             animatedRotation: override.model?.animatedRotation ?? [1,1,0], 
             scale: override.model?.scale ?? 1,
             direction: override.model?.direction ?? getRandomDirection(),
@@ -312,25 +313,74 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
-        function buildChannelSection ( salt: number, title: string, animationSvg: string, svgDimentions: any[] | undefined ) {
-            const aspectRatio = svgDimentions[0] / svgDimentions[1];
-            const offSetYTimes = Math.trunc(aspectRatio); // cast to int basically, has to be whole number for y offset to line up (this only aprox. gets diagonal motion)
+        function buildChannelSection( salt: number, title: string, animationSvg: string, svgDimentions: number[] | undefined, imgPaths: string[] ) {
+            const slug = title.replaceAll(" ", "_");
+            const highlightedTitle = `
+                        <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
+                            ${title}
+                        </div>
+                        <div class="channel-name">
+                            ${title}
+                        </div>`;
+
+            // no images, fall back to the drifting background svg
+            if (imgPaths.length === 0) {
+                const dims = svgDimentions ?? [1, 1];
+                const aspectRatio = dims[0] / dims[1];
+                const offSetYTimes = Math.trunc(aspectRatio);
+
+                return `<style>
+                            @keyframes drift_${slug} {
+                                0% { transform: translate(0, 0); }
+                                100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * offSetYTimes}dvh); }
+                            }
+                        </style>
+                        <div class="grid-mover" 
+                            style="background-image: url('${animationSvg}'); animation: drift_${slug} ${4 + salt}s linear infinite;"
+                        >
+                        </div>` + highlightedTitle;
+            }
+
+            // images present crossfade slideshow
+            const perImageDuration = 4 + salt;
+            const totalDuration = perImageDuration * imgPaths.length;
+            const slot = 100 / imgPaths.length;
+            const fadeEdge = slot * 0.15;
+
+            const layers = imgPaths.map((path, i) => {
+                const delay = -(i * perImageDuration);  // negative delay pre-offsets each image into its own slot
+                return `<img
+                            src="${path}"
+                            class="fade-layer"
+                            style="animation: fade_${slug} ${totalDuration}s ease-in-out infinite; animation-delay: ${delay}s;"
+                        />`;
+            }).join("");
+
             return `<style>
-                @keyframes drift_${ title.replaceAll(" ", "_") } {
-                    0% { transform: translate(0, 0); }
-                    100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * offSetYTimes }dvh); }
-                }
-            </style>
-            <div class="grid-mover" 
-                style="background-image: url('${ animationSvg }'); animation: drift_${ title.replaceAll(" ", "_") } ${4 + salt}s linear infinite; "
-            >
-            </div>
-            <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
-                ${ title }
-            </div>
-            <div class="channel-name">
-                ${ title }
-            </div>`;
+                        @keyframes fade_${slug} {
+                            0%   { opacity: 0; }
+                            ${fadeEdge}% { opacity: 1; }
+                            ${slot - fadeEdge}% { opacity: 1; }
+                            ${slot}% { opacity: 0; }
+                            100% { opacity: 0; }
+                        }
+                        .fade-stack {
+                            position: relative;
+                            width: 100%;
+                            height: 100%;
+                        }
+                        .fade-layer {
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            opacity: 0;
+                        }
+                    </style>
+                    <div class="fade-stack">
+                        ${layers}
+                    </div>` + highlightedTitle;
         }
 
         function cellMarkup(ch: any) {
@@ -357,7 +407,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     <div class="grid-wrap">
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
-                        : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions)
+                        : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions, ch.imgPaths )
                     }
                     </div>
 
@@ -540,8 +590,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 return;
             }
 
-            if (!ch?.scanDir) {
-                const geo = new THREE.IcosahedronGeometry(1, 0);
+            if (!ch?.scanDir) { // this is jank. it is displaying something of no size.
+                const geo = new THREE.IcosahedronGeometry(0, 0);
                 const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
                 const mesh = new THREE.Mesh(geo, mat);
                 cellGroups[pageIndex][cellIndex].add(mesh);
@@ -605,11 +655,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
                     const ch = pages[p][i];
-                    group.children.forEach(child => {
+                    group.children.forEach(child => { 
                         if (child.userData.isBackground) return;
-                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .00001 * t * ch?.model?.salt) * ch?.model?.direction;
-                        child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2;
-                        child.position.y = ch?.model?.baseRotation?.[2] + Math.cos(t * ch?.model?.saltBounce * .002) * 6 ;
+                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .00001 * t * ch?.model?.salt) * ch?.model?.direction; // rotation
+                        child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2; // view point correction
+                        child.position.y = ch?.model?.baseRotation?.[2] + Math.cos(t * ch?.model?.saltBounce * .002) * 6 ; // bounce
                     });
                 });
             });
