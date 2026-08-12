@@ -245,8 +245,8 @@ Grab your scan folder and throw it into /public/scans
 As long as it looks good, thats it! Just make a pr and merge it in, and cloudlflare will deploy!
 
 # Current TODOs somewhat ordered by importance:
-- [ ] Make a logo for myself
-- [ ] Change the icon in the tab to be this logo
+- [x] Make a logo for myself
+- [x] Change the icon in the tab to be this logo
 
 - [x] Astro (specifically the markdown implementation)
   - [x] Serving markdown files
@@ -260,13 +260,13 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 - [x] Main bottom banner. I COOKED with this one. looks great - onlything that needs some work would be generally supporting mobile. looked it up and it seems like you should be able to support 275px width and this does not do that. its not bad its kinda functional
   - [x] fix scaling issues
     - [x] spcifically for mobile i need to support 275px width
-    - [ ] silly that the time display (also I want to make sure that I move away from the monospace - it was much easier to code initially, but i really dont like how it looks - ill have to do a better job animating with a non-monospaced font casue times like 11:11 are damned ugos). this is done but there is a slight stutter on certain mobile browesers with the 3js. this is directly being caused by the js loop that I have I need to test it more but the blinking : has to at the minum change (setting visbablity might work? it def needs to be altered cause the look of times like 1:19 on monospace looks terrible. but i cant test rn :/)
+    - [x] silly that the time display (also I want to make sure that I move away from the monospace - it was much easier to code initially, but i really dont like how it looks - ill have to do a better job animating with a non-monospaced font casue times like 11:11 are damned ugos). this is done but there is a slight stutter on certain mobile browesers with the 3js. this is directly being caused by the js loop that I have I need to test it more but the blinking : has to at the minum change (setting visbablity might work? it def needs to be altered cause the look of times like 1:19 on monospace looks terrible. but i cant test rn :/)
   - [x] Circle buttons
     - [x] Styled
     - [x] Able to take svgs as an arg
   - [x] Outline in blue
   - [x] grey background
-    - [ ] Fix small spacing glitch? I think all it is a rounding issue combining px and percent - maybe just round to the nearest pixel? this is an issue that needs to be solved in the way future - it is such a minimal issue that it is probably not worth the time that it takes in order to fix it. It is kinda fixed - but the z fighting or whatever is causing the shadow to break every once in a while still persists
+    - [ ] Fix small spacing glitch? I think all it is a rounding issue combining px and percent - maybe just round to the nearest pixel? this is an issue that needs to be solved in the way future - it is such a minimal issue that it is probably not worth the time that it takes in order to fix it. It is kinda fixed - but the z fighting or whatever is causing the shadow to break every once in a while still persists ** yeah this is still an issue, its gonna be for the forseeable future cause ive already spent a few hoours several times to figure it out **
   - [x] Drop shadows on buttons
   - [x] Shadows from the outline. This one I have been struggling with a lot. I think I will have to make a new svg path for each with a height that is taller than it used to be for everything. that would solve the issue of the center line being cut off. But the curves are the real stickler. I have to do some research on how to cast a shaodow downwards from an svg. I thought I had something that would work (linear gradient) but it has not yet and it would be messed up on the scaling so I have not gotten anything that looks good yet. radial and linear??? make them all into one svg and use other variables in order to scale on the x????? Ive spent like 2 hours on this alone, I have to figure it out. I FIGURED IT OUT!!! Really really chalenging one. had to let it sit in the back of my mind working on other stuff and then finally i figured out that you could filter blur on a whole div and it would blur everything together. i now have a div with black lines along the path (which updates live) and then blur the hell out of it - like 60px. Works like a charm. the curves are a little bit thinner (8 thick instead of 10 because the curves kinda loop on themselves kinda) so when i would be testing it 
   - [x] svg mail icon for right side
@@ -296,7 +296,7 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
     - [x] page flipping (only if there are enough? I think i would be a good idea to have something that is always going to have page flipping - even if there are only enough to not even fill a page. this will show that its possible at all times - plus hopefully not all too complicated)
     - [x] tease the next few - not interactive but load them
   - [x] Make the scaling for many sizes of monitors. have 4x3 be the default and what it will be scalling up from anything - ultrawides all that will have only 12 per screen. i dont really see the y getting scalled down from 3 at all - a thinner than square screen might have a 3x3 but i dont think they will ever have a 2x2 or 2x4 in any normal use case. this is the next thing that I am planning on making - maybe not the page flipping quite yet, but at least getting some of the style down. this is the very frist thing that people will see when they go on the page and I really want it to be something that it technically impressive. 
-  - [ ] implement lazy loading
+  - [x] implement lazy loading
   - [ ] setup / renavigiation blank issue. somethign is causing the return to the main page to not render anything - it def has to do with the crt filter cause it was never an issue before.
   - [ ] load on mobile and scale up to desktop veiw removes all entries of index of 6-11 and has default coloring, also does not over write the colors that were there on the next screen with the new files
   - [x] find a way to decrease the size of the files for faster loading (there is ab a 2 sec delay on local host when the page is full, this will be much worse when it is hosted. very much a networking bottle neck)
@@ -305,7 +305,7 @@ As long as it looks good, thats it! Just make a pr and merge it in, and cloudlfl
 
 
 - [ ] three js
-  - [ ] crt filter
+  - [x] crt filter
   - [ ] animate full screen fuction (at this point - this is so much smaller a part of the project than i thought it would be. I am still really excited to get into three js, but this was originally going to be the way that I learn three js. now it is looking like this is going to teach me a little bit about it, maybe enough to gain a likeing or disliking to it and do more research acordingly. this really eneded up being a normal web dev project. I am learning a lot about front end - which is something that I have never really been intereested in because I was not trying to make something that was interesting just for the sake of observation. I have only really been parts of projects that are trying to solve a problem r do something so the frontend really takes a back seat while)
   - [x] implement 3d files into markdown files (technical challenge, plus tedious to make the files. might not even be worth it at this point. the animation on the front psge i think is enough. I am going to be taking some photos on my digital camera for the esthetic)
     - [x] I deemed this unworthy of the time it will take. i will just take some photos on a digital camera and that should still stick with the esthetic I am going for. ~~validate the poly cam to three js pile line. edit: this is a royal pain in the ass. I have scanned 2 things (one of them failed) because I tried to do my ipod the same night as I did my test canand it took more than 10 min so I just gave up. this is something that will be so so so cool when it is done and completed, and I am really excited for it, but it is one of those things where it is probably hours of time that I will have to spend scanning in order to get the amount of files that I would Ideally have. So far I feel like I average like 10-15 min per scan. Once i get better it will be like 10 flat. But one of the articles that I have alread written would benifit from like 8 scans. that alone is probably 2 hours (and prob over the course of like 5 days cause I dont have much stamana for moving my phone around an object ackwardly). Claude has validated that it is something that is possible to be done and I have not closed the tab that I have my test can spinning around in and it has been like 3 days, I just get so filled with glee whenever i see it~~

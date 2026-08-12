@@ -17,11 +17,11 @@
                     </mask>
                 </defs>
 
-                <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".1" />
-                <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".2" mask="url(#internet-masking)" />
+                <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".2" />
+                <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".5" mask="url(#internet-masking)" />
 
                 <g transform="translate(60 22)">
-                    <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".1" />
-                    <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".2" mask="url(#internet-masking)" />
+                    <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".2" />
+                    <circle cx="10" cy="10" r="10" fill="black" fill-opacity=".5" mask="url(#internet-masking)" />
                 </g>
             </svg>

@@ -14,18 +14,23 @@
   /* overscroll-behavior: none; */
 }
 
+canvas {
+  pointer-events: none !important;
+  position: fixed;
+}
+
 .page-track {
-  position:absolute; 
+  position: absolute; 
   width: 100%; 
   height: 100%; 
   top: 0; 
-  overflow:hidden; 
+  overflow: hidden; 
   z-index: -1;
   margin: 10px 0 0 0;
 }
 
 .channel-grid {
-  box-sizing:border-box; 
+  box-sizing: border-box; 
   padding: 0 5%;
   position: absolute;
   inset: 0;
@@ -84,11 +89,7 @@
   bottom: 5%;
   text-align: center;
   font-weight: 600;
-  font-size: clamp(min(10px, 2dvh), 5dvw, 20px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
-}
-
-.channel-name-shadow {
-  background-color: pink;
+  font-size: clamp(10px, 3.5dvw, 30px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
 }
 
 .page-arrow {
