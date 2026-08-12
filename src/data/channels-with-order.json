@@ -1,5 +1,9 @@
 [
     {
+        "slug": "about-me",
+        "color": [250, 200, 25]
+    },
+    {
         "slug": "ipod",
         "animationSvgDir": "/svg/mask-ipod.svg",
         "animationSvgDimentions": [36, 15.833333],
@@ -61,7 +65,12 @@
     },
     {
         "slug": "path-finding",
-        "color": [225, 225, 175],
+        "color": [250, 200, 25],
         "imgPaths": ["/img/path_finding_01.webp", "/img/path_finding_03.webp", "/img/path_finding_02.webp"]
+    },
+    {
+        "slug": "donations",
+        "color": [250, 200, 25],
+        "imgPaths": ["/img/donate.png"]
     }
 ]
