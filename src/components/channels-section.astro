@@ -166,6 +166,9 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         const ambient = new THREE.AmbientLight(0xffffff, 3);
         scene.add(ambient);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(0, 10, 10);
+        scene.add(directionalLight);
 
         const MAX_COLS = 4;
         const MAX_ROWS = 3;
@@ -583,7 +586,17 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 if (!mesh.isMesh) return;
                 const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
                 mats.forEach((mat: any) => {
+                    // only flat-Kd materials (hair/pants/shirt/skin/beard) need this correction.
+                    // anything with a diffuse map (eyes/brows/mouth) already has its real baked
+                    // color from the PNG and has no Kd in the mtl, so it defaults to white —
+                    // boosting that just overexposes the texture toward white instead of leaving
+                    // its actual color alone.
+                    if (mat.map) return;
                     if (mat.color) mat.color.multiplyScalar(boost); // scales diffuse reflectance, not a flat overlay
+                    if (mat.emissive) {
+                        const peak = Math.max(mat.color.r, mat.color.g, mat.color.b, 1e-4);
+                        mat.emissive.copy(mat.color).multiplyScalar(0.05 / peak);
+                    }
                 });
             });
         }
