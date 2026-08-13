@@ -1,8 +1,8 @@
-# Blender 5.0.1 MTL File: 'Mii_Maker_for_4.1_v222.blend'
+# Blender 5.0.1 MTL File: 'mii3_17.blend'
 # www.blender.org
 
 newmtl mii_beard
-Kd 0.000000 0.000000 0.000000
+Kd 0.080220 0.045186 0.017642
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
@@ -14,10 +14,10 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
+map_Kd beard_sprite.png
 map_d beard_sprite.png
 
 newmtl mii_eye
-Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
@@ -29,10 +29,25 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
-map_d eye sprite_rgb.png
+map_Kd eye_upsidedown_reversed.png
+map_d eye_upsidedown_reversed.png
+
+newmtl mii_eye_right
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+Pr 0.500000
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd eye_upsidedown.png
+map_d eye_upsidedown.png
 
 newmtl mii_eyebrow
-Kd 0.000000 0.000000 0.000000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
@@ -44,7 +59,8 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
-map_d eyebrow_sprite.png
+map_Kd brows.png
+map_d brows.png
 
 newmtl mii_glasses
 Kd 0.800000 0.800000 0.800000
@@ -55,9 +71,11 @@ d 1.000000
 illum 2
 Pr 0.400000
 Pm 0.000000
+map_Kd glasses.png
+map_d glasses.png
 
 newmtl mii_hair
-Kd 0.399434 0.399434 0.399434
+Kd 0.147027 0.082283 0.029557
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
@@ -72,7 +90,6 @@ aniso 0.000000
 anisor 0.000000
 
 newmtl mii_mouth
-Kd 0.800000 0.800000 0.800000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
@@ -84,25 +101,11 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
-map_d mouth_sprite_rgb.png
-
-newmtl mii_nose
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.500000
-illum 2
-Pr 0.500000
-Pm 0.000000
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
-map_Kd nose_sprite.png
-map_d nose_sprite.png
+map_Kd mouth.png
+map_d mouth.png
 
 newmtl mii_pants
-Kd 0.100335 0.074135 0.059939
+Kd 0.005182 0.015996 0.051269
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
@@ -117,7 +120,7 @@ aniso 0.000000
 anisor 0.000000
 
 newmtl mii_shirt
-Kd 0.572086 0.000000 0.000000
+Kd 0.179150 0.312784 0.572081
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
@@ -132,7 +135,7 @@ aniso 0.000000
 anisor 0.000000
 
 newmtl mii_skin
-Kd 1.000000 0.462000 0.147000
+Kd 0.479320 0.327778 0.212231
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
@@ -145,38 +148,3 @@ Pc 0.000000
 Pcr 0.030000
 aniso 0.000000
 anisor 0.000000
-
-newmtl mii_wrinkle
-Kd 0.000000 0.000000 0.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.500000
-d 1.000000
-illum 2
-Pr 0.500000
-Pm 0.000000
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
-
-newmtl none
-Kd 0.800000 0.800000 0.800000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-Pr 0.400000
-Pm 0.000000
-
-newmtl selection
-Kd 0.800000 0.800000 0.800000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-Pr 0.400000
-Pm 0.000000

@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/articles.astro
-title: About Me
+title: About Mii
 dateWritten: August 2026
 timeSpan: 2003 - Current
 ---

@@ -28,7 +28,7 @@ const channels = Object.entries(globbed)
         imgPaths: override.imgPaths ? override.imgPaths : [],
         model:   { 
             position: override.model?.position ?? [0,0,0], 
-            baseRotation: override.model?.baseRotation ?? [0,0,0],
+            baseRotation: override.model?.baseRotation ?? [0,5,0],
             color: override.color ?? [250,250,250],
             animatedRotation: override.model?.animatedRotation ?? [1,1,0], 
             scale: override.model?.scale ?? 1,
@@ -576,6 +576,37 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             requestAnimationFrame(tick);
         }
 
+        // this function changes the baked lighting of an obj. it is only used for the mii, and this will be removed come animations
+        function applyFillLight(root: THREE.Object3D, boost = 3.6) {
+            root.traverse((child) => {
+                const mesh = child as THREE.Mesh;
+                if (!mesh.isMesh) return;
+                const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+                mats.forEach((mat: any) => {
+                    if (mat.color) mat.color.multiplyScalar(boost); // scales diffuse reflectance, not a flat overlay
+                });
+            });
+        }
+
+        // only used for the mii, and this will be removed come animations
+        // corrects alpha map issues for models i have made and not scanned, probaly could be fixed on the blender side / mtl side but this works and will be removed come animations
+        function fixMiiAlpha(root: THREE.Object3D) {
+            root.traverse((child) => {
+                const mesh = child as THREE.Mesh;
+                if (!mesh.isMesh) return;
+                const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+                mats.forEach((mat: any) => {
+                    if (mat.alphaMap && mat.map) {
+                        mat.alphaMap = null;
+                        mat.transparent = false;
+                        mat.alphaTest = 0.5;
+                        mat.depthWrite = true;
+                        mat.needsUpdate = true;
+                    }
+                });
+            });
+        }
+
         function loadModel(pageIndex: number, cellIndex: number) {
             const ch = pages[pageIndex]?.[cellIndex];
             if (!ch) return;
@@ -590,12 +621,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 return;
             }
 
-            if (!ch?.scanDir) { // this is jank. it is displaying something of no size.
-                const geo = new THREE.IcosahedronGeometry(0, 0);
-                const mat = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
-                const mesh = new THREE.Mesh(geo, mat);
-                cellGroups[pageIndex][cellIndex].add(mesh);
-                scaleGroup(pageIndex, cellIndex);
+            if (!ch?.scanDir) { // no model
                 onModelLoaded();
                 return;
             }
@@ -617,6 +643,12 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         objPath,
                         (obj: THREE.Group) => {
                             obj.position.set(...ch.model.position);
+
+                            if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp solution, will remain until i rig and animate, as it will not be an obj after that
+                                applyFillLight(obj);
+                                fixMiiAlpha(obj);
+                            }
+
                             cellGroups[pageIndex][cellIndex].add(obj);
                             scaleGroup(pageIndex, cellIndex);
                             window.__modelCache.set(cacheKey, obj.clone());
@@ -657,7 +689,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     const ch = pages[p][i];
                     group.children.forEach(child => { 
                         if (child.userData.isBackground) return;
-                        child.rotation.y = ch?.model.baseRotation?.[1] + (s + .00001 * t * ch?.model?.salt) * ch?.model?.direction; // rotation
+                        child.rotation.y = ch?.model.baseRotation?.[1] + 4 + (s + .00001 * t * ch?.model?.salt) * ch?.model?.direction; // rotation
                         child.rotation.x = ch?.model.baseRotation?.[0] + Math.cos(ch?.model?.salt * s * ch?.model?.animatedRotation?.[0]) / 5 + .2; // view point correction
                         child.position.y = ch?.model?.baseRotation?.[2] + Math.cos(t * ch?.model?.saltBounce * .002) * 6 ; // bounce
                     });
