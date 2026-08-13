@@ -644,7 +644,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         (obj: THREE.Group) => {
                             obj.position.set(...ch.model.position);
 
-                            if (ch.title === 'About Me') { // temp solution, will remain until i rig and animate, as it will not be an obj after that
+                            if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp solution, will remain until i rig and animate, as it will not be an obj after that
                                 applyFillLight(obj);
                                 fixMiiAlpha(obj);
                             }
