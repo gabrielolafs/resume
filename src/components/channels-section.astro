@@ -317,7 +317,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
         function buildChannelSection( salt: number, title: string, animationSvg: string, svgDimentions: number[] | undefined, imgPaths: string[] ) {
-            const slug = title.replaceAll(" ", "_");
+            const slug = title.replaceAll(/[^a-zA-Z0-9\-._~]/g, "_"); // all url un safe chars
             const highlightedTitle = `
                         <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
                             ${title}
