@@ -1,13 +1,25 @@
-
-
-import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { readdir, readFile, writeFile, stat, unlink, rename } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { join, extname, dirname, basename } from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { minify as minifyJS } from "terser";
 import { transform as transformCSS } from "lightningcss";
 import { minify as minifyHTML } from "html-minifier-terser";
 import { optimize as optimizeSVG } from "svgo";
 
-const OUT_DIR = process.argv[2] ?? "dist";
+const MODE = process.argv[2] ?? "compress";
+const OUT_DIR = process.argv[3] ?? "dist";
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+
+const MAGICK = join(SCRIPT_DIR, "../bin/magick");
+
+const EXTRA_SCRIPTS = [
+  { label: "article images webp conversion", file: "reduce_img_article.sh" },
+  { label: "chanel images webp conversion", file: "reduce_img_chanel.sh" },
+  { label: "article image-extension replace", file: "replace_img_ext_md.sh" },
+  { label: "chanel image-extension replace", file: "replace_img_ext_json.sh" },
+];
 
 const HTML_OPTIONS = {
   collapseWhitespace: true,
@@ -18,22 +30,46 @@ const HTML_OPTIONS = {
   removeEmptyAttributes: true,
 };
 
+function runExtraScripts() {
+  for (const { label, file } of EXTRA_SCRIPTS) {
+    const scriptPath = join(SCRIPT_DIR, file);
+    if (!existsSync(scriptPath)) {
+      console.warn(`Skipped ${label}: ${scriptPath} not found`);
+      continue;
+    }
+
+    console.log(`Running ${label}...`);
+
+    const result = spawnSync("sh", [scriptPath], { stdio: "inherit" });
+
+    if (result.error) {
+      console.warn(`  ! ${label} failed to start: ${result.error.message}`);
+    } else if (result.status !== 0) {
+      console.warn(`  ! ${label} exited with code ${result.status}`);
+    }
+  }
+}
+
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
+
   for (const entry of entries) {
     const full = join(dir, entry.name);
+
     if (entry.isDirectory()) {
       files.push(...(await walk(full)));
     } else {
       files.push(full);
     }
   }
+
   return files;
 }
 
 async function compressFile(file, totals) {
   const ext = extname(file).toLowerCase();
+
   if (![".js", ".mjs", ".css", ".html", ".svg"].includes(ext)) return;
 
   const original = await readFile(file, "utf8");
@@ -41,7 +77,10 @@ async function compressFile(file, totals) {
 
   try {
     if (ext === ".js" || ext === ".mjs") {
-      const result = await minifyJS(original, { module: ext === ".mjs" });
+      const result = await minifyJS(original, {
+        module: ext === ".mjs",
+      });
+
       if (result.code) output = result.code;
     } else if (ext === ".css") {
       const { code } = transformCSS({
@@ -49,11 +88,13 @@ async function compressFile(file, totals) {
         code: Buffer.from(original),
         minify: true,
       });
+
       output = code.toString();
     } else if (ext === ".html") {
       output = await minifyHTML(original, HTML_OPTIONS);
     } else if (ext === ".svg") {
       const result = optimizeSVG(original, { path: file });
+
       if (result.data) output = result.data;
     }
   } catch (err) {
@@ -63,6 +104,7 @@ async function compressFile(file, totals) {
 
   if (output.length < original.length) {
     await writeFile(file, output, "utf8");
+
     totals.before += original.length;
     totals.after += output.length;
     totals.count += 1;
@@ -70,7 +112,18 @@ async function compressFile(file, totals) {
 }
 
 async function main() {
+  if (MODE === "prepare") {
+    runExtraScripts();
+    return;
+  }
+
+  if (MODE !== "compress") {
+    console.error(`Unknown mode: ${MODE}`);
+    process.exit(1);
+  }
+
   let files;
+
   try {
     files = await walk(OUT_DIR);
   } catch {
@@ -78,16 +131,25 @@ async function main() {
     process.exit(1);
   }
 
-  const totals = { before: 0, after: 0, count: 0 };
+  const totals = {
+    before: 0,
+    after: 0,
+    count: 0,
+  };
+
   for (const file of files) {
     await compressFile(file, totals);
   }
 
   const savedKB = ((totals.before - totals.after) / 1024).toFixed(1);
+
   const pct = totals.before
     ? (100 * (1 - totals.after / totals.before)).toFixed(1)
     : "0";
-  console.log(`✓ Compressed ${totals.count} files — saved ${savedKB} KB (${pct}%)`);
+
+  console.log(
+    `Compressed ${totals.count} files — saved ${savedKB} KB (${pct}%)`
+  );
 }
 
 main();
