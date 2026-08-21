@@ -1,19 +1,20 @@
 #!/bin/sh
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 IMG_DIR="$SCRIPT_DIR/../public/img/chanel"
+MAGICK="$SCRIPT_DIR/../bin/magick"
 
-if ! command -v magick >/dev/null 2>&1; then
-    echo "Error: 'magick' command not found. Install ImageMagick and try again." >&2
+if [ ! -x "$MAGICK" ] ; then
+    echo "Error: ImageMagick binary not found: $MAGICK" >&2
     exit 1
 fi
 
 for file in "$IMG_DIR"/*; do
-    # Skip if not a regular file
-    [ -f "$file" ] || continue
+    [ -f "$file" ] || continue # Skip if not a regular file
+
     filename=$(basename "$file")
-    # Get extension
     ext="${filename##*.}"
     ext=$(printf "%s" "$ext" | tr '[:upper:]' '[:lower:]')
+    
     # Only process jpg/jpeg/png
     case "$ext" in
         jpg|jpeg|png)
@@ -22,10 +23,11 @@ for file in "$IMG_DIR"/*; do
             continue
             ;;
     esac
-    # Output filename with .webp extension
+    
     output="${file%.*}.webp"
-    # Skip if webp already exists
-    [ -f "$output" ] && continue
+    
+    [ -f "$output" ] && continue # Skip if webp already exists
+
     echo "Converting $file -> $output"
-    magick "$file" -define webp:target-size=20000 "$output"
+    "$MAGICK" "$file" -define webp:target-size=250000 "$output"
 done
