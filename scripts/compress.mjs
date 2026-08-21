@@ -9,6 +9,8 @@ import { minify as minifyHTML } from "html-minifier-terser";
 import { optimize as optimizeSVG } from "svgo";
 
 const OUT_DIR = process.argv[2] ?? "dist";
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+
 
 const EXTRA_SCRIPTS = [
   { label: "article images webp conversion", file: "reduce_img_article.sh" },
