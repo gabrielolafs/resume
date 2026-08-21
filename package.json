@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/compress.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -13,11 +13,14 @@
     "astro": "^7.2.0",
     "rehype-external-links": "^3.0.0",
     "remark-breaks": "^4.0.0",
-    "sharp": "^0.35.2",
     "three": "^0.183.2"
   },
   "devDependencies": {
-    "@types/three": "^0.183.1"
+    "@types/three": "^0.183.1",
+    "html-minifier-terser": "^7.2.0",
+    "lightningcss": "^1.33.0",
+    "svgo": "^4.0.2",
+    "terser": "^5.50.0"
   },
   "packageManager": "yarn@4.9.1"
 }

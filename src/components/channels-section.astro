@@ -78,6 +78,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     import * as THREE from 'three';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+    import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+    // create ONCE, outside loadModel — the decoder (wasm) only needs to load a single time,
+    // re-instantiating per call would refetch/reinit it on every model
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
 
     declare global {
         interface Window {
@@ -166,6 +175,9 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         const ambient = new THREE.AmbientLight(0xffffff, 3);
         scene.add(ambient);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(0, 10, 10);
+        scene.add(directionalLight);
 
         const MAX_COLS = 4;
         const MAX_ROWS = 3;
@@ -314,7 +326,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
         function buildChannelSection( salt: number, title: string, animationSvg: string, svgDimentions: number[] | undefined, imgPaths: string[] ) {
-            const slug = title.replaceAll(" ", "_");
+            const slug = title.replaceAll(/[^a-zA-Z0-9\-._~]/g, "_"); // all url un safe chars
             const highlightedTitle = `
                         <div class="channel-name" style="-webkit-text-stroke-width: 8px; -webkit-text-stroke-color: black;">
                             ${title}
@@ -577,35 +589,27 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         // this function changes the baked lighting of an obj. it is only used for the mii, and this will be removed come animations
-        function applyFillLight(root: THREE.Object3D, boost = 3.6) {
+        function applyFillLight(root: THREE.Object3D, boost = 2.0) {
             root.traverse((child) => {
                 const mesh = child as THREE.Mesh;
                 if (!mesh.isMesh) return;
                 const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
                 mats.forEach((mat: any) => {
+                    // only flat-Kd materials (hair/pants/shirt/skin/beard) need this correction.
+                    // anything with a diffuse map (eyes/brows/mouth) already has its real baked
+                    // color from the PNG and has no Kd in the mtl, so it defaults to white —
+                    // boosting that just overexposes the texture toward white instead of leaving
+                    // its actual color alone.
+                    if (mat.map) return;
                     if (mat.color) mat.color.multiplyScalar(boost); // scales diffuse reflectance, not a flat overlay
-                });
-            });
-        }
-
-        // only used for the mii, and this will be removed come animations
-        // corrects alpha map issues for models i have made and not scanned, probaly could be fixed on the blender side / mtl side but this works and will be removed come animations
-        function fixMiiAlpha(root: THREE.Object3D) {
-            root.traverse((child) => {
-                const mesh = child as THREE.Mesh;
-                if (!mesh.isMesh) return;
-                const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-                mats.forEach((mat: any) => {
-                    if (mat.alphaMap && mat.map) {
-                        mat.alphaMap = null;
-                        mat.transparent = false;
-                        mat.alphaTest = 0.5;
-                        mat.depthWrite = true;
-                        mat.needsUpdate = true;
+                    if (mat.emissive) {
+                        const peak = Math.max(mat.color.r, mat.color.g, mat.color.b, 1e-4);
+                        mat.emissive.copy(mat.color).multiplyScalar(0.01 / peak);
                     }
                 });
             });
         }
+        
 
         function loadModel(pageIndex: number, cellIndex: number) {
             const ch = pages[pageIndex]?.[cellIndex];
@@ -626,40 +630,26 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 return;
             }
 
-            const dir     = ch.scanDir.replace(/\/$/, '');
-            const mtlPath = `${dir}/${BASE_NAME}.mtl`;
-            const objPath = `${dir}/${BASE_NAME}.obj`;
-            const texPath = `${dir}/`;
+            const dir = ch.scanDir.replace(/\/$/, '');
+            const glbPath = `${dir}/${BASE_NAME}.glb`;
 
-            const mtlLoader = new MTLLoader();
-            mtlLoader.setResourcePath(texPath);
-            mtlLoader.load(
-                mtlPath,
-                (materials: any) => {
-                    materials.preload();
-                    const objLoader = new OBJLoader();
-                    objLoader.setMaterials(materials);
-                    objLoader.load(
-                        objPath,
-                        (obj: THREE.Group) => {
-                            obj.position.set(...ch.model.position);
+            gltfLoader.load(
+                glbPath,
+                (gltf) => {
+                    const root = gltf.scene;
+                    root.position.set(...ch.model.position);
 
-                            if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp solution, will remain until i rig and animate, as it will not be an obj after that
-                                applyFillLight(obj);
-                                fixMiiAlpha(obj);
-                            }
+                    if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp, remove come animations
+                        applyFillLight(root);
+                    }
 
-                            cellGroups[pageIndex][cellIndex].add(obj);
-                            scaleGroup(pageIndex, cellIndex);
-                            window.__modelCache.set(cacheKey, obj.clone());
-                            onModelLoaded();
-                        },
-                        undefined,
-                        (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
-                    );
+                    cellGroups[pageIndex][cellIndex].add(root);
+                    scaleGroup(pageIndex, cellIndex);
+                    window.__modelCache.set(cacheKey, root.clone());
+                    onModelLoaded();
                 },
                 undefined,
-                (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
+                (err) => console.warn(`GLB load failed [${ch.title}]:`, err)
             );
         }
 

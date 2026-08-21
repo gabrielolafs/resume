@@ -46,8 +46,9 @@ h3 {
 
 h4 {
   font-family: 'Contb', sans-serif;
-  font-size: 4rem;
-  color: var(--wii-blue-dark);
+  font-size: 1rem;
+  color: var(--text-secondary) !important;
+  font-weight: 400 !important;
   margin: 0;
 }
 
@@ -82,9 +83,7 @@ p {
   margin: 0;
 }
 
-/* Style all content inside article */
 article * {
-  /* color: var(--text-primary); */
   margin: 0;
 }
 
