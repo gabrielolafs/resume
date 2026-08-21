@@ -18,7 +18,6 @@ for file in "$IMG_DIR"/*; do
     ext="${filename##*.}"
     ext=$(printf "%s" "$ext" | tr '[:upper:]' '[:lower:]')
 
-    # Only process jpg/jpeg/png
     case "$ext" in
         jpg|jpeg|png)
             ;;
@@ -32,14 +31,19 @@ for file in "$IMG_DIR"/*; do
 
     echo "Converting $file -> $output"
 
-    quality=90
+    low=0
+    high=100
+    best_quality=-1
+    best_size=0
 
-    while [ "$quality" -gt 0 ]; do
+    while [ "$low" -le "$high" ]; do
+        quality=$(( (low + high) / 2 ))
+
         rm -f "$temp"
 
         "$MAGICK" "$file" \
             -quality "$quality" \
-            "$temp"
+            "webp:$temp"
 
         if [ ! -f "$temp" ]; then
             echo "Error: ImageMagick failed for $file" >&2
@@ -50,41 +54,31 @@ for file in "$IMG_DIR"/*; do
 
         echo "  quality=$quality size=${size} bytes"
 
-        if [ "$size" -lt "$MAX_SIZE" ]; then
-            mv "$temp" "$output"
-            echo "Done: $output ($size bytes, quality $quality)"
-            break
+        if [ "$size" -le "$MAX_SIZE" ]; then
+            # This quality fits, so try a higher quality.
+            best_quality=$quality
+            best_size=$size
+            low=$((quality + 1))
+        else
+            # Too large, so try a lower quality.
+            high=$((quality - 1))
         fi
-
-        quality=$((quality - 5))
     done
 
-    if [ "$quality" -le 0 ]; then
+    if [ "$best_quality" -ge 0 ]; then
         rm -f "$temp"
-        while [ "$quality" -gt 0 ]; do
-            rm -f "$temp"
 
-            "$MAGICK" "$file" \
-                -quality "$quality" \
-                "$temp"
+        "$MAGICK" "$file" \
+            -quality "$best_quality" \
+            "webp:$temp"
 
-            if [ ! -f "$temp" ]; then
-                echo "Error: ImageMagick failed for $file" >&2
-                break
-            fi
+        mv "$temp" "$output"
 
-            size=$(wc -c < "$temp" | tr -d ' ')
-
-            echo "  quality=$quality size=${size} bytes"
-
-            if [ "$size" -lt "$MAX_SIZE" ]; then
-                mv "$temp" "$output"
-                echo "Done: $output ($size bytes, quality $quality)"
-                break
-            fi
-
-            quality=$((quality - 1))
-        done
-        echo "Error: Could not reduce $file below $MAX_SIZE bytes" >&2
+        echo "Done: $output"
+        echo "  quality=$best_quality"
+        echo "  size=$best_size bytes"
+    else
+        rm -f "$temp"
+        echo "Error: Could not create $file under $MAX_SIZE bytes" >&2
     fi
 done
