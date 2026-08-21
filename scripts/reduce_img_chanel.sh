@@ -8,6 +8,8 @@ if [ ! -x "$MAGICK" ] ; then
     exit 1
 fi
 
+MAX_SIZE=25000
+
 for file in "$IMG_DIR"/*; do
     [ -f "$file" ] || continue # Skip if not a regular file
 
@@ -29,5 +31,26 @@ for file in "$IMG_DIR"/*; do
     [ -f "$output" ] && continue # Skip if webp already exists
 
     echo "Converting $file -> $output"
-    "$MAGICK" "$file" -define webp:target-size=250000 "$output"
+
+    quality=90
+
+    while :; do
+        "$MAGICK" "$file" -quality "$quality" "$output"
+
+        size=$(wc -c < "$output")
+
+        if [ "$size" -lt "$MAX_SIZE" ]; then
+            echo "Done: $output ($size bytes, quality $quality)"
+            break
+        fi
+
+        rm -f "$output"
+
+        quality=$((quality - 5))
+
+        if [ "$quality" -le 0 ]; then
+            echo "Error: Could not reduce $file below $MAX_SIZE bytes" >&2
+            break
+        fi
+    done
 done
