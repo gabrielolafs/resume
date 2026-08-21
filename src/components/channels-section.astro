@@ -175,7 +175,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         const ambient = new THREE.AmbientLight(0xffffff, 3);
         scene.add(ambient);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 5.0);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
         directionalLight.position.set(0, 10, 10);
         scene.add(directionalLight);
 
@@ -589,7 +589,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         // this function changes the baked lighting of an obj. it is only used for the mii, and this will be removed come animations
-        function applyFillLight(root: THREE.Object3D, boost = 3.6) {
+        function applyFillLight(root: THREE.Object3D, boost = 2.0) {
             root.traverse((child) => {
                 const mesh = child as THREE.Mesh;
                 if (!mesh.isMesh) return;
@@ -609,25 +609,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 });
             });
         }
-
-        // only used for the mii, and this will be removed come animations
-        // corrects alpha map issues for models i have made and not scanned, probaly could be fixed on the blender side / mtl side but this works and will be removed come animations
-        function fixMiiAlpha(root: THREE.Object3D) {
-            root.traverse((child) => {
-                const mesh = child as THREE.Mesh;
-                if (!mesh.isMesh) return;
-                const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-                mats.forEach((mat: any) => {
-                    if (mat.alphaMap && mat.map) {
-                        mat.alphaMap = null;
-                        mat.transparent = false;
-                        mat.alphaTest = 0.5;
-                        mat.depthWrite = true;
-                        mat.needsUpdate = true;
-                    }
-                });
-            });
-        }
+        
 
         function loadModel(pageIndex: number, cellIndex: number) {
             const ch = pages[pageIndex]?.[cellIndex];
@@ -658,8 +640,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     root.position.set(...ch.model.position);
 
                     if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp, remove come animations
-                        // applyFillLight(root);
-                        // fixMiiAlpha(root);
+                        applyFillLight(root);
                     }
 
                     cellGroups[pageIndex][cellIndex].add(root);
