@@ -9,7 +9,7 @@ import { minify as minifyHTML } from "html-minifier-terser";
 import { optimize as optimizeSVG } from "svgo";
 
 const MODE = process.argv[2] ?? "compress";
-const OUT_DIR = process.argv[2] ?? "dist";
+const OUT_DIR = process.argv[3] ?? "dist";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 
 const EXTRA_SCRIPTS = [
