@@ -175,7 +175,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         const ambient = new THREE.AmbientLight(0xffffff, 3);
         scene.add(ambient);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 5.0);
         directionalLight.position.set(0, 10, 10);
         scene.add(directionalLight);
 
@@ -604,7 +604,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     if (mat.color) mat.color.multiplyScalar(boost); // scales diffuse reflectance, not a flat overlay
                     if (mat.emissive) {
                         const peak = Math.max(mat.color.r, mat.color.g, mat.color.b, 1e-4);
-                        mat.emissive.copy(mat.color).multiplyScalar(0.05 / peak);
+                        mat.emissive.copy(mat.color).multiplyScalar(0.01 / peak);
                     }
                 });
             });
@@ -658,8 +658,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     root.position.set(...ch.model.position);
 
                     if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp, remove come animations
-                        applyFillLight(root);
-                        fixMiiAlpha(root);
+                        // applyFillLight(root);
+                        // fixMiiAlpha(root);
                     }
 
                     cellGroups[pageIndex][cellIndex].add(root);

@@ -1,15 +1,5 @@
 [
     {
-        "slug": "about-me",
-        "color": [250, 200, 25],
-         "model": {
-            "baseDir": "/scans/mii",
-            "baseRotation": [0.1, 3.8, 0],
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
         "slug": "brig-wom",
         "color": [123, 161, 201],
         "imgPaths": ["/img/hero.webp", "/img/service_request.webp" ]
