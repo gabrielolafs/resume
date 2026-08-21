@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-  "build": "node scripts/compress.mjs prepare && astro build && node scripts/compress.mjs compress",    "preview": "astro preview",
+    "build": "node scripts/compress.mjs prepare && astro build && node scripts/compress.mjs compress",
+    "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
