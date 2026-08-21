@@ -8,9 +8,9 @@ import { transform as transformCSS } from "lightningcss";
 import { minify as minifyHTML } from "html-minifier-terser";
 import { optimize as optimizeSVG } from "svgo";
 
+const MODE = process.argv[2] ?? "compress";
 const OUT_DIR = process.argv[2] ?? "dist";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
-
 
 const EXTRA_SCRIPTS = [
   { label: "article images webp conversion", file: "reduce_img_article.sh" },
@@ -99,11 +99,14 @@ async function compressFile(file, totals) {
 }
 
 async function main() {
-  const mode = process.argv[2] ?? "compress";
-
-  if (mode === "prepare") {
+  if (MODE === "prepare") {
     runExtraScripts();
     return;
+  }
+
+  if (MODE !== "compress") {
+    console.error(`Unknown mode: ${MODE}`);
+    process.exit(1);
   }
 
   let files;
@@ -123,7 +126,11 @@ async function main() {
   const pct = totals.before
     ? (100 * (1 - totals.after / totals.before)).toFixed(1)
     : "0";
-  console.log(`✓ Compressed ${totals.count} files — saved ${savedKB} KB (${pct}%)`);
+
+  console.log(
+    `Compressed ${totals.count} files — saved ${savedKB} KB (${pct}%)`
+  );
 }
+
 
 main();
