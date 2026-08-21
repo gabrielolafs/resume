@@ -67,74 +67,8 @@ async function walk(dir) {
   return files;
 }
 
-async function compressWebP(file, totals) {
-  if (!existsSync(MAGICK)) {
-    console.warn(`  ! ImageMagick binary not found: ${MAGICK}`);
-    return;
-  }
-
-  const originalSize = (await stat(file)).size;
-  const tempFile = `${file}.compress.tmp.webp`;
-
-  try {
-    const result = spawnSync(
-      MAGICK,
-      [
-        file,
-        "-quality",
-        "90",
-        tempFile,
-      ],
-      { stdio: "ignore" }
-    );
-
-    if (
-      result.error ||
-      result.status !== 0 ||
-      !existsSync(tempFile)
-    ) {
-      console.warn(`  ! skipped ${file}: ImageMagick failed`);
-      return;
-    }
-
-    const compressedSize = (await stat(tempFile)).size;
-
-    // Only replace the WebP if compression actually made it smaller.
-    if (compressedSize < originalSize) {
-      await rename(tempFile, file);
-
-      totals.before += originalSize;
-      totals.after += compressedSize;
-      totals.count += 1;
-
-      console.log(
-        `  ▶ ${file} (before: ${Math.round(originalSize / 1024)}kB, after: ${Math.round(compressedSize / 1024)}kB)`
-      );
-    } else {
-      await unlink(tempFile);
-
-      console.log(
-        `  ─ ${file} kept (before: ${Math.round(originalSize / 1024)}kB, candidate: ${Math.round(compressedSize / 1024)}kB)`
-      );
-    }
-  } catch (err) {
-    console.warn(`  ! skipped ${file}: ${err.message}`);
-
-    if (existsSync(tempFile)) {
-      await unlink(tempFile).catch(() => {});
-    }
-  }
-}
-
-
 async function compressFile(file, totals) {
   const ext = extname(file).toLowerCase();
-
-  // WebP is handled separately.
-  if (ext === ".webp") {
-    await compressWebP(file, totals);
-    return;
-  }
 
   if (![".js", ".mjs", ".css", ".html", ".svg"].includes(ext)) return;
 
