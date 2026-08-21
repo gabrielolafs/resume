@@ -10,7 +10,7 @@ As of writing, the AWS deployment has been down for more than two years as we we
 
 I want to start with the game that we made at the very end of the course first, as I sometimes like to have my pudding before eating my meat.
 
-![score board](/img/score_board.webp)  
+![score board](/img/article/score_board.webp)  
 
 This was the first page that I made fully by myself, frontend and back, the design being inspired by retro arcade machines. The user is able to give up to 3 chars representing their initials. As input it accepts arrow press or mouse clicks to cycle through the 26 english chars (I quickly added a keyboard input option as it got old pretty fast). This page takes those initials, the name of the character used followed by the score, being able to see today's top scores and all time top scores.  
 
@@ -24,6 +24,6 @@ At the start of a game, the user sends a create/update (one user should only be 
 
 In the first meetings with my team, we created our schema and database outline. This was a CRUD database using SQL so we created our ERDs for what we needed in the database. We needed to accommodate users, some with admin status, and out line “nodes and edges”. These were used by the algorithms team to create paths from one location, potentially up or down 4 flights of stairs through the hospital. This is the only ERD that I was able to recover, this is one of many. They had to be built by parsing through a csv file. We were given a new csv file every week so we had to also accommodate uploading new csv files, and downloading in case we needed to record the current state of the database to store or upload again after testing.
 
-![node edges ERD](/img/node_edges.webp)
+![node edges ERD](/img/article/node_edges.webp)
 
-![gamer gabriel](/img/bouncing-gabriel.gif)
+![gamer gabriel](/img/article/bouncing-gabriel.gif)

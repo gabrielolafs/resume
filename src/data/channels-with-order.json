@@ -12,17 +12,17 @@
     {
         "slug": "brig-wom",
         "color": [123, 161, 201],
-        "imgPaths": ["/img/hero.webp", "/img/service_request.webp" ]
+        "imgPaths": ["/img/chanel/hero.webp", "/img/chanel/service_request.webp" ]
     },
     {
         "slug": "aging-congress",
         "color": [138, 90, 21],
-        "imgPaths": ["/img/aging_01.webp", "/img/aging_02.webp", "/img/aging_03.webp"]
+        "imgPaths": ["/img/chanel/aging_01.webp", "/img/chanel/aging_02.webp", "/img/chanel/aging_03.webp"]
     },
     {
         "slug": "path-finding",
         "color": [250, 200, 25],
-        "imgPaths": ["/img/path_finding_01.webp", "/img/path_finding_03.webp", "/img/path_finding_02.webp"]
+        "imgPaths": ["/img/chanel/path_finding_01.webp", "/img/chanel/path_finding_03.webp", "/img/chanel/path_finding_02.webp"]
     },
     {
         "slug": "prorm",
@@ -62,7 +62,7 @@
     {
         "slug": "donations",
         "color": [250, 200, 25],
-        "imgPaths": ["/img/donate_chanel.webp"]
+        "imgPaths": ["/img/chanel/donate.webp"]
     },
     {
         "slug": "left-moonlander",
