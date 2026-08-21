@@ -1,22 +1,23 @@
 #!/bin/sh
+
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 IMG_DIR="$SCRIPT_DIR/../public/img/chanel"
 MAGICK="$SCRIPT_DIR/../bin/magick"
 
-if [ ! -x "$MAGICK" ] ; then
+if [ ! -x "$MAGICK" ]; then
     echo "Error: ImageMagick binary not found: $MAGICK" >&2
     exit 1
 fi
 
-MAX_SIZE=25000
+MAX_SIZE=20000
 
 for file in "$IMG_DIR"/*; do
-    [ -f "$file" ] || continue # Skip if not a regular file
+    [ -f "$file" ] || continue
 
     filename=$(basename "$file")
     ext="${filename##*.}"
     ext=$(printf "%s" "$ext" | tr '[:upper:]' '[:lower:]')
-    
+
     # Only process jpg/jpeg/png
     case "$ext" in
         jpg|jpeg|png)
@@ -25,32 +26,41 @@ for file in "$IMG_DIR"/*; do
             continue
             ;;
     esac
-    
+
     output="${file%.*}.webp"
-    
-    [ -f "$output" ] && continue # Skip if webp already exists
+    temp="${output}.tmp"
 
     echo "Converting $file -> $output"
 
     quality=90
 
-    while :; do
-        "$MAGICK" "$file" -quality "$quality" "$output"
+    while [ "$quality" -gt 0 ]; do
+        rm -f "$temp"
 
-        size=$(wc -c < "$output")
+        "$MAGICK" "$file" \
+            -quality "$quality" \
+            "$temp"
+
+        if [ ! -f "$temp" ]; then
+            echo "Error: ImageMagick failed for $file" >&2
+            break
+        fi
+
+        size=$(wc -c < "$temp" | tr -d ' ')
+
+        echo "  quality=$quality size=${size} bytes"
 
         if [ "$size" -lt "$MAX_SIZE" ]; then
+            mv "$temp" "$output"
             echo "Done: $output ($size bytes, quality $quality)"
             break
         fi
 
-        rm -f "$output"
-
         quality=$((quality - 5))
-
-        if [ "$quality" -le 0 ]; then
-            echo "Error: Could not reduce $file below $MAX_SIZE bytes" >&2
-            break
-        fi
     done
+
+    if [ "$quality" -le 0 ]; then
+        rm -f "$temp"
+        echo "Error: Could not reduce $file below $MAX_SIZE bytes" >&2
+    fi
 done
