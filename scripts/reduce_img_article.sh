@@ -1,6 +1,6 @@
 #!/bin/sh
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-IMG_DIR="$SCRIPT_DIR/../public/img/chanel"
+IMG_DIR="$SCRIPT_DIR/../public/img/article"
 MAGICK="$SCRIPT_DIR/../bin/magick"
 
 if [ ! -x "$MAGICK" ] ; then
