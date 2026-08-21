@@ -61,6 +61,30 @@ for file in "$IMG_DIR"/*; do
 
     if [ "$quality" -le 0 ]; then
         rm -f "$temp"
+        while [ "$quality" -gt 0 ]; do
+            rm -f "$temp"
+
+            "$MAGICK" "$file" \
+                -quality "$quality" \
+                "$temp"
+
+            if [ ! -f "$temp" ]; then
+                echo "Error: ImageMagick failed for $file" >&2
+                break
+            fi
+
+            size=$(wc -c < "$temp" | tr -d ' ')
+
+            echo "  quality=$quality size=${size} bytes"
+
+            if [ "$size" -lt "$MAX_SIZE" ]; then
+                mv "$temp" "$output"
+                echo "Done: $output ($size bytes, quality $quality)"
+                break
+            fi
+
+            quality=$((quality - 1))
+        done
         echo "Error: Could not reduce $file below $MAX_SIZE bytes" >&2
     fi
 done
