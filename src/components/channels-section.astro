@@ -78,6 +78,15 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     import * as THREE from 'three';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+    import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+    // create ONCE, outside loadModel — the decoder (wasm) only needs to load a single time,
+    // re-instantiating per call would refetch/reinit it on every model
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
 
     declare global {
         interface Window {
@@ -639,40 +648,27 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 return;
             }
 
-            const dir     = ch.scanDir.replace(/\/$/, '');
-            const mtlPath = `${dir}/${BASE_NAME}.mtl`;
-            const objPath = `${dir}/${BASE_NAME}.obj`;
-            const texPath = `${dir}/`;
+            const dir = ch.scanDir.replace(/\/$/, '');
+            const glbPath = `${dir}/${BASE_NAME}.glb`;
 
-            const mtlLoader = new MTLLoader();
-            mtlLoader.setResourcePath(texPath);
-            mtlLoader.load(
-                mtlPath,
-                (materials: any) => {
-                    materials.preload();
-                    const objLoader = new OBJLoader();
-                    objLoader.setMaterials(materials);
-                    objLoader.load(
-                        objPath,
-                        (obj: THREE.Group) => {
-                            obj.position.set(...ch.model.position);
+            gltfLoader.load(
+                glbPath,
+                (gltf) => {
+                    const root = gltf.scene;
+                    root.position.set(...ch.model.position);
 
-                            if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp solution, will remain until i rig and animate, as it will not be an obj after that
-                                applyFillLight(obj);
-                                fixMiiAlpha(obj);
-                            }
+                    if (ch.title === 'About Me' || ch.title === 'About Mii') { // temp, remove come animations
+                        applyFillLight(root);
+                        fixMiiAlpha(root);
+                    }
 
-                            cellGroups[pageIndex][cellIndex].add(obj);
-                            scaleGroup(pageIndex, cellIndex);
-                            window.__modelCache.set(cacheKey, obj.clone());
-                            onModelLoaded();
-                        },
-                        undefined,
-                        (err: any) => console.warn(`OBJ load failed [${ch.title}]:`, err)
-                    );
+                    cellGroups[pageIndex][cellIndex].add(root);
+                    scaleGroup(pageIndex, cellIndex);
+                    window.__modelCache.set(cacheKey, root.clone());
+                    onModelLoaded();
                 },
                 undefined,
-                (err: any) => console.warn(`MTL load failed [${ch.title}]:`, err)
+                (err) => console.warn(`GLB load failed [${ch.title}]:`, err)
             );
         }
 

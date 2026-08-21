@@ -1,30 +1,5 @@
 [
     {
-        "slug": "about-me",
-        "color": [250, 200, 25],
-         "model": {
-            "baseDir": "/scans/mii",
-            "baseRotation": [0.1, 3.8, 0],
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
-        "slug": "brig-wom",
-        "color": [123, 161, 201],
-        "imgPaths": ["/img/hero.webp", "/img/service_request.webp" ]
-    },
-    {
-        "slug": "aging-congress",
-        "color": [138, 90, 21],
-        "imgPaths": ["/img/aging_01.webp", "/img/aging_03.webp", "/img/aging_02.webp"]
-    },
-    {
-        "slug": "path-finding",
-        "color": [250, 200, 25],
-        "imgPaths": ["/img/path_finding_01.webp", "/img/path_finding_03.webp", "/img/path_finding_02.webp"]
-    },
-    {
         "slug": "prorm",
         "animationSvgDir": "/svg/mask-gpu.svg",
         "animationSvgDimentions": [240, 79],
@@ -32,54 +7,6 @@
         "model": {
             "baseDir": "/scans/prorm",
             "baseRotation": [0.1, 0.0, 0],
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
-        "slug": "ipod",
-        "animationSvgDir": "/svg/mask-ipod.svg",
-        "animationSvgDimentions": [36, 15.833333],
-        "color": [255, 204, 0],
-        "model": {
-            "baseDir": "/scans/ipod",
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
-        "slug": "woo-network",
-        "animationSvgDir": "/svg/mask-internet.svg",
-        "animationSvgDimentions": [120, 44],
-        "color": [0,180,0],
-        "model": {
-            "baseDir": "/scans/woo-network",
-            "baseRotation": [0.1, 3.8, 0],
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
-        "slug": "donations",
-        "color": [250, 200, 25],
-        "imgPaths": ["/img/donate.png"]
-    },
-    {
-        "slug": "left-moonlander",
-        "color": [99,159,189],
-        "model": {
-            "baseDir": "/scans/left-moonlander",
-            "baseRotation": [0.8, 4.4, 0],
-            "scale": 1,
-            "direction": -1
-        }
-    },
-    {
-        "slug": "right-moonlander",
-        "color": [99,159,189],
-        "model": {
-            "baseDir": "/scans/right-moonlander",
-            "baseRotation": [0.8, 3.8, 0],
             "scale": 1,
             "direction": -1
         }
