@@ -25,6 +25,6 @@ At the start of a game, the user sends a create/update (one user should only be 
 
 In the first meetings with my team, we created our schema and database outline. This was a CRUD database using SQL so we created our ERDs for what we needed in the database. We needed to accommodate users, some with admin status, and out line "nodes and edges". These were used by the algorithms team to create paths from one location, potentially up or down 4 flights of stairs through the hospital. This is the only ERD that I was able to recover, this is one of many. They had to be built by parsing through a csv file. We were given a new csv file every week so we had to also accommodate uploading new csv files, and downloading in case we needed to record the current state of the database to store or upload again after testing.  
 
-![node edges ERD](/img/node_edges.jpg)
+![node edges ERD](/img/node_edges.webp)
 
 ![gamer gabriel](/img/bouncing-gabriel.gif)

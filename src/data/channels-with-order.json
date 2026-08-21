@@ -17,7 +17,7 @@
     {
         "slug": "aging-congress",
         "color": [138, 90, 21],
-        "imgPaths": ["/img/photo.webp", "/img/photo_2.webp"]
+        "imgPaths": ["/img/aging_01.webp", "/img/aging_02.webp", "/img/aging_03.webp"]
     },
     {
         "slug": "path-finding",
@@ -62,7 +62,7 @@
     {
         "slug": "donations",
         "color": [250, 200, 25],
-        "imgPaths": ["/img/donate.png"]
+        "imgPaths": ["/img/donate_chanel.webp"]
     },
     {
         "slug": "left-moonlander",
