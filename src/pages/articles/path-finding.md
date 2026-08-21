@@ -38,11 +38,7 @@ Seeing my piece running at the showcase was the most proud of something I had ma
 For my very final required course at WPI, I was in a class called "multimedia art in a suitcase". This was my final course at WPI, and the reason I could not graduate a semester early. At first I was really frustrated that there was nothing to fill this graduation requirement until my final semester, even though by this point I had already taken 2 more courses than were required to graduate. I chose to take advantage and ended up very much appreciating this additional semester as it gave me the chance to go deeper into topics I had been able to yet as I was focusing on diploma requirements, such as music theory, philosophy, CAD, and another electrical engineering course. 
 
 ### Sources:
-#### 1. 
-“CoreXY | Cartesian Motion Platform.” n.d. Corexy.com. [https://corexy.com/theory.html](https://corexy.com/theory.html).
-#### 2. 
-Benn Jordan. 2026. “Datacenters Behaving like Acoustic Weapons.” YouTube. February 18, 2026. [https://www.youtube.com/watch?v=_bP80DEAbuo](https://www.youtube.com/watch?v=_bP80DEAbuo).
-#### 3. 
-“More Data Centers, More Environmental Problems?” 2025. National Wildlife Federation. 2025. [https://www.nwf.org/Magazines/National-Wildlife/2025/Fall/Conservation/AI-Data-Centers](https://www.nwf.org/Magazines/National-Wildlife/2025/Fall/Conservation/AI-Data-Centers).
-#### 4. 
-Gardner, Matthew, and Spandan Marasini. 2026. “At Least 88 Profitable U.S. Corporations Paid Zero Federal Income Tax in 2025.” ITEP. Institute on Taxation and Economic Policy (ITEP). April 14, 2026. https://itep.org/88-profitable-corporations-paid-zero-income-tax-in-2025/.
+#### 1. “CoreXY | Cartesian Motion Platform.” n.d. Corexy.com. [https://corexy.com/theory.html](https://corexy.com/theory.html).
+#### 2. Benn Jordan. 2026. “Datacenters Behaving like Acoustic Weapons.” YouTube. February 18, 2026. [https://www.youtube.com/watch?v=_bP80DEAbuo](https://www.youtube.com/watch?v=_bP80DEAbuo).
+#### 3. “More Data Centers, More Environmental Problems?” 2025. National Wildlife Federation. 2025. [https://www.nwf.org/Magazines/National-Wildlife/2025/Fall/Conservation/AI-Data-Centers](https://www.nwf.org/Magazines/National-Wildlife/2025/Fall/Conservation/AI-Data-Centers).
+#### 4. Gardner, Matthew, and Spandan Marasini. 2026. “At Least 88 Profitable U.S. Corporations Paid Zero Federal Income Tax in 2025.” ITEP. Institute on Taxation and Economic Policy (ITEP). April 14, 2026. https://itep.org/88-profitable-corporations-paid-zero-income-tax-in-2025/.
