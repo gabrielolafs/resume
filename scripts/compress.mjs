@@ -99,7 +99,12 @@ async function compressFile(file, totals) {
 }
 
 async function main() {
-  runExtraScripts();
+  const mode = process.argv[2] ?? "compress";
+
+  if (mode === "prepare") {
+    runExtraScripts();
+    return;
+  }
 
   let files;
   try {
