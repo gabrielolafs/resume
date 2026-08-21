@@ -15,7 +15,8 @@ const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const EXTRA_SCRIPTS = [
   { label: "article images webp conversion", file: "reduce_img_article.sh" },
   { label: "chanel images webp conversion", file: "reduce_img_chanel.sh" },
-  { label: "markdown image-extension replace", file: "replace_img_ext.sh" },
+  { label: "article image-extension replace", file: "replace_img_ext_md.sh" },
+  { label: "chanel image-extension replace", file: "replace_img_ext_json.sh" },
 ];
 
 const HTML_OPTIONS = {
