@@ -1,13 +1,20 @@
-
-
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { existsSync } from "node:fs";
+import { join, extname, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { minify as minifyJS } from "terser";
 import { transform as transformCSS } from "lightningcss";
 import { minify as minifyHTML } from "html-minifier-terser";
 import { optimize as optimizeSVG } from "svgo";
 
 const OUT_DIR = process.argv[2] ?? "dist";
+
+const EXTRA_SCRIPTS = [
+  { label: "article images webp conversion", file: "reduce_img_article.sh" },
+  { label: "chanel images webp conversion", file: "reduce_img_chanel.sh" },
+  { label: "markdown image-extension replace", file: "replace_img_ext.sh" },
+];
 
 const HTML_OPTIONS = {
   collapseWhitespace: true,
@@ -17,6 +24,25 @@ const HTML_OPTIONS = {
   removeRedundantAttributes: true,
   removeEmptyAttributes: true,
 };
+
+function runExtraScripts() {
+  for (const { label, file } of EXTRA_SCRIPTS) {
+    const scriptPath = join(SCRIPT_DIR, file);
+    if (!existsSync(scriptPath)) {
+      console.warn(`Skipped ${label}: ${scriptPath} not found`);
+      continue;
+    }
+    console.log(`Running ${label}...`);
+    // Invoke via `sh` explicitly rather than executing the file directly,
+    // so this doesn't depend on the file's executable bit being set.
+    const result = spawnSync("sh", [scriptPath], { stdio: "inherit" });
+    if (result.error) {
+      console.warn(`  ! ${label} failed to start: ${result.error.message}`);
+    } else if (result.status !== 0) {
+      console.warn(`  ! ${label} exited with code ${result.status}`);
+    }
+  }
+}
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -70,6 +96,8 @@ async function compressFile(file, totals) {
 }
 
 async function main() {
+  runExtraScripts();
+
   let files;
   try {
     files = await walk(OUT_DIR);
