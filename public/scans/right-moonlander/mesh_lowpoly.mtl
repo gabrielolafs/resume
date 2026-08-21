@@ -9,7 +9,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 1
-map_Kd mesh_lowpoly_material0000_map_Kd.png
+map_Kd mesh_lowpoly_material0000_map_Kd.webp
 
 newmtl material0001.002
 Ns 0.999999
@@ -19,4 +19,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 1
-map_Kd mesh_lowpoly_material0001_map_Kd.png
+map_Kd mesh_lowpoly_material0001_map_Kd.webp
