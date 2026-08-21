@@ -10,11 +10,6 @@
         }
     },
     {
-        "slug": "about-me-too",
-        "color": [123, 161, 201],
-        "imgPaths": ["/img/chanel/eye_brow.png", "/img/chanel/bald_man.jpg" ]
-    },
-    {
         "slug": "brig-wom",
         "color": [123, 161, 201],
         "imgPaths": ["/img/chanel/hero.webp", "/img/chanel/service_request.webp" ]
