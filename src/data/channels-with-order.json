@@ -17,7 +17,7 @@
     {
         "slug": "aging-congress",
         "color": [138, 90, 21],
-        "imgPaths": ["/img/aging_01.webp", "/img/aging_03.webp", "/img/aging_02.webp"]
+        "imgPaths": ["/img/photo.webp", "/img/photo_2.webp"]
     },
     {
         "slug": "path-finding",
