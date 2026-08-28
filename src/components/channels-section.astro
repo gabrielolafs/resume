@@ -63,6 +63,9 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" 
             d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
         </svg>`
+
+// right below me, I want to swap over loading screen only to happen on the initial load of the page or referesh.
+// (todo: zooming) will be called whenever routing somewhere that is not itself.
 ---
 
 <LoadingScreen/>
@@ -76,13 +79,24 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
 <script>
     import * as THREE from 'three';
-    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-    import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
     import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
-    // create ONCE, outside loadModel — the decoder (wasm) only needs to load a single time,
-    // re-instantiating per call would refetch/reinit it on every model
+    type FlipState = {
+        active: Boolean,
+        from: number,
+        to: number,
+        duration: number
+    }
+
+    type ChanelLayout = {
+        page: number,
+        cols: number,
+        rows: number,
+        cpp: number
+    }
+
+    // load the compressed 3d objects
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
     const gltfLoader = new GLTFLoader();
@@ -93,7 +107,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             __modelCache: Map<string, THREE.Group>;
         }
     }
-
+    
+    const BASE_NAME = 'mesh_lowpoly'; 
+    const MIN_MS_OF_LOADING_SCREEEN = 500;
+    
     window.__modelCache = window.__modelCache ?? new Map();
 
     let animFrameId: number;
@@ -102,63 +119,29 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
         if (!canvas) return;
 
-        cancelAnimationFrame(animFrameId);
+        let flipState: FlipState = {
+            active: false,
+            from: 0,
+            to: 1,
+            duration: 600 // ms
+        };
 
-        let currentPage = 0;
+        let chanelLayout: ChanelLayout = {
+            page: 0,
+            cols: 4,
+            rows: 3,
+            cpp: 12 
+        };
+
         let isFlipping = false;
-
-        const BASE_NAME = 'mesh_lowpoly';
-        let cols = 4;
-        let rows = 3;
-        let channelsPerPage = cols * rows;
 
         const container = canvas.parentElement!;
         const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
 
         const overlay = document.getElementById('loading-overlay');
 
-        const minWait = new Promise(resolve => setTimeout(resolve, 500));
 
-        // reuse the compile idea but tied to a load counter
-        let loadCount = 0;
-        const totalLoads = channelsPerPage * 2;
-
-        function onModelLoaded() {
-            loadCount++;
-            if (loadCount >= totalLoads) {
-                Promise.all([minWait]).then(() => {
-                    if (overlay) {
-                        overlay.style.opacity = '0';
-                        setTimeout(() => overlay.remove(), 500);
-                    }
-                    renderer.compile(scene, camera);
-                });
-            }
-        }
-
-        function buildPages(cpp: number, chs: any[]) {
-            const padded = [
-                ...chs,
-                ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({
-                    title: 'notebook',
-                    url: '/articles/test',
-                    model: {
-                        position: [0,0,0] as [number,number,number],
-                        animatedRotation: [1,1,0] as [number,number,number],
-                        scale: .6,
-                        direction: Math.random() < 0.5 ? -1 : 1,
-                        color: [9,9,9],
-                        salt: Math.random(),
-                        saltBounce: Math.random()
-                    }
-                }))
-            ];
-            return Array.from({ length: Math.ceil(padded.length / cpp) }, (_, i) =>
-                padded.slice(i * cpp, (i + 1) * cpp)
-            );
-        }
-
-        let pages = buildPages(channelsPerPage, allChannels);
+        let pages = buildPages(chanelLayout.cpp, allChannels);
 
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(devicePixelRatio);
@@ -184,6 +167,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         const MAX_CPP = MAX_COLS * MAX_ROWS;
 
         const cellGroups: THREE.Group[][] = [];
+
         for (let p = 0; p < 2; p++) {
             const page: THREE.Group[] = [];
             for (let i = 0; i < MAX_CPP; i++) {
@@ -192,6 +176,43 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 page.push(g);
             }
             cellGroups.push(page);
+        }
+
+        switchLayout();
+        setup();
+        updateArrows();
+
+        loadChanels();
+
+        let lastRenderTime = 0;
+        const targetFPS = 60;
+        const frameInterval = 1000 / targetFPS;
+
+        animFrameId = requestAnimationFrame(animate);
+
+        window.addEventListener('resize', () => {
+            switchLayout();
+            setup();
+        });
+
+        document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(chanelLayout.page - 1));
+        document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(chanelLayout.page + 1));
+
+        function buildPages(cpp: number, chs: any[]) {
+            const padded = [
+                ...chs,
+                ...Array.from({ length: Math.max(0, 2 * cpp - chs.length) }, () => ({ // fill rest of page + whole next page with blank
+                    title: 'static',
+                    model: {
+                        color: [9,9,9],
+                        salt: Math.random(),
+                        saltBounce: Math.random()
+                    }
+                }))
+            ];
+            return Array.from({ length: Math.ceil(padded.length / cpp) }, (_, i) =>
+                padded.slice(i * cpp, (i + 1) * cpp)
+            );
         }
 
         function setup() {
@@ -207,19 +228,19 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
             const padX = w * 0.05;
             const usableW = w - padX * 2;
-            const cellW = usableW / cols;
-            const cellH = h / rows;
+            const cellW = usableW / chanelLayout.cols;
+            const cellH = h / chanelLayout.rows;
 
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
-                    if (i >= channelsPerPage) {
+                    if (i >= chanelLayout.cpp) {
                         group.position.set(-99999, -99999, 0);
                         return;
                     }
-                    const col = i % cols;
-                    const row = Math.floor(i / cols);
+                    const col = i % chanelLayout.cols;
+                    const row = Math.floor(i / chanelLayout.cols);
                     group.position.set(
-                        p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - currentPage * w * 0.9,
+                        p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - chanelLayout.page * w * 0.9,
                         h / 2 - (row + 0.5) * cellH,
                         0
                     );
@@ -237,8 +258,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const h = container.clientHeight;
             const padX = w * 0.05;
             const usableW = w - padX * 2;
-            const cellW = usableW / cols;
-            const cellH = h / rows;
+            const cellW = usableW / chanelLayout.cols;
+            const cellH = h / chanelLayout.rows;
             const cellSize = Math.min(cellW, cellH);
 
             group.children.forEach(child => {
@@ -270,7 +291,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             });
         }
 
-        // hope this works
         function mulberry32(seed: number) {
             let state = Math.floor(seed * 0xFFFFFFFF) >>> 0;
 
@@ -283,7 +303,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             };
         }
 
-        // called by the blank channels - garentees unique static look per channel
         function buildNoiseAnimation(salt: number) {
             const rand = mulberry32(salt);
 
@@ -475,7 +494,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const track = document.getElementById('page-track')!;
             track.innerHTML = pages.map((pageChannels, p) => `
                 <div class="channel-grid channel-page" data-page="${p}"
-                    style="grid-template-columns:repeat(${cols}, 1fr); grid-template-rows:repeat(${rows}, 1fr);">
+                    style="grid-template-columns:repeat(${chanelLayout.cols}, 1fr); grid-template-rows:repeat(${chanelLayout.rows}, 1fr);">
                     ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
                 </div>
             `).join('');
@@ -483,7 +502,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
         function layoutPageTrack(offset?: number) {
             const w = container.clientWidth;
-            const resolvedOffset = offset ?? currentPage * w * 0.9;
+            const resolvedOffset = offset ?? chanelLayout.page * w * 0.9;
             document.querySelectorAll('#page-track .channel-page').forEach((el) => {
                 const p = Number((el as HTMLElement).dataset.page);
                 (el as HTMLElement).style.transform = `translateX(${p * w * 0.9 - resolvedOffset}px)`;
@@ -493,8 +512,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         function updateArrows() {
             const prev = document.getElementById('arrow-prev') as HTMLButtonElement;
             const next = document.getElementById('arrow-next') as HTMLButtonElement;
-            prev.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
-            next.style.visibility = currentPage >= pages.length - 1 ? 'hidden' : 'visible';
+            prev.style.visibility = chanelLayout.page === 0 ? 'hidden' : 'visible';
+            next.style.visibility = chanelLayout.page >= pages.length - 1 ? 'hidden' : 'visible';
         }
 
         function teardownModels() {
@@ -516,22 +535,20 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             });
         }
 
-        function switchLayout() {
+        function switchLayout() { // only have to account for the cols changing. not the rows
             const ratio = container.clientHeight / container.clientWidth;
             const newCols = ratio > 1 ? 2 : 4;
-            const newRows = 3;
-            const newCpp = newCols * newRows;
+            const newCpp = newCols * chanelLayout.rows;
 
-            if (newCols === cols && newRows === rows) return;
+            if ( newCols === chanelLayout.cols ) return;
 
-            const firstChannelIndex = currentPage * channelsPerPage;
+            const firstChannelIndex = chanelLayout.page * chanelLayout.cpp;
 
-            cols = newCols;
-            rows = newRows;
-            channelsPerPage = newCpp;
+            chanelLayout.cols = newCols;
+            chanelLayout.cpp = newCpp;
 
-            pages = buildPages(channelsPerPage, allChannels);
-            currentPage = Math.floor(firstChannelIndex / channelsPerPage);
+            pages = buildPages(chanelLayout.cpp, allChannels);
+            chanelLayout.page = Math.floor(firstChannelIndex / chanelLayout.cpp);
 
             teardownModels();
 
@@ -540,36 +557,32 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             layoutPageTrack();
             updateArrows();
 
-            for (let p = 0; p < cellGroups.length; p++) {
-                for (let i = 0; i < channelsPerPage; i++) {
-                    loadModel(p, i);
-                }
-            }
+            loadChanels();
         }
 
         function flipTo(targetPage: number) {
-            if (isFlipping) return;
+            if (flipState.active) return;
             if (targetPage < 0 || targetPage >= pages.length) return;
-            isFlipping = true;
+
+            flipState.active = true;
 
             const w = container.clientWidth;
-            const duration = 600;
             const start = performance.now();
-            const from = currentPage * w * 0.9;
+            const from = chanelLayout.page * w * 0.9;
             const to = targetPage * w * 0.9;
 
             function tick(now: number) {
-                const t = Math.min((now - start) / duration, 1);
-                const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                const t = Math.min((now - start) / flipState.duration, 1);
+                const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // half ease in half out
                 const offset = from + (to - from) * ease;
 
                 cellGroups.forEach((page, p) => {
                     page.forEach((group, i) => {
-                        if (i >= channelsPerPage) return;
-                        const col = i % cols;
+                        if (i >= chanelLayout.cpp) return;
+                        const col = i % chanelLayout.cols;
                         const padX = w * 0.05;
                         const usableW = w - padX * 2;
-                        const cellW = usableW / cols;
+                        const cellW = usableW / chanelLayout.cols;
                         group.position.x = p * w * 0.9 + padX + (col + 0.5) * cellW - w / 2 - offset;
                     });
                 });
@@ -579,8 +592,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 if (t < 1) {
                     requestAnimationFrame(tick);
                 } else {
-                    currentPage = targetPage;
-                    isFlipping = false;
+                    chanelLayout.page = targetPage;
+                    flipState.active = false;
                     updateArrows();
                 }
             }
@@ -609,24 +622,40 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 });
             });
         }
-        
 
-        function loadModel(pageIndex: number, cellIndex: number) {
+        function loadChanels() {
+            const minWait = new Promise(resolve => setTimeout(resolve, MIN_MS_OF_LOADING_SCREEEN));
+
+            for (let p = 0; p < cellGroups.length; p++) {
+                for (let i = 0; i < chanelLayout.cpp; i++) {
+                    loadChanel(p, i);
+                }
+            }
+            
+            // render all chanels
+            Promise.all([minWait]).then(() => {
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                }
+                renderer.compile(scene, camera);
+            });
+        }
+
+        function loadChanel(pageIndex: number, cellIndex: number) {
             const ch = pages[pageIndex]?.[cellIndex];
             if (!ch) return;
 
             const cacheKey = ch.scanDir;
-            if (window.__modelCache.has(cacheKey)) {
+            
+            if (window.__modelCache.has(cacheKey)) { // cached
                 const cached = window.__modelCache.get(cacheKey)!.clone();
                 cached.position.set(...ch.model.position);
                 cellGroups[pageIndex][cellIndex].add(cached);
                 scaleGroup(pageIndex, cellIndex);
-                onModelLoaded();
                 return;
             }
 
-            if (!ch?.scanDir) { // no model
-                onModelLoaded();
+            if (!ch?.scanDir) { // no model? no need to load a model.
                 return;
             }
 
@@ -646,26 +675,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     cellGroups[pageIndex][cellIndex].add(root);
                     scaleGroup(pageIndex, cellIndex);
                     window.__modelCache.set(cacheKey, root.clone());
-                    onModelLoaded();
                 },
                 undefined,
                 (err) => console.warn(`GLB load failed [${ch.title}]:`, err)
             );
         }
-
-        switchLayout();
-        setup();
-        updateArrows();
-
-        for (let p = 0; p < cellGroups.length; p++) {
-            for (let i = 0; i < channelsPerPage; i++) {
-                loadModel(p, i);
-            }
-        }
-
-        let lastRenderTime = 0;
-        const targetFPS = 60;
-        const frameInterval = 1000 / targetFPS;
 
         function animate(t: number) {
             animFrameId = requestAnimationFrame(animate);
@@ -686,16 +700,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 });
             });
             renderer.render(scene, camera);
-        }
-
-        animFrameId = requestAnimationFrame(animate);
-
-        window.addEventListener('resize', () => {
-            switchLayout();
-            setup();
-        });
-
-        document.getElementById('arrow-prev')?.addEventListener('click', () => flipTo(currentPage - 1));
-        document.getElementById('arrow-next')?.addEventListener('click', () => flipTo(currentPage + 1));
+        };        
     });
 </script>
