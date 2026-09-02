@@ -22,10 +22,6 @@ const { frontmatter } = Astro.props;
     {frontmatter.dateWritten && <div class="vignette">
       {/* mobile support sillieness. cant have a cutout - have to do it in a silly way cause otherwise it black screens */}
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="100%" height="100%" preserveAspectRatio="none">
-        {/* <path 
-          fill="none" stroke="black" stroke-width="1"
-          d="M1 3 Q0 25 1 47 Q1.0417 48.9583 3 49 Q25 50 47 49 Q48.9583 48.9583 49 47 Q50 25 49 3 Q48.9583 1.0417 47 1 Q25 0 3 1 Q1.0417 1.0417 1 3 Z"
-        /> */}
         <filter id="blurMe">
           <feGaussianBlur in="SourceGraphic" stdDeviation=".3" />
         </filter>
@@ -42,6 +38,11 @@ const { frontmatter } = Astro.props;
       <div class="timeline">
         {frontmatter.dateWritten && <p><b>Written:</b> {frontmatter.dateWritten}</p>}
         {frontmatter.timeSpan && <p><b>Active:</b> {frontmatter.timeSpan}</p>}
+      </div>
+      <div class="tech-stack">
+        {frontmatter.tech && frontmatter.tech.map((tech : String) => (
+          <div class="tech">{tech}</div>
+        ))}
       </div>
     </div>
 
