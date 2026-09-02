@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, stat, unlink, rename } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, extname, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,8 +11,6 @@ import { optimize as optimizeSVG } from "svgo";
 const MODE = process.argv[2] ?? "compress";
 const OUT_DIR = process.argv[3] ?? "dist";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
-
-const MAGICK = join(SCRIPT_DIR, "../bin/magick");
 
 const EXTRA_SCRIPTS = [
   { label: "article images webp conversion", file: "reduce_img_article.sh" },
