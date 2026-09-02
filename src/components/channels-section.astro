@@ -564,14 +564,22 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     loadchannel(p, i);
                 }
             }
-            
-            // render all channels
+
             Promise.all([minWait]).then(() => {
                 if (overlay) {
                     overlay.style.opacity = '0';
+                    setTimeout(() => overlay.remove(), MIN_MS_OF_LOADING_SCREEEN);
                 }
                 renderer.compile(scene, camera);
             });
+            
+            // // render all channels
+            // Promise.all([minWait]).then(() => {
+            //     if (overlay) {
+            //         overlay.style.opacity = '0';
+            //     }
+            //     renderer.compile(scene, camera);
+            // });
         }
 
         function loadchannel(pageIndex: number, cellIndex: number) {
