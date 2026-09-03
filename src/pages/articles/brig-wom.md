@@ -3,7 +3,7 @@ layout: ../../layouts/articles.astro
 title: Brig & Womens Web
 dateWritten: June 2026
 timeSpan: April 2024 - May 2024
-tech: ['TypeScript', 'React', 'Express', 'Prisma', 'AWS', 'ERD', 'PostgreSQL']
+tech: [TypeScript, React, Express, Prisma, PostgreSQL, AWS, ERD, CRUD, Pen Testing, CSV Parsing]
 ---
 Assistant Lead Software Engineer (Back-End Lead) on an 11-person Agile Scrum team building a mock hospital website for Brigham and Women's Hospital. I managed a 3-person sub-team through 3 weekly stand-ups and 2 weekly all-team syncs. I partnered directly with the team lead on weekly AWS deployments, troubleshooting and resolving back-end issues in real time, and frequently served as the primary technical support during deployment windows.  
 

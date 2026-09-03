@@ -3,6 +3,7 @@ layout: ../../layouts/articles.astro
 title: De-Natured Path Finding
 dateWritten: May 2026
 timeSpan: March 2026 - May 2026
+tech: [Graph Traversal, Python, OOP, MainsailOS, Klipper, CoreXY]
 ---
 
 ![fig 2.4](../../../public/img/article/path_finding_fig_0.webp)

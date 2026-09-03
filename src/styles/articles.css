@@ -175,3 +175,9 @@ article img {
   border-radius: 10px;
   background-color: white;
 }
+
+hr {
+  padding: 0 10px;
+  border-color: var(--wii-blue-dark);
+  border-style: dashed;
+}

@@ -565,6 +565,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 }
             }
 
+            // render all channels + unload loading screen
             Promise.all([minWait]).then(() => {
                 if (overlay) {
                     overlay.style.opacity = '0';
@@ -572,14 +573,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 }
                 renderer.compile(scene, camera);
             });
-            
-            // // render all channels
-            // Promise.all([minWait]).then(() => {
-            //     if (overlay) {
-            //         overlay.style.opacity = '0';
-            //     }
-            //     renderer.compile(scene, camera);
-            // });
         }
 
         function loadchannel(pageIndex: number, cellIndex: number) {

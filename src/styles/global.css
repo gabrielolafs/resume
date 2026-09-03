@@ -67,6 +67,7 @@
 /* removal of the original mouse */
 *, *::before, *::after {
   cursor: none !important;
+  overscroll-behavior: none;
 }
 
 /* romoval of scrollbar (for the style) */
