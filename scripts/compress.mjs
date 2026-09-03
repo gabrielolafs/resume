@@ -17,7 +17,7 @@ const EXTRA_SCRIPTS = [
   { label: "chanel images webp conversion", file: "reduce_img_chanel.sh" },
   { label: "article image-extension replace", file: "replace_img_ext_md.sh" },
   { label: "chanel image-extension replace", file: "replace_img_ext_json.sh" },
-  { label: "glb compress", file: "compress_glb.sh" },
+  { label: "glb compress", file: "temp.sh" },
 ];
 
 const HTML_OPTIONS = {
