@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, stat, unlink, rename } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, extname, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,13 +12,12 @@ const MODE = process.argv[2] ?? "compress";
 const OUT_DIR = process.argv[3] ?? "dist";
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 
-const MAGICK = join(SCRIPT_DIR, "../bin/magick");
-
 const EXTRA_SCRIPTS = [
   { label: "article images webp conversion", file: "reduce_img_article.sh" },
   { label: "chanel images webp conversion", file: "reduce_img_chanel.sh" },
   { label: "article image-extension replace", file: "replace_img_ext_md.sh" },
   { label: "chanel image-extension replace", file: "replace_img_ext_json.sh" },
+  // { label: "glb compress", file: "compress_glb.sh" },
 ];
 
 const HTML_OPTIONS = {

@@ -15,6 +15,7 @@ layout: {route to layout, the same on every file}
 title: {title}
 dateWritten: {date}
 timeSpan: {dates}
+tech?: [{tech used}]
 ---
 {content}
 ```
@@ -26,6 +27,7 @@ layout: ../../layouts/articles.astro
 title: 'Robots Are Cool'
 dateWritten: 'Jan 1985'
 timeSpan: 'Jan 1985 - Aug 2020'
+tech: [Robots, Computers]
 ---
 # Robots
 Cool! Am I right?
@@ -92,7 +94,7 @@ Stucture and reasoning:
     { // using images and fading instead of obj file
         "slug": "ex", 
         "color": [250, 250, 250],
-        "imgPaths": ["/img/ex_01.webp", "/img/ex_03.webp", "/img/ex_02.webp"] // list of images in the order you want them to be displayed. webp, png, doesnt matter. it will scale to fill, so keep that in mind when selecting images. make sure your images buffer space of about 20% x and y and that the content of the image is in the direct center
+        "imgPaths": ["/img/ex_01.webp", "/img/ex_03.webp", "/img/ex_02.webp"] // list of images in the order you want them to be displayed. webp, png, doesnt matter. it will scale to fill, so keep that in mind when selecting images. make sure your images buffer space of at least about 20% on x and y and that the content of the image is in the direct center
         // no model + no animation svg because I chose they should not be rendered on img switching
     }
 ]

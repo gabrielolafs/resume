@@ -153,3 +153,34 @@ article img {
   color: var(--wii-blue-dark);
   font-weight: 600;
 }
+
+.tech-stack {
+  gap: 5px 20px;
+  background-color: none;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.tech-stack .tech {
+  padding: 5px 10px;
+  color: var(--wii-blue-dark);
+  border: 0;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: var(--wii-blue-dark);
+  border-width: .05em;
+  background-color: white;
+  box-shadow: 0 0 .25em var(--wii-blue-dark);
+
+}
+
+hr {
+  padding: 0 10px;
+  border-color: var(--wii-blue-dark);
+  border-style: dashed;
+}

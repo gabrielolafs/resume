@@ -3,6 +3,7 @@ layout: ../../layouts/articles.astro
 title: Net Dash
 dateWritten: Aug 2026
 timeSpan: May - August 2025 & Ausust 2026 - current
+tech: [Docker, Flask, Azure AD, RBAC, React, PostgreSQL, SQLAlchemy, Prometheus, Grafana, SNMP]
 ---
 A Docker containerized web app utilizing: Flask, PostgreSQL, React, Grafana, Prometheus, and most prominently, SNMP (Simple Network Monitoring Protocol). Able to operate off a single light weight computer or VM (400mb + ~5mb * devices_to_scrape_count RAM) for ease of self hosting.
 
