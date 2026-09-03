@@ -3,7 +3,7 @@ layout: ../../layouts/articles.astro
 title: Donations
 dateWritten: January 2026
 timeSpan: April 2024
-tech: ['stem cells', 'baldness', blood]
+tech: [stem cells, baldness, blood]
 ---
 <hr/>
 ![donation](../../../public/img/article/donate.webp)
