@@ -177,12 +177,13 @@ article img {
 }
 
 .tech-stack .tech::before {
+  content: '';
   position: absolute;
   inset: -1px;
   border-radius: 4px;
-  background: #00ffff;
+  border-color: green;
   filter: blur(4px);
-  z-index: 10;
+  z-index: -1;
 }
 
 hr {

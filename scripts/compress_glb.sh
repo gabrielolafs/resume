@@ -1,7 +1,6 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-
 SRC_DIR="$SCRIPT_DIR/../public/scans"
 OUT_DIR="$SCRIPT_DIR/../public/scans"
 MAX_SIZE_KB=100
@@ -48,8 +47,10 @@ for file in "$SRC_DIR"/*.glb; do
             break
         fi
 
-        # Always simplify from the ORIGINAL file so quality loss doesn't compound
-        gltf-transform simplify "$file" "$work" --ratio "$ratio" --error 0.001
+        # Always simplify from the ORIGINAL file so quality loss doesn't compound.
+        # --lock-border prevents the decimator from collapsing vertices across
+        # UV island seams, which is what was causing warped/torn textures.
+        gltf-transform simplify "$file" "$work" --ratio "$ratio" --error 0.001 --lock-border
         gltf-transform draco "$work" "$work" --method "$DRACO_METHOD"
 
         size=$(wc -c < "$work" | tr -d ' ')
