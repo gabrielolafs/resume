@@ -1,22 +1,4 @@
 #!/bin/sh
-#
-# compress_glb.sh
-#
-# Simplifies (decimates) and Draco-compresses .glb files until each is under
-# a target size. Works whether or not the source is already Draco compressed
-# (gltf-transform decodes Draco automatically on load).
-#
-# Requirements:
-#   npm install -g @gltf-transform/cli
-#
-# Usage:
-#   ./compress_glb.sh [SRC_DIR] [OUT_DIR] [MAX_SIZE_KB]
-#
-#   SRC_DIR      Directory containing .glb files (default: ./models)
-#   OUT_DIR      Directory to write compressed output (default: ./models_compressed)
-#   MAX_SIZE_KB  Target max size in KB (default: 100)
-
-set -euo pipefail
 
 SRC_DIR="../public/scans"
 OUT_DIR="../public/scans"
