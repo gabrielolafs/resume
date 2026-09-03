@@ -1,7 +1,9 @@
 #!/bin/sh
 
-SRC_DIR="../public/scans"
-OUT_DIR="../public/scans"
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
+SRC_DIR="$SCRIPT_DIR/../public/scans"
+OUT_DIR="$SCRIPT_DIR/../public/scans"
 MAX_SIZE_KB=100
 
 RATIO_STEP=0.1
