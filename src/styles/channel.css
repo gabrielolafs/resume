@@ -9,7 +9,7 @@
   padding: 0;
   background-color: var(--wii-background) ;
   flex-direction: row;
-  overflow: hidden;
+  /* overflow: hidden; */
   z-index: -1;
   /* overscroll-behavior: none; */
 }

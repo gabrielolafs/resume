@@ -4,6 +4,7 @@ import '../styles/animations.css';
 import '../styles/global.css'
 import overrides from '../data/channels-with-order.json';
 import LoadingScreen from './loading-screen.astro';
+import EmbeddedChannel from './embedded-channel.astro';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
@@ -72,15 +73,41 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
 <div class="top-container">
   <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
+  <canvas id="zoom-canvas"></canvas>
   <div class="page-track" id="page-track"></div>
+  <div id="zoom-clone-layer"></div>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
 </div>
+
+<style>
+  /* Wii-style channel zoom: sits above everything else in .top-container. */
+  #zoom-canvas {
+    /* background-color: black; */
+    position: fixed;
+    inset: 0;
+    width: 100dvw !important;
+    height: 100dvh !important;
+    z-index: 20;
+  }
+
+  #zoom-clone-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    pointer-events: none;
+  }
+
+  #zoom-clone-layer .channel-cell {
+    will-change: transform;
+  }
+</style>
 
 <script>
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+    import { navigate } from 'astro:transitions/client';
 
     type FlipState = {
         active: Boolean,
@@ -95,6 +122,18 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         cols: number,
         rows: number,
         cpp: number
+    }
+
+    type ZoomState = {
+        active: boolean,
+        start: number,
+        pageIndex: number,
+        cellIndex: number,
+        fromRect: DOMRect,
+        href: string,
+        cloneEl: HTMLElement | null,
+        chromeEls: HTMLElement[],
+        startPos: THREE.Vector3
     }
 
     // load the compressed 3d objects
@@ -113,6 +152,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     
     const BASE_NAME = 'mesh_lowpoly'; 
     const MIN_MS_OF_LOADING_SCREEEN = 500;
+    const ZOOM_DURATION = 500; //ms
 
     let pageEls: HTMLElement[] = [];
     let animFrameId: number;
@@ -162,6 +202,39 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         directionalLight.position.set(0, 10, 10);
         scene.add(directionalLight);
 
+        // --- zoom stage: transparent on top and spanning below
+        const zoomCanvas = document.getElementById('zoom-canvas') as HTMLCanvasElement;
+        const zoomCloneLayer = document.getElementById('zoom-clone-layer') as HTMLElement;
+        const zoomRenderer = new THREE.WebGLRenderer({ canvas: zoomCanvas, antialias: true, alpha: true });
+        zoomRenderer.setPixelRatio(devicePixelRatio);
+        const zoomScene = new THREE.Scene();
+        const zoomCamera = new THREE.OrthographicCamera(-w0/2, w0/2, h0/2, -h0/2, 0.1, 1000);
+        zoomCamera.position.set(0, 0, 200);
+        zoomCamera.lookAt(0, 0, 0);
+        zoomRenderer.setSize(w0, h0);
+        zoomScene.add(zoomCamera);
+        zoomScene.add(new THREE.AmbientLight(0xffffff, 3));
+        const zoomDirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        zoomDirLight.position.set(0, 10, 10);
+        zoomScene.add(zoomDirLight);
+
+        // in case we navigated back here mid-fade from a previous zoom
+        setBackgroundOpacity(1);
+        zoomCanvas.style.display = 'none';
+
+        let zoomedGroup: THREE.Group | null = null;
+        let zoomState: ZoomState = {
+            active: false,
+            start: 0,
+            pageIndex: 0,
+            cellIndex: 0,
+            fromRect: new DOMRect(),
+            href: '',
+            cloneEl: null,
+            chromeEls: [],
+            startPos: new THREE.Vector3()
+        };
+
         let pendingPage = 0;
 
         const cellGroups: THREE.Group[][] = [];
@@ -186,10 +259,35 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         window.addEventListener('resize', () => {
             switchLayout();
             setup();
+
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            zoomRenderer.setSize(w, h);
+            zoomCamera.left = -w / 2;
+            zoomCamera.right = w / 2;
+            zoomCamera.top = h / 2;
+            zoomCamera.bottom = -h / 2;
+            zoomCamera.updateProjectionMatrix();
         });
 
         document.getElementById('arrow-prev')?.addEventListener('click', () => startFlip(channelLayout.page - 1));
         document.getElementById('arrow-next')?.addEventListener('click', () => startFlip(channelLayout.page + 1));
+
+        document.getElementById('page-track')?.addEventListener('click', (e) => {
+            const anchor = (e.target as HTMLElement).closest('.channel-cell') as HTMLAnchorElement | null;
+            if (!anchor || anchor.classList.contains('is-default-color')) return;
+
+            const pageEl = anchor.closest('.channel-page') as HTMLElement | null;
+            if (!pageEl) return;
+
+            const pageIndex = Number(pageEl.dataset.page);
+            const cellIndex = Array.from(pageEl.querySelectorAll('.channel-cell')).indexOf(anchor);
+            const ch = pages[pageIndex]?.[cellIndex];
+            if (!ch?.url) return;
+
+            e.preventDefault();
+            startZoom(pageIndex, cellIndex, anchor, ch.url);
+        });
 
         function buildPages(cpp: number, chs: any[]) {
             const padded = [
@@ -542,10 +640,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
                 mats.forEach((mat: any) => {
                     // only flat-Kd materials (hair/pants/shirt/skin/beard) need this correction.
-                    // anything with a diffuse map (eyes/brows/mouth) already has its real baked
-                    // color from the PNG and has no Kd in the mtl, so it defaults to white —
-                    // boosting that just overexposes the texture toward white instead of leaving
-                    // its actual color alone.
                     if (mat.map) return;
                     if (mat.color) mat.color.multiplyScalar(boost); // scales diffuse reflectance, not a flat overlay
                     if (mat.emissive) {
@@ -616,12 +710,141 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         function startFlip(targetPage: number) {
-            if (flipState.active || targetPage < 0 || targetPage >= pages.length) return;
+            if (flipState.active || zoomState.active || targetPage < 0 || targetPage >= pages.length) return;
             console.log(flipState);
             console.log(targetPage);
             const w = container.clientWidth;
             flipState = { active: true, from: channelLayout.page * w * 0.9, to: targetPage * w * 0.9, start: performance.now(), duration: 600 };
             pendingPage = targetPage;
+        }
+
+        // Zoom-in
+        function backgroundLayers(): HTMLElement[] {
+            return [
+                canvas,
+                document.getElementById('page-track'),
+                document.getElementById('arrow-prev'),
+                document.getElementById('arrow-next'),
+                document.getElementById('bottom-container')
+            ].filter(Boolean) as HTMLElement[];
+        }
+
+        function setBackgroundOpacity(value: number) {
+            backgroundLayers().forEach(el => { el.style.opacity = `${value}`; });
+        }
+
+        function startZoom(pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
+            if (flipState.active || zoomState.active) return;
+
+            const rect = anchorEl.getBoundingClientRect();
+            const clone = anchorEl.cloneNode(true) as HTMLElement;
+            clone.style.position = 'fixed';
+            clone.style.top = `${rect.top}px`;
+            clone.style.left = `${rect.left}px`;
+            clone.style.width = `${rect.width}px`;
+            clone.style.height = `${rect.height}px`;
+            
+            clone.style.margin = '0';
+            clone.style.transformOrigin = 'center center';
+            clone.style.pointerEvents = 'none';
+
+            zoomCloneLayer.innerHTML = '';
+            zoomCloneLayer.appendChild(clone);
+
+            const chromeEls = [] as HTMLElement[];
+
+            const embedded = document.createElement('embedded-channel') as HTMLElement;
+            clone.appendChild(embedded);
+
+            anchorEl.style.visibility = 'hidden'; 
+
+            const group = cellGroups[pageIndex]?.[cellIndex] ?? null;
+            const startPos = group ? group.position.clone() : new THREE.Vector3();
+            if (group) {
+                zoomScene.add(group);
+                group.scale.set(1, 1, 1);
+            }
+            zoomedGroup = group;
+
+            zoomState = {
+                active: true,
+                start: performance.now(),
+                pageIndex,
+                cellIndex,
+                fromRect: rect,
+                href,
+                cloneEl: clone,
+                chromeEls,
+                startPos
+            };
+
+            zoomCanvas.style.display = 'block';
+
+            if (zoomState.cloneEl) {
+                const cloneEl = zoomState.cloneEl;
+
+                // 1. Explicit identity state, no transition yet.
+                cloneEl.style.transition = 'none';
+                cloneEl.style.transform = 'translate(0px, 0px) scale(1, 1)';
+
+                void cloneEl.offsetWidth;
+
+                const eased = 1;
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const from = zoomState.fromRect;
+                const fromCx = from.left + from.width / 2;
+                const fromCy = from.top + from.height / 2;
+                const scaleX = vw / from.width;
+                const scaleY = vh / from.height;
+                const curScaleX = 1 + (scaleX - 1) * eased;
+                const curScaleY = 1 + (scaleY - 1) * eased;
+                const dx = (vw / 2 - fromCx) * eased;
+                const dy = (vh / 2 - fromCy) * eased + eased * 20;
+
+                cloneEl.style.transition = `transform ${ZOOM_DURATION - 50}ms linear`;
+                requestAnimationFrame(() => {
+                    cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX}, ${curScaleY})`;
+                });
+            }
+        }
+
+        function stepZoom(now: number) {
+            const t = Math.min((now - zoomState.start) / ZOOM_DURATION, 1);
+            const eased = t;
+
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const from = zoomState.fromRect;
+            const fromCx = from.left + from.width / 2;
+            const fromCy = from.top + from.height / 2;
+            const scaleX = vw / from.width;
+            const scaleY = vh / from.height;
+            const curScaleX = 1 + (scaleX - 1) * eased;
+            const curScaleY = 1 + (scaleY - 1) * eased;
+
+            zoomState.chromeEls.forEach(el => { el.style.opacity = `${.5}`; });
+            // zoomState.chromeEls.forEach(el => { el.style.opacity = `${1 - eased}`; });
+
+            const restT = Math.min(Math.max((t - 0.3) / 0.3, 0), 1); // 30% fade 
+            setBackgroundOpacity(1 - restT);
+
+            if (zoomedGroup) { // model zooming (a little wonky atm todo: fix the bottom left comming from the bottom. its some sort of math problem)
+                zoomedGroup.position.x = zoomState.startPos.x * (1 - eased);
+                zoomedGroup.position.y = zoomState.startPos.y * (1 - eased);
+                zoomedGroup.scale.setScalar(1 + (curScaleY - 1));
+            }
+
+            zoomRenderer.render(zoomScene, zoomCamera);
+
+            if (t >= 1.0) finishZoom();
+        }
+
+        function finishZoom() {
+            const href = zoomState.href;
+            zoomState.active = false;
+            zoomedGroup = null;
+            navigate(href);
         }
 
         function renderPageTrack() {
@@ -668,6 +891,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             cellGroups.forEach((page, p) => {
                 page.forEach((group, i) => {
                     if (i >= channelLayout.cpp) return;
+                    if (zoomState.active && p === zoomState.pageIndex && i === zoomState.cellIndex) return; // stepZoom owns this one's position
                     const col = i % channelLayout.cols;
                     const padX = w * 0.05;
                     const cellW = (w - padX * 2) / channelLayout.cols;
@@ -687,6 +911,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                     child.position.y = ch?.model?.baseRotation?.[2] + Math.cos(t * ch?.model?.saltBounce * .002) * 6;
                 });
             }));
+
+            if (zoomState.active) {
+                stepZoom(t);
+            }
 
             renderer.render(scene, camera);
         }
