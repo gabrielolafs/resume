@@ -69,41 +69,54 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 // (todo: zooming) will be called whenever routing somewhere that is not itself.
 ---
 
+{channels.map((ch) => {
+  const slug = ch.url.split('/').pop();
+  return (
+    <template data-slug={slug}>
+      <EmbeddedChannel
+        title={ch.title}
+        animationSvg={ch.animationSvg}
+        animationSvgDimentions={ch.animationSvgDimentions}
+        imgPaths={ch.imgPaths}
+        salt={ch.model.salt}
+      />
+    </template>
+  );
+})}
+
 <LoadingScreen/>
+<div id="zoom-clone-layer"></div>
+<div id ="zoom-background"></div>
 
 <div class="top-container">
   <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
   <canvas id="zoom-canvas"></canvas>
-  <div class="page-track" id="page-track"></div>
-  <div id="zoom-clone-layer"></div>
+  <div id="page-track" class="page-track"></div>
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
 </div>
 
 <style>
-  /* Wii-style channel zoom: sits above everything else in .top-container. */
   #zoom-canvas {
-    /* background-color: black; */
     position: fixed;
     inset: 0;
-    width: 100dvw !important;
-    height: 100dvh !important;
-    z-index: 20;
+    width: 100dvw;
+    height: 100dvh;
+    z-index: 99;
   }
 
   #zoom-clone-layer {
     position: fixed;
     inset: 0;
-    z-index: 25;
+    z-index: 99;
     pointer-events: none;
-  }
-
-  #zoom-clone-layer .channel-cell {
-    will-change: transform;
+    background-color: none;
+    background: black;
+    opacity: 30%;
   }
 </style>
 
-<script>
+<script >
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -150,7 +163,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     
     window.__modelCache = window.__modelCache ?? new Map();
     
-    const BASE_NAME = 'mesh_lowpoly'; 
     const MIN_MS_OF_LOADING_SCREEEN = 500;
     const ZOOM_DURATION = 500; //ms
 
@@ -506,7 +518,9 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         }
 
         function cellMarkup(ch: any) {
-            const isDefaultColor = ch.model.color.every((v: number, i: string | number) => v === [9, 9, 9][i]);
+            const isDefaultColor = ch.model.color.every((v: number, i: number) => v === [9, 9, 9][i]);
+            const slug = ch.url?.split('/').pop();
+
 
             return `
                 <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
@@ -527,6 +541,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         />
                     </svg>
                     <div class="grid-wrap">
+                    ${document.querySelector(`template[data-slug="${slug}"]`)?.innerHTML}
+
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
                         : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions, ch.imgPaths )
@@ -751,7 +767,9 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             zoomCloneLayer.innerHTML = '';
             zoomCloneLayer.appendChild(clone);
 
-            const chromeEls = [] as HTMLElement[];
+            // const chromeEls = [] as HTMLElement[];
+            const chromeEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
+            console.log(chromeEls);
 
             const embedded = document.createElement('embedded-channel') as HTMLElement;
             clone.appendChild(embedded);
@@ -804,7 +822,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
                 cloneEl.style.transition = `transform ${ZOOM_DURATION - 50}ms linear`;
                 requestAnimationFrame(() => {
-                    cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX}, ${curScaleY})`;
+                    // cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * 1.03}, ${curScaleY * 1.03})`;
+                    cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * .93}, ${curScaleY * .93})`;
                 });
             }
         }
@@ -837,7 +856,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
             zoomRenderer.render(zoomScene, zoomCamera);
 
-            if (t >= 1.0) finishZoom();
+            if (t >= 1.1) finishZoom();
         }
 
         function finishZoom() {
