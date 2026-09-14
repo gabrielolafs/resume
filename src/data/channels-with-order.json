@@ -62,7 +62,7 @@
     {
         "slug": "donations",
         "color": [250, 200, 25],
-        "imgPaths": ["/img/channel/donate.webp"]
+        "imgPaths": ["/img/channel/donate.webp", "/img/channel/donate.webp"]
     },
     {
         "slug": "left-moonlander",

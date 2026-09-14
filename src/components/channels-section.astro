@@ -832,7 +832,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 const dx = (vw / 2 - fromCx) * eased;
                 const dy = (vh / 2 - fromCy) * eased + eased * 17;
 
-                cloneEl.style.transition = `transform ${ZOOM_DURATION - 10}ms linear`;
+                cloneEl.style.transition = `transform ${ZOOM_DURATION + 200}ms linear`;
                 requestAnimationFrame(() => {
                     cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX}, ${curScaleY})`;
                 });
