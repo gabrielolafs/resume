@@ -75,10 +75,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     <template data-slug={slug}>
       <EmbeddedChannel
         title={ch.title}
-        animationSvg={ch.animationSvg}
-        animationSvgDimentions={ch.animationSvgDimentions}
-        imgPaths={ch.imgPaths}
-        salt={ch.model.salt}
       />
     </template>
   );
@@ -86,7 +82,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
 <LoadingScreen/>
 <div id="zoom-clone-layer"></div>
-<div id ="zoom-background"></div>
+<div id="zoom-background"></div>
 
 <div class="top-container">
   <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
@@ -108,11 +104,20 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
   #zoom-clone-layer {
     position: fixed;
     inset: 0;
-    z-index: 99;
+    z-index: 1;
     pointer-events: none;
-    background-color: none;
-    background: black;
-    opacity: 30%;
+  }
+
+  #zoom-background {
+    opacity: 0; 
+    background: black; 
+    z-index: 0; 
+    height: 100dvh; 
+    width: 100dvw; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    pointer-events: none;
   }
 </style>
 
@@ -145,7 +150,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
         fromRect: DOMRect,
         href: string,
         cloneEl: HTMLElement | null,
-        chromeEls: HTMLElement[],
+        fadingOutEls: HTMLElement[],
+        fadingInEls: HTMLElement[],
         startPos: THREE.Vector3
     }
 
@@ -243,7 +249,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             fromRect: new DOMRect(),
             href: '',
             cloneEl: null,
-            chromeEls: [],
+            fadingInEls: [],
+            fadingOutEls: [],
             startPos: new THREE.Vector3()
         };
 
@@ -492,7 +499,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
             return `<style>
                         @keyframes fade_${slug} {
-                            0%   { opacity: 0; }
                             ${fadeEdge}% { opacity: 1; }
                             ${slot - fadeEdge}% { opacity: 1; }
                             ${slot}% { opacity: 0; }
@@ -541,12 +547,14 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         />
                     </svg>
                     <div class="grid-wrap">
-                    ${document.querySelector(`template[data-slug="${slug}"]`)?.innerHTML}
 
                     ${isDefaultColor
                         ? buildNoiseAnimation(ch.model.salt)
                         : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions, ch.imgPaths )
                     }
+
+                    ${document.querySelector(`template[data-slug="${slug}"]`)?.innerHTML}
+                    
                     </div>
 
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" width="100%" height="100%">
@@ -768,11 +776,14 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             zoomCloneLayer.appendChild(clone);
 
             // const chromeEls = [] as HTMLElement[];
-            const chromeEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
-            console.log(chromeEls);
+            // const chromeEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
+            // console.log(chromeEls);
 
-            const embedded = document.createElement('embedded-channel') as HTMLElement;
-            clone.appendChild(embedded);
+            const embedded = clone.querySelector('.embedded-channel') as HTMLElement | null;
+            const blackBackground = document.getElementById('zoom-background');
+            const fadingInEls = embedded ? [embedded, blackBackground] : [blackBackground];
+            const fadingOutEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
+            
 
             anchorEl.style.visibility = 'hidden'; 
 
@@ -792,7 +803,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 fromRect: rect,
                 href,
                 cloneEl: clone,
-                chromeEls,
+                fadingInEls,
+                fadingOutEls,
                 startPos
             };
 
@@ -818,12 +830,12 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 const curScaleX = 1 + (scaleX - 1) * eased;
                 const curScaleY = 1 + (scaleY - 1) * eased;
                 const dx = (vw / 2 - fromCx) * eased;
-                const dy = (vh / 2 - fromCy) * eased + eased * 20;
+                const dy = (vh / 2 - fromCy) * eased + eased * 17;
 
-                cloneEl.style.transition = `transform ${ZOOM_DURATION - 50}ms linear`;
+                cloneEl.style.transition = `transform ${ZOOM_DURATION - 10}ms linear`;
                 requestAnimationFrame(() => {
-                    // cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * 1.03}, ${curScaleY * 1.03})`;
-                    cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * .93}, ${curScaleY * .93})`;
+                    cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX}, ${curScaleY})`;
+                    // cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * .93}, ${curScaleY * .93})`;
                 });
             }
         }
@@ -835,15 +847,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const vw = window.innerWidth;
             const vh = window.innerHeight;
             const from = zoomState.fromRect;
-            const fromCx = from.left + from.width / 2;
-            const fromCy = from.top + from.height / 2;
-            const scaleX = vw / from.width;
             const scaleY = vh / from.height;
-            const curScaleX = 1 + (scaleX - 1) * eased;
             const curScaleY = 1 + (scaleY - 1) * eased;
 
-            zoomState.chromeEls.forEach(el => { el.style.opacity = `${.5}`; });
-            // zoomState.chromeEls.forEach(el => { el.style.opacity = `${1 - eased}`; });
+            zoomState.fadingInEls.forEach(el => { el.style.opacity = `${eased + .2}`; });
+            zoomState.fadingOutEls.forEach(el => { el.style.opacity = `${1 - eased - .2}`; });
 
             const restT = Math.min(Math.max((t - 0.3) / 0.3, 0), 1); // 30% fade 
             setBackgroundOpacity(1 - restT);
