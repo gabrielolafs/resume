@@ -5,7 +5,11 @@ dateWritten: August 2026
 timeSpan: 2003 - Current
 ---
 
-I am Gabriel Olafsson and this is my website. I have been coding since 14, and started messing with hardware around that time too.  
+<video class="waving-video" autoplay muted loop playsinline>
+  <source src="/video/me_waving.mp4" type="video/mp4">
+</video>
+
+I am Gabriel Olafsson (pictured above) and this is my website.
 
 I went to Essex Technical High to study IT / Networking (starting in Machine Tech for a little more than half my freshman year). A majority of my work was with networking and network configurations, which I still like to do in my home lab.  
 

@@ -117,7 +117,7 @@ ul li a {
   color: var(--wii-blue-dark)
 }
 
-article img {
+article img, article video {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -125,9 +125,9 @@ article img {
   max-height: 70vh;
   width: auto;
   height: auto;
+  margin-bottom: 2.5rem;
 
   color: var(--wii-blue-dark);
-
   box-shadow: 0 0 .75em var(--wii-blue-dark);
 }
 
@@ -179,7 +179,7 @@ article img {
 }
 
 hr {
-  padding: 0 10px;
+  margin-bottom: 2.5rem;
   border-color: var(--wii-blue-dark);
   border-style: dashed;
 }
