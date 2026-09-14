@@ -5,10 +5,13 @@ dateWritten: January 2026
 timeSpan: April 2024
 tech: [stem cells, baldness, blood]
 ---
-<hr/>
-![donation](../../../public/img/article/donate.webp)
+
+
+![donation](/img/article/donate.webp)
+
 <br/>
-<br/>In the fall of 2023, there was a van on the WPI campus handing out free paninis. All that was required was a mouth swab for Be The Match (now NMDP). As a college student, I of course chose a free meal over a financed one. I rubbed the cotton swab around my mouth, and handed it back to the Be The Match folks. I quickly replenished my, now dehydrated mouth, with a big bite of chicken panini.  
+
+In the fall of 2023, there was a van on the WPI campus handing out free paninis. All that was required was a mouth swab for Be The Match (now NMDP). As a college student, I of course chose a free meal over a financed one. I rubbed the cotton swab around my mouth, and handed it back to the Be The Match folks. I quickly replenished my, now dehydrated mouth, with a big bite of chicken panini.  
 
 Approximately one year later I got a call that I was a match for an individual with leukemia. After over a week's worth of G-CSF injections (to increase my stem cell count), I showed up for my donation which took half the time that was expected due to my high blood volume.
 
@@ -27,4 +30,4 @@ for that you get:
 **BALD BONUS!!!**
 
 
-![bald](../../../public/img/article/bald_bonus.webp)
+![bald](/img/article/bald_bonus.webp)
