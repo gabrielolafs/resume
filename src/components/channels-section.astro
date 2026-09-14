@@ -70,11 +70,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 ---
 
 {channels.map((ch) => {
-  const slug = ch.url.split('/').pop();
+  const slug = ch.url?.split('/').pop();
   return (
     <template data-slug={slug}>
       <EmbeddedChannel
-        title={ch.title}
+        // title={ch.title}
       />
     </template>
   );
@@ -554,7 +554,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                         : buildChannelSection(ch.model.salt, ch.title, ch.animationSvg, ch.animationSvgDimentions, ch.imgPaths )
                     }
 
-                    ${document.querySelector(`template[data-slug="${slug}"]`)?.innerHTML}
+                    ${document.querySelector(`template[data-slug="${slug}"]`)?.innerHTML ?? ""}
                     
                     </div>
 
@@ -814,7 +814,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             if (zoomState.cloneEl) {
                 const cloneEl = zoomState.cloneEl;
 
-                // 1. Explicit identity state, no transition yet.
                 cloneEl.style.transition = 'none';
                 cloneEl.style.transform = 'translate(0px, 0px) scale(1, 1)';
 
@@ -836,7 +835,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
                 cloneEl.style.transition = `transform ${ZOOM_DURATION - 10}ms linear`;
                 requestAnimationFrame(() => {
                     cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX}, ${curScaleY})`;
-                    // cloneEl.style.transform = `translate(${dx}px, ${dy}px) scale(${curScaleX * .93}, ${curScaleY * .93})`;
                 });
             }
         }
@@ -845,7 +843,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             const t = Math.min((now - zoomState.start) / ZOOM_DURATION, 1);
             const eased = t;
 
-            const vw = window.innerWidth;
             const vh = window.innerHeight;
             const from = zoomState.fromRect;
             const scaleY = vh / from.height;
@@ -854,8 +851,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             zoomState.fadingInEls.forEach(el => { el.style.opacity = `${eased + .2}`; });
             zoomState.fadingOutEls.forEach(el => { el.style.opacity = `${1 - eased - .2}`; });
 
-            const restT = Math.min(Math.max((t - 0.3) / 0.3, 0), 1); // 30% fade 
-            setBackgroundOpacity(1 - restT);
 
             if (zoomedGroup) { // model zooming (a little wonky atm todo: fix the bottom left comming from the bottom. its some sort of math problem)
                 zoomedGroup.position.x = zoomState.startPos.x * (1 - eased);
