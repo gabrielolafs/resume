@@ -170,7 +170,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
     window.__modelCache = window.__modelCache ?? new Map();
     
     const MIN_MS_OF_LOADING_SCREEEN = 500;
-    const ZOOM_DURATION = 500; //ms
+    const ZOOM_DURATION = 600; //ms
 
     let pageEls: HTMLElement[] = [];
     let animFrameId: number;
@@ -499,10 +499,11 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
             return `<style>
                         @keyframes fade_${slug} {
-                            ${fadeEdge}% { opacity: 1; }
+                            0% { opacity: 1; }
                             ${slot - fadeEdge}% { opacity: 1; }
                             ${slot}% { opacity: 0; }
-                            100% { opacity: 0; }
+                            ${100 - fadeEdge}% { opacity: 0; }
+                            100% { opacity: 1; }
                         }
                         .fade-stack {
                             position: relative;

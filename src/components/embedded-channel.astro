@@ -9,16 +9,11 @@ import '../styles/articles.css';
     inset: 0;
     z-index: 1;
     background-color: var(--wii-background);
-    /* background-color: black; */
     opacity: 0;
   }
 
-  .embedded-channel .coloring {
-    height: 20%;
-  }
-
   .waiste-space {
-    height: 80%;
+    height: 75%;
   }
 
   .mini-vignette {
@@ -30,11 +25,13 @@ import '../styles/articles.css';
 </style>
 
 <div class="embedded-channel">
-  
-  <div class="waiste-space"></div>  
+  <div class="waiste-space">
+    <!-- ipod modding -->
+  </div>  
+
   <div class="coloring">
       <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" overflow="visible" viewBox="0 0 24 24">
-          <path fill="var(--background-color)" stroke="var(--wii-blue-darker)" stroke-width=".3" d="M-1 1 Q12 0 25 1 L25 25 L-1 25 Z"></path>
+          <path fill="var(--background-color)" stroke="var(--wii-blue-darker)" stroke-width=".3" vector-effect="non-scaling-stroke" d="M-1 1 Q12 0.6 25 1 L25 25 L-1 25 Z"></path>
       </svg>
   </div>
   <div class="mini-vignette">
@@ -48,12 +45,5 @@ import '../styles/articles.css';
       />
     </svg>
   </div>
-  
-  
-
-  <!-- <div class="buttons">
-      <WiiButton href="/">Home</WiiButton>
-      <WiiButton onclick="window.toggleCrt()">Toggle CRT</WiiButton>
-  </div> -->
 </div>
 
