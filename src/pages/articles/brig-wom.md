@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/articles.astro
-title: Brig & Womens Web
+title: Brigham & Womens Web
 dateWritten: June 2026
 timeSpan: April 2024 - May 2024
 tech: [TypeScript, React, Express, Prisma, PostgreSQL, AWS, ERD, CRUD, Pen Testing, CSV Parsing]

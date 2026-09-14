@@ -176,7 +176,7 @@ const { color = '#000' } = Astro.props;
     resetFadeTimer(cursor);
 
     applyCrtState();
-    el.style.backgroundColor = 'transparent';
+    // el.style.backgroundColor = 'transparent';
     el.style.pointerEvents = 'none';
     el.style.zIndex = '-1';
     setTimeout(() => {
@@ -185,10 +185,8 @@ const { color = '#000' } = Astro.props;
   });
 
   document.addEventListener('astro:before-preparation', () => {
-    el.style.opacity = '1';
     el.style.pointerEvents = 'all';
-    el.style.backgroundColor = el.dataset.color!;
-    el.style.zIndex = '100';
+  el.style.zIndex = '100';
   });
 
   (window as any).toggleCrt = () => {

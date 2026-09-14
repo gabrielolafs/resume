@@ -4,6 +4,7 @@ title: About Mii
 dateWritten: August 2026
 timeSpan: 2003 - Current
 ---
+
 I am Gabriel Olafsson and this is my website. I have been coding since 14, and started messing with hardware around that time too.  
 
 I went to Essex Technical High to study IT / Networking (starting in Machine Tech for a little more than half my freshman year). A majority of my work was with networking and network configurations, which I still like to do in my home lab.  

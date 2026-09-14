@@ -7,7 +7,6 @@
   --bar-size: min(25dvw, 20dvh);
   --shadow-weight: clamp(10px, calc(var(--bar-size) * 0.08), 12px);
   --shadow-blur: clamp(8px, calc(var(--bar-size) * 0.3), 100px);
-  /* --shadow-blur: 0; */
 
   position: fixed;
   left: 0;
@@ -21,7 +20,7 @@
   flex-direction: column;  
   overflow: hidden;
 
-  z-index: 1;
+  z-index: -1;
 }
 .bottom-container-background-pass,
 .bottom-container-shadow-pass,

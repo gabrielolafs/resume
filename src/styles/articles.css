@@ -174,7 +174,6 @@ article img {
   border-radius: 10px;
   border-color: var(--wii-blue-dark);
   border-width: .05em;
-  background-color: white;
   box-shadow: 0 0 .25em var(--wii-blue-dark);
 
 }
@@ -183,4 +182,20 @@ hr {
   padding: 0 10px;
   border-color: var(--wii-blue-dark);
   border-style: dashed;
+}
+
+::view-transition-group(root) {
+  perspective: 1500px;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  background: var(--wii-background);
+}
+
+html {
+  background: var(--wii-background);
 }

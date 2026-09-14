@@ -45,21 +45,21 @@
 /* i found like the exact the font. I am so happy */
 @font-face {
   font-family: 'Contb';
-  src: url('../fonts/contb.ttf') format('truetype');
+  src: url('../fonts/contb.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Contm';
-  src: url('../fonts/contm.ttf') format('truetype');
+  src: url('../fonts/contm.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'digital-7';
-  src: url('../fonts/digital-7.ttf') format('truetype');
+  src: url('../fonts/digital-7.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
