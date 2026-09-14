@@ -11,13 +11,3 @@
   flex-direction: row;
   overflow: hidden;
 }
-
-#whole-screen-scene.crt-flash {
-  background-color: var(--flash-color, #000);
-  opacity: 1;
-  transition: opacity 0.25s ease;
-}
-#whole-screen-scene:not(.crt-flash) {
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}

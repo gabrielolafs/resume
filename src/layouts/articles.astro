@@ -13,9 +13,8 @@ const { frontmatter } = Astro.props;
 
     <ClientRouter />
 
-    <!-- {(frontmatter.dateWritten) 
-      ? <meta name="theme-color" content="#000000"/> 
-      : <meta name="theme-color" content="#YOUR_WII_BACKGROUND_HEX"/>} -->
+    <!-- safari. something smells stinky. -->
+    {(frontmatter.dateWritten) ? <meta name="theme-color" content="#000000"/> : <meta name="theme-color" content="var(--wii-background)"/>}
   </head>
   <body> 
     <WholeScreenScene/>
