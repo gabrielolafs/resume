@@ -125,10 +125,35 @@ article img {
   max-height: 70vh;
   width: auto;
   height: auto;
+  margin-bottom: 2.5rem;
 
   color: var(--wii-blue-dark);
-
   box-shadow: 0 0 .75em var(--wii-blue-dark);
+}
+
+article .video {
+  display: block;
+  margin-bottom: 2.5rem; 
+  color: var(--wii-blue-dark);
+  display: flex;
+  flex-direction: column; 
+}
+
+article .video video {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80vw;
+  max-height: 70vh;
+  box-shadow: 0 0 .75em var(--wii-blue-dark);
+
+  margin-bottom: 0.5rem;
+}
+
+article .video p {
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .top {
@@ -179,7 +204,7 @@ article img {
 }
 
 hr {
-  padding: 0 10px;
+  margin-bottom: 2.5rem;
   border-color: var(--wii-blue-dark);
   border-style: dashed;
 }

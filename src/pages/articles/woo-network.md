@@ -5,6 +5,11 @@ dateWritten: Jan 2026
 timeSpan: Aug 2024 - May 2026
 tech: [Ubiquiti, Pi-hole, Ubuntu Server, DNS, Self-Host]
 ---
+
+Network configuration of my Worcester apartment
+
+<hr/>
+
 My apartment in Worcester was not a place of beauty. It was a place to sleep at night, and in the winter months, under 4 blankets. For the sake of my roommates, the networking had to be easily deployed and functional, but I also wanted the ability to mess around a little. After a conversation with a coworker whose job is to be a good network engineer, I opted for a Ubiquity setup, and I could not be more happy with the decision. Instead of renting a router from our ISP for two years, I chose to spend 20 dollars more up front for an Express 7 router, a Lite 8 PoE switch, and 2 U6+ Access Points. Plus I got to keep all the equipment after the fact, deploying them in my [home home lab](/articles/home-network) as a dedicated lab network with only my equipment connected to it.
 ### Cool things in the Networking Closet:
 ##### Prorm (pro~~g~~r~~am~~m~~er~~ PC):
