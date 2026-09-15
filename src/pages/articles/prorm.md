@@ -6,7 +6,7 @@ timeSpan: 2019 - present
 tech: [Docker, API Server, PC build, VNC, TTS]
 ---
 
-A gaming PC turned dedicated windows remote worker and operating as an API endpoint using Docker to convert text to audio
+A gaming PC I built turned into dedicated windows remote work horse and operating as an API endpoint using Docker to convert text to audio
 
 <hr/>
 

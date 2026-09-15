@@ -6,10 +6,9 @@ timeSpan: April 2024
 tech: [stem cells, baldness, blood]
 ---
 
+<hr/>
 
 ![donation](/img/article/donate.webp)
-
-<br/>
 
 In the fall of 2023, there was a van on the WPI campus handing out free paninis. All that was required was a mouth swab for Be The Match (now NMDP). As a college student, I of course chose a free meal over a financed one. I rubbed the cotton swab around my mouth, and handed it back to the Be The Match folks. I quickly replenished my, now dehydrated mouth, with a big bite of chicken panini.  
 
