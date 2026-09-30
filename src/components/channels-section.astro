@@ -2,6 +2,7 @@
 import '../styles/channel.css';
 import '../styles/animations.css';
 import '../styles/global.css'
+import '../styles/arrows.css';
 import overrides from '../data/channels-with-order.json';
 import LoadingScreen from './loading-screen.astro';
 import EmbeddedChannel from './embedded-channel.astro';
@@ -44,26 +45,7 @@ const channels = Object.entries(globbed)
 
 const channelsJson = JSON.stringify(channels);
 
-const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="currentColor" viewBox="0 0 16 24">
-        <defs>
-            <radialGradient id="grad1" cx="85%" cy="5%" r="100%" fx="85%" fy="15%">
-                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
-                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
-            </radialGradient>
-            <radialGradient id="grad2" cx="85%" cy="95%" r="90%" fx="85%" fy="95%">
-                <stop offset="0%" stop-color="var(--arrow-fill-dark)"/>
-                <stop offset="100%" stop-color="var(--arrow-fill-light)" stop-opacity="0.4"/>
-            </radialGradient>
-        </defs>
-        <path stroke-linecap="round" stroke="var(--arrow-fill-dark)" stroke-linejoin="round" fill="url(#base)" stroke-width="1" 
-            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23"/>
-        <path stroke="none" fill="url(#grad1)" 
-            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
-        <path stroke="none" fill="url(#grad2)" 
-            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
-        <path stroke-linecap="round" stroke="var(--arrow-stroke)" stroke-linejoin="round" fill="none" stroke-width="1" 
-            d="M13 23 L2 12 L13 1 C13.5 9 13 10 12.5 11 Q11.9 12 12.5 13 C13 14 13.5 15 13 23" />
-        </svg>`
+import LeftArrow from '../../public/svg/left-arrow.svg';
 
 // right below me, I want to swap over loading screen only to happen on the initial load of the page or referesh.
 // (todo: zooming) will be called whenever routing somewhere that is not itself.
@@ -86,6 +68,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 <!-- this loading screen should only be hit on a reload of main page or itial load. cant nesseserly use the caching of the
  models. it has be be something with the routing. todo -->
 <LoadingScreen/> 
+
 <div id="zoom-clone-layer"></div>
 <div id="zoom-background"></div>
 
@@ -93,8 +76,12 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
   <canvas id="three-canvas" data-channels={channelsJson} style="pointer-events: none;"></canvas>
   <canvas id="zoom-canvas"></canvas>
   <div id="page-track" class="page-track"></div>
-  <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
-  <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
+  <button id="arrow-prev" class="page-arrow left">
+    <LeftArrow />
+  </button>
+  <button id="arrow-next" class="page-arrow right">
+    <LeftArrow />
+  </button>
 </div>
 
 <script >

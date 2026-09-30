@@ -1,7 +1,9 @@
 ---
 import '../styles/articles.css';
+import '../styles/arrows.css';
 import FocusedBottomBar from '../components/focused-bottom-bar.astro';
 import WholeScreenScene from '../components/whole-screen-scene.astro';
+import LeftArrow from '../../public/svg/left-arrow.svg';
 import { ClientRouter } from 'astro:transitions';
 
 const { frontmatter } = Astro.props;
@@ -22,6 +24,11 @@ if ( frontmatter.url ) {
     }
   }
 }
+
+const next_slug = index != -1 && index < channels.length - 1? channels[index + 1].slug : "";
+const prev_slug = index != -1 && index > 0? channels[index - 1].slug : "";
+
+console.log(next_slug, prev_slug);
 ---
 <html lang="en">
   <head>
@@ -36,6 +43,20 @@ if ( frontmatter.url ) {
   </head>
   <body> 
     <WholeScreenScene/>
+
+    { prev_slug ?
+    <a href={prev_slug}>
+      <button id="arrow-prev" class="article page-arrow left">
+        <LeftArrow />
+      </button>
+    </a>: <></>}
+
+    { next_slug ?
+    <a href={next_slug}>
+      <button id="arrow-next" class="article page-arrow right">
+        <LeftArrow />
+      </button>
+    </a>: <></>}
 
     {frontmatter.dateWritten && <div class="vignette">
       {/* mobile support sillieness. cant have a cutout - have to do it in a silly way cause otherwise it black screens */}
