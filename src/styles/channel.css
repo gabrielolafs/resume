@@ -116,3 +116,29 @@ canvas {
     transform: translateY(-50%) scaleX(-1);
 }
 
+#zoom-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 99;
+}
+
+#zoom-clone-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#zoom-background {
+  opacity: 0; 
+  background: black; 
+  z-index: 0; 
+  height: 100dvh; 
+  width: 100dvw; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  pointer-events: none;
+}

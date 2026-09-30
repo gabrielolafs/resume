@@ -74,13 +74,18 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
   return (
     <template data-slug={slug}>
       <EmbeddedChannel
-        // title={ch.title}
+        // title={ch.title} // i want to set this up so that i can have the zooming look spaced better. dont have a 
+        // solution atp as cqw and cqh didnt work. I am planning on doing a ton of math to port over the logic from 
+        // the spacing of bottom bar and buttons and title of article to make it look even better than it does now.
+        // passing in the title will be useful at the min
       />
     </template>
   );
 })}
 
-<LoadingScreen/>
+<!-- this loading screen should only be hit on a reload of main page or itial load. cant nesseserly use the caching of the
+ models. it has be be something with the routing. todo -->
+<LoadingScreen/> 
 <div id="zoom-clone-layer"></div>
 <div id="zoom-background"></div>
 
@@ -91,35 +96,6 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
   <button id="arrow-prev" class="page-arrow left" set:html={leftFacingArrow}></button>
   <button id="arrow-next" class="page-arrow right" set:html={leftFacingArrow}></button>
 </div>
-
-<style>
-  #zoom-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100dvw;
-    height: 100dvh;
-    z-index: 99;
-  }
-
-  #zoom-clone-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  #zoom-background {
-    opacity: 0; 
-    background: black; 
-    z-index: 0; 
-    height: 100dvh; 
-    width: 100dvw; 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    pointer-events: none;
-  }
-</style>
 
 <script >
     import * as THREE from 'three';
@@ -305,7 +281,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             if (!ch?.url) return;
 
             e.preventDefault();
-            startZoom(pageIndex, cellIndex, anchor, ch.url);
+            startZoomIn(pageIndex, cellIndex, anchor, ch.url);
         });
 
         function buildPages(cpp: number, chs: any[]) {
@@ -530,7 +506,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
 
 
             return `
-                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
+                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}?page=0&vp=0&i=0&j=0" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M 1 3
@@ -687,7 +663,8 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             // render all channels + unload loading screen
             Promise.all([minWait]).then(() => {
                 if (overlay) {
-                    overlay.style.opacity = '0';
+                    overlay.style.opacity = '.5';
+                    overlay.style.animation = "fade_${slug} $.5s linear;"
                     setTimeout(() => overlay.remove(), MIN_MS_OF_LOADING_SCREEEN);
                 }
                 renderer.compile(scene, camera);
@@ -743,7 +720,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             pendingPage = targetPage;
         }
 
-        // Zoom-in
+        // Zooming in and out
         function backgroundLayers(): HTMLElement[] {
             return [
                 canvas,
@@ -758,7 +735,7 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             backgroundLayers().forEach(el => { el.style.opacity = `${value}`; });
         }
 
-        function startZoom(pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
+        function startZoomIn(pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
             if (flipState.active || zoomState.active) return;
 
             const rect = anchorEl.getBoundingClientRect();
@@ -776,15 +753,10 @@ const leftFacingArrow = `<svg xmlns="http://www.w3.org/2000/svg" stroke="current
             zoomCloneLayer.innerHTML = '';
             zoomCloneLayer.appendChild(clone);
 
-            // const chromeEls = [] as HTMLElement[];
-            // const chromeEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
-            // console.log(chromeEls);
-
             const embedded = clone.querySelector('.embedded-channel') as HTMLElement | null;
             const blackBackground = document.getElementById('zoom-background');
             const fadingInEls = embedded ? [embedded, blackBackground] : [blackBackground];
             const fadingOutEls = Array.from(clone.querySelectorAll(':scope > svg')) as HTMLElement[];
-            
 
             anchorEl.style.visibility = 'hidden'; 
 
