@@ -839,7 +839,7 @@ const channelsJson = JSON.stringify(channels);
             );
             const fullPos = new THREE.Vector3(
                 vw / 2 - (cr.left + cr.width / 2),
-                (cr.top + cr.height / 2) - vh / 2 + FULL_OFFSET_Y,
+                (cr.top + cr.height / 2) - vh / 2,
                 restPos.z
             );
             const restScale = group?.scale.x ?? 1;
