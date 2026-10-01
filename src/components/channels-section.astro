@@ -53,14 +53,12 @@ const channelsJson = JSON.stringify(channels);
   return (
     <template data-slug={slug}>
       <EmbeddedChannel
-        title={ch.title} 
+        title={ch.title}
       />
     </template>
   );
 })}
 
-<!-- this loading screen should only be hit on a reload of main page or itial load. cant nesseserly use the caching of the
- models. it has be be something with the routing. todo -->
 <LoadingScreen/> 
 
 <div id="zoom-clone-layer"></div>
@@ -113,8 +111,11 @@ const channelsJson = JSON.stringify(channels);
         href: string,
         anchorEl: HTMLElement | null,
         frameEl: HTMLElement | null,
-        pageEl: HTMLElement | null,   // the .embedded-channel inside the frame
         blackEl: HTMLElement | null,  // #zoom-background
+        group: THREE.Group | null,    // the cell's model group
+        warm: number,                 // frames to wait, with nothing visibly moving, before the clock may start
+        hold: number,                 // ms to sit on the first pose once the clock starts (zoom out)
+        committed: boolean,           // the real cell is hidden and the model has moved to the zoom stage
         restPos: THREE.Vector3,     // model endpoints: sitting in the cell (p = 0)
         fullPos: THREE.Vector3,     // ...and full screen (p = 1)
         restScale: number,
@@ -144,8 +145,17 @@ const channelsJson = JSON.stringify(channels);
     const ZOOM_DURATION = 600; //ms
 
     const BLACK_FULL_AT = 0.5;
-    const PAGE_FADE_FROM = 0.4;
+    const PAGE_FADE_FROM = 0.5;
     const PAGE_FADE_TO = 1;
+
+    // mobile smoothness.
+    // the zoom waits WARM_FRAMES rendered frames before anything moves, so shader compiles, texture uploads and the
+    // first paint of the frame land while nothing is animating. zoom out then holds on its first pose (it looks like
+    // the page you just left) for ZOOM_OUT_HOLD_MS before it starts shrinking
+    const WARM_FRAMES = 3;
+    const ZOOM_OUT_HOLD_MS = 150;
+    // both webgl canvases are full screen + antialiased, and phones are 3x. cap it (set to 3 to undo)
+    const MAX_PIXEL_RATIO = 2;
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
     const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
@@ -179,7 +189,7 @@ const channelsJson = JSON.stringify(channels);
         let pendingPage = 0;
 
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setPixelRatio(devicePixelRatio);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, MAX_PIXEL_RATIO));
 
         const scene = new THREE.Scene();
 
@@ -201,7 +211,7 @@ const channelsJson = JSON.stringify(channels);
         const zoomCanvas = document.getElementById('zoom-canvas') as HTMLCanvasElement;
         const zoomCloneLayer = document.getElementById('zoom-clone-layer') as HTMLElement;
         const zoomRenderer = new THREE.WebGLRenderer({ canvas: zoomCanvas, antialias: true, alpha: true });
-        zoomRenderer.setPixelRatio(devicePixelRatio);
+        zoomRenderer.setPixelRatio(Math.min(devicePixelRatio, MAX_PIXEL_RATIO));
         const zoomScene = new THREE.Scene();
         const zoomCamera = new THREE.OrthographicCamera(-w0/2, w0/2, h0/2, -h0/2, 0.1, 1000);
         zoomCamera.position.set(0, 0, 200);
@@ -230,8 +240,11 @@ const channelsJson = JSON.stringify(channels);
             href: '',
             anchorEl: null,
             frameEl: null,
-            pageEl: null,
             blackEl: null,
+            group: null,
+            warm: 0,
+            hold: 0,
+            committed: false,
             restPos: new THREE.Vector3(),
             fullPos: new THREE.Vector3(),
             restScale: 1,
@@ -745,19 +758,6 @@ const channelsJson = JSON.stringify(channels);
             pendingPage = targetPage;
         }
 
-        // ---------------------------------------------------------------------------------------------
-        // Zooming in and out
-        //
-        // One progress value p drives the frame, the fades and the model:
-        //   p = 0  ->  sitting in its cell
-        //   p = 1  ->  full screen
-        // zoom in runs p from 0 to 1, zoom out runs it from 1 to 0.
-        //
-        // The article page is a "frame" laid out ONCE at real viewport pixels (so percentages, vh and
-        // layout all behave like the real page). It is never resized, only transformed:
-        //   transform-origin: top left, translate(cell.left, cell.top) scale(cell.w / vw, cell.h / vh)  at p = 0
-        //   translate(0, 0) scale(1)                                                                    at p = 1
-        // ---------------------------------------------------------------------------------------------
         function backgroundLayers(): HTMLElement[] {
             return [
                 canvas,
@@ -790,12 +790,20 @@ const channelsJson = JSON.stringify(channels);
                 width: `${window.innerWidth}px`,   // real pixel size, laid out once
                 height: `${window.innerHeight}px`,
                 transformOrigin: '0 0',            // top left, so translate = where the corner lands
+                transform: 'translate(0px, 0px) scale(1, 1)', // first paint is at scale 1, so it gets rastered at full resolution
+                opacity: '0.01',                   // not 0: a fully transparent layer may never get painted at all
+                willChange: 'transform, opacity',  // own layer. the zoom is then the compositor scaling a finished bitmap, no repaint per frame
                 pointerEvents: 'none',
                 overflow: 'hidden'
             });
 
             const tpl = slug ? document.querySelector<HTMLTemplateElement>(`template[data-slug="${slug}"]`) : null;
             if (tpl) frame.appendChild(tpl.content.cloneNode(true));
+
+            // the frame carries the fade now, so the page inside is simply on
+            const page = frame.querySelector('.embedded-channel') as HTMLElement | null;
+            if (page) page.style.opacity = '1';
+
             return frame;
         }
 
@@ -807,16 +815,12 @@ const channelsJson = JSON.stringify(channels);
             const vh = window.innerHeight;
             const slug = pages[pageIndex]?.[cellIndex]?.url?.split('/').pop();
 
-            // the frame is the only thing that zooms. there is deliberately no copy of the cell left behind:
-            // the real cell goes invisible right now, so nothing stands in the grid while the page grows
+            // the frame is the only thing that zooms. there is deliberately no copy of the cell left behind
             const frame = makeZoomFrame(slug);
             zoomCloneLayer.innerHTML = '';
             zoomCloneLayer.append(frame);
 
-            const pageEl = frame.querySelector('.embedded-channel') as HTMLElement | null;
             const blackEl = document.getElementById('zoom-background') as HTMLElement | null;
-
-            anchorEl.style.visibility = 'hidden';
 
             // the canvas has to be displayed before we can measure it
             zoomCanvas.style.display = 'block';
@@ -835,19 +839,19 @@ const channelsJson = JSON.stringify(channels);
             );
             const fullPos = new THREE.Vector3(
                 vw / 2 - (cr.left + cr.width / 2),
-                (cr.top + cr.height / 2) - vh / 2,
+                (cr.top + cr.height / 2) - vh / 2 + FULL_OFFSET_Y,
                 restPos.z
             );
             const restScale = group?.scale.x ?? 1;
             const fullScale = restScale * (vh / rect.height);
 
-            if (group) zoomScene.add(group); // moves it out of the main scene
-            zoomedGroup = group;
-
             zoomState = {
                 active: true,
                 dir,
                 start: -1,
+                warm: WARM_FRAMES,
+                hold: dir === 'out' ? ZOOM_OUT_HOLD_MS : 0,
+                committed: false,
                 pageIndex,
                 cellIndex,
                 cellRect: rect,
@@ -856,16 +860,31 @@ const channelsJson = JSON.stringify(channels);
                 href,
                 anchorEl,
                 frameEl: frame,
-                pageEl,
                 blackEl,
+                group,
                 restPos,
                 fullPos,
                 restScale,
                 fullScale
             };
 
-            // pose the first frame right now, otherwise there's one flash of an untransformed full-screen frame
-            renderZoom(dir === 'in' ? 0 : 1);
+            if (dir === 'out') {
+                commitZoom();
+                renderZoom(1);
+            }
+        }
+
+        // the real cell goes away and the model moves to the zoom stage
+        function commitZoom() {
+            const z = zoomState;
+            z.committed = true;
+
+            if (z.anchorEl) z.anchorEl.style.visibility = 'hidden';
+            if (z.group) zoomScene.add(z.group); // moves it out of the main scene
+            zoomedGroup = z.group;
+
+            // own layers while we fade them, so each frame doesn't repaint the whole grid
+            backgroundLayers().forEach(el => { el.style.willChange = 'opacity'; });
         }
 
         function startZoomIn(pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
@@ -904,15 +923,14 @@ const channelsJson = JSON.stringify(channels);
 
             setBackgroundOpacity(1 - dark); // cells, images, other models, arrows
             if (z.blackEl) z.blackEl.style.opacity = `${dark}`;
-            if (z.pageEl) z.pageEl.style.opacity = `${page}`;
 
-            // zoom in: the real cell is hidden from the first frame and stays hidden.
-            // zoom out: it stays hidden while the page shrinks, then comes back as the black lifts,
-            // fading in with the rest of the grid instead of popping in at the very end
             if (z.dir === 'out' && z.anchorEl) z.anchorEl.style.visibility = p <= BLACK_FULL_AT ? '' : 'hidden';
 
-            // frame: cell rect -> viewport, on the same clock as the model
             if (z.frameEl) {
+                // floor of 0.01 keeps the layer alive and painted while it's "invisible"
+                z.frameEl.style.opacity = `${Math.max(page, 0.01)}`;
+
+                // frame: cell rect -> viewport, on the same clock as the model
                 z.frameEl.style.transform =
                     `translate(${lerp(r.left, 0, p)}px, ${lerp(r.top, 0, p)}px) ` +
                     `scale(${lerp(r.width / z.viewW, 1, p)}, ${lerp(r.height / z.viewH, 1, p)})`;
@@ -929,7 +947,17 @@ const channelsJson = JSON.stringify(channels);
 
         function stepZoom(now: number) {
             const z = zoomState;
-            if (z.start < 0) z.start = now;
+
+            if (z.warm > 0) {
+                z.warm--;
+                if (z.warm === 0 && !z.committed) { // zoom in: only now does the real cell vanish
+                    commitZoom();
+                    renderZoom(0);
+                }
+                return;
+            }
+
+            if (z.start < 0) z.start = now + z.hold; // clock starts after the stalls, plus the hold on zoom out
 
             const t = clamp01((now - z.start) / ZOOM_DURATION);
             renderZoom(z.dir === 'in' ? t : 1 - t);
@@ -957,6 +985,7 @@ const channelsJson = JSON.stringify(channels);
 
             if (z.anchorEl) z.anchorEl.style.visibility = '';
             setBackgroundOpacity(1);
+            backgroundLayers().forEach(el => { el.style.willChange = ''; });
             if (z.blackEl) z.blackEl.style.opacity = '0';
             zoomCloneLayer.innerHTML = '';
             zoomCanvas.style.display = 'none';
