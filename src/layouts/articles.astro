@@ -17,7 +17,7 @@ if ( frontmatter.url ) {
   const slug = frontmatter.url.split('/').pop();
 
   for ( let i = 0; i < channels.length; i ++ ) {
-    if (channels[i].slug == slug) {
+    if (channels[i] == slug) {
       console.log("found the index:", i);
       index = i;
     }

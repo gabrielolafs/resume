@@ -1,32 +1,12 @@
 [
-    {
-        "slug": "about-me"
-    },
-    {
-        "slug": "brig-wom"
-    },
-    {
-        "slug": "aging-congress"
-    },
-    {
-        "slug": "path-finding"
-    },
-    {
-        "slug": "prorm"
-    },
-    {
-        "slug": "ipod"
-    },
-    {
-        "slug": "woo-network"
-    },
-    {
-        "slug": "donations"
-    },
-    {
-        "slug": "left-moonlander"
-    },
-    {
-        "slug": "right-moonlander"
-    }
+    "about-me",
+    "brig-wom",
+    "aging-congress",
+    "path-finding",
+    "prorm",
+    "ipod",
+    "woo-network",
+    "donations",
+    "left-moonlander",
+    "right-moonlander"
 ]

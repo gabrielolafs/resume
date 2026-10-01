@@ -17,8 +17,8 @@ function getRandomDirection() {
 const channels = Object.entries(globbed)
 .map(([filepath, mod]: [string, any]) => {
     const slug = filepath.split('/').pop()!.replace(/\.md$/, '');
-    const overrideIndex = (overrides as any[]).findIndex(o => o.slug === slug);
-    const override = (overrides as any[]).find(o => o.slug === slug);
+    const overrideIndex = (overrides as any[]).findIndex(o => o === slug);
+    const override = (overrides as any[]).find(o => o === slug);
 
     if (!override) return null;
     return {
