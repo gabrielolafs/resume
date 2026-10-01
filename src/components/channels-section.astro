@@ -6,6 +6,7 @@ import '../styles/arrows.css';
 import overrides from '../data/channels-with-order.json';
 import LoadingScreen from './loading-screen.astro';
 import EmbeddedChannel from './embedded-channel.astro';
+import LeftArrow from '../../public/svg/left-arrow.svg';
 
 const globbed = import.meta.glob('../pages/articles/*.md', { eager: true });
 
@@ -45,10 +46,6 @@ const channels = Object.entries(globbed)
 
 const channelsJson = JSON.stringify(channels);
 
-import LeftArrow from '../../public/svg/left-arrow.svg';
-
-// right below me, I want to swap over loading screen only to happen on the initial load of the page or referesh.
-// (todo: zooming) will be called whenever routing somewhere that is not itself.
 ---
 
 {channels.map((ch) => {
@@ -84,7 +81,7 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
   </button>
 </div>
 
-<script >
+<script >        
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -116,6 +113,11 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
         fadingOutEls: HTMLElement[],
         fadingInEls: HTMLElement[],
         startPos: THREE.Vector3
+    }
+
+    type Skips = {
+        page: number | null,
+        index: number | null,
     }
 
     // load the compressed 3d objects
@@ -159,10 +161,9 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
 
         const container = canvas.parentElement!;
         const allChannels = JSON.parse(canvas.dataset.channels ?? '[]');
-
         const overlay = document.getElementById('loading-overlay');
-
         let pages = buildPages(channelLayout.cpp, allChannels);
+        let pendingPage = 0;
 
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(devicePixelRatio);
@@ -217,11 +218,9 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             startPos: new THREE.Vector3()
         };
 
-        let pendingPage = 0;
-
         const cellGroups: THREE.Group[][] = [];
 
-        for (let p = 0; p < 2; p++) {
+        for (let p = 0; p < 2; p++) { // min of 2 pages, fill with blanks
             const page: THREE.Group[] = [];
             for (let i = 0; i < channelLayout.cols * channelLayout.rows; i++) {
                 const g = new THREE.Group();
@@ -231,10 +230,12 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             cellGroups.push(page);
         }
 
-        switchLayout();
+        switchLayout(true);
         setup();
+
+        const skips: Skips = startZoomOrLoading(); // shows either the loading screen if first load, shows the zooming if it is a redirect, returns index of preloaded or nulls
+        loadchannels(skips);
         updateArrows();
-        loadchannels();
 
         animFrameId = requestAnimationFrame(animate);
 
@@ -268,8 +269,25 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             if (!ch?.url) return;
 
             e.preventDefault();
-            startZoomIn(pageIndex, cellIndex, anchor, ch.url);
+            startZoomIn(pageIndex, cellIndex, anchor, anchor.href);
         });
+
+        function startZoomOrLoading() {
+            const params = new URLSearchParams(location.search);
+            let skips: Skips = { page: null, index: null };
+
+            if ( params.has('fromIndex') ) { // this came from somewhere else (routing), meaning we can zoom out working
+                const index = params.get('fromIndex');
+                let page = 0;
+                let i = 0;
+                document.getElementById('loading-overlay')?.remove();
+
+                startZoomOut(1);
+            }
+            history.replaceState(history.state, '', location.pathname + location.hash)
+
+            return skips;
+        }
 
         function buildPages(cpp: number, chs: any[]) {
             const padded = [
@@ -493,7 +511,7 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
 
 
             return `
-                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}?page=0&vp=0&i=0&j=0" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
+                <a class="channel-cell${isDefaultColor ? ' is-default-color' : ''}" href="${ch.url || '#'}" ${isDefaultColor ? `style="pointer-events: none;"` : ''}>
                     <svg viewBox="0 0 50 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M 1 3
@@ -595,7 +613,7 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             });
         }
 
-        function switchLayout() { // only have to account for the cols changing. not the rows
+        function switchLayout(initial : boolean = false) { // only have to account for the cols changing. not the rows
             const ratio = container.clientHeight / container.clientWidth;
             const newCols = ratio > 1 ? 2 : 4;
             const newCpp = newCols * channelLayout.rows;
@@ -610,14 +628,10 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             pages = buildPages(channelLayout.cpp, allChannels);
             channelLayout.page = Math.floor(firstChannelIndex / channelLayout.cpp);
 
-            teardownModels();
-
-            setup();
-            renderPageTrack();
-            layoutPageTrack();
-            updateArrows();
-
-            loadchannels();
+            if (!initial) {
+                teardownModels();
+                loadchannels();
+            }
         }
 
         // this function changes the baked lighting of an obj. it is only used for the mii, and this will be removed come animations
@@ -638,12 +652,12 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
             });
         }
 
-        function loadchannels() {
+        function loadchannels(skips : Skips = {page: null, index: null}) {
             const minWait = new Promise(resolve => setTimeout(resolve, MIN_MS_OF_LOADING_SCREEEN));
-
+            
             for (let p = 0; p < cellGroups.length; p++) {
                 for (let i = 0; i < channelLayout.cpp; i++) {
-                    loadchannel(p, i);
+                    if (skips.page != p && skips.index != i) loadchannel(p, i); // only load is not already loaded by zooming
                 }
             }
 
@@ -720,6 +734,16 @@ import LeftArrow from '../../public/svg/left-arrow.svg';
 
         function setBackgroundOpacity(value: number) {
             backgroundLayers().forEach(el => { el.style.opacity = `${value}`; });
+        }
+
+        function startZoomOut(index: number) {
+            // determine the veiwport
+            const rows = 3;
+            const cols = container.clientHeight / container.clientWidth > 1? 2 : 4;
+            const page = Math.floor((index + 1) / (rows * cols)); // int divide
+
+            console.log(rows, cols, page);
+            return;
         }
 
         function startZoomIn(pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {

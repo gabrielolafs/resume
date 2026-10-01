@@ -4,15 +4,14 @@ import '../styles/arrows.css';
 import FocusedBottomBar from '../components/focused-bottom-bar.astro';
 import WholeScreenScene from '../components/whole-screen-scene.astro';
 import LeftArrow from '../../public/svg/left-arrow.svg';
+import channels from '../data/channels-with-order.json';
+
 import { ClientRouter } from 'astro:transitions';
 
 const { frontmatter } = Astro.props;
 
-import channels from '../data/channels-with-order.json';
-
-console.log(frontmatter.url ? "true" : "false");
-
-let index = -1; // index of the article on the json file
+let index = -1; // index of the article on the json file. NOTE: not using url encoding because maybe i want to reference a 
+// specific article, that would break things or just require both, a loop through < 15 items on a json file this small is inconsiquential
 
 if ( frontmatter.url ) {
   const slug = frontmatter.url.split('/').pop();
@@ -28,7 +27,6 @@ if ( frontmatter.url ) {
 const next_slug = index != -1 && index < channels.length - 1? channels[index + 1].slug : "";
 const prev_slug = index != -1 && index > 0? channels[index - 1].slug : "";
 
-console.log(next_slug, prev_slug);
 ---
 <html lang="en">
   <head>
@@ -88,6 +86,6 @@ console.log(next_slug, prev_slug);
     <article>
       <slot /> 
     </article>
-    {frontmatter.dateWritten && <FocusedBottomBar />}
+    {frontmatter.dateWritten && <FocusedBottomBar fromIndex={index} />}
   </body>
 </html>

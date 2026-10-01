@@ -1,6 +1,9 @@
 ---
 import '../styles/focused-bottom-bar.css';
 import WiiButton from './wii-button.astro';
+
+const { fromIndex } = Astro.props;
+
 ---
 
 <div class="focused-bottom-container">
@@ -10,7 +13,7 @@ import WiiButton from './wii-button.astro';
         </svg>
     </div>
     <div class="buttons">
-        <WiiButton href="/">Home</WiiButton>
+        <WiiButton href={fromIndex !=null ? "/?fromIndex=" + fromIndex : "/"}>Home</WiiButton>
         <WiiButton onclick="window.toggleCrt()">Toggle CRT</WiiButton>
     </div>
 </div>
