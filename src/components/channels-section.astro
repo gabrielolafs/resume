@@ -25,17 +25,17 @@ const channels = Object.entries(globbed)
         order: overrideIndex,
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
-        scanDir: override.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
-        animationSvg: override.animationSvgDir ? override.animationSvgDir : `/svg/mask-star.svg`,
-        animationSvgDimentions: override.animationSvgDimentions ? override.animationSvgDimentions : [90.45, 43.61], // default to size of mask-star.svg. this could have its own json with options if i get around to making more default svgs
-        imgPaths: override.imgPaths ? override.imgPaths : [],
+        scanDir: mod.frontmatter.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
+        animationSvg: mod.frontmatter.animationSvgDir ? mod.frontmatter.animationSvgDir : `/svg/mask-star.svg`,
+        animationSvgDimentions: mod.frontmatter.animationSvgDimentions ?? [90.45, 43.61], // default to size of mask-star.svg. this could have its own json with options if i get around to making more default svgs
+        imgPaths: mod.frontmatter.imgPaths ? mod.frontmatter.imgPaths : [],
         model:   { 
-            position: override.model?.position ?? [0,0,0], 
-            baseRotation: override.model?.baseRotation ?? [0,5,0],
-            color: override.color ?? [250,250,250],
-            animatedRotation: override.model?.animatedRotation ?? [1,1,0], 
-            scale: override.model?.scale ?? 1,
-            direction: override.model?.direction ?? getRandomDirection(),
+            position: [0,0,0], // normalized in blender
+            baseRotation: mod.frontmatter.model?.baseRotation ?? [0,5,0],
+            color: mod.frontmatter.color ?? [250,250,250],
+            animatedRotation: mod.frontmatter.animatedRotation ?? [1,1,0], 
+            scale: mod.frontmatter.scale ?? 1,
+            direction: mod.frontmatter.direction ?? getRandomDirection(),
             salt: Math.random(), 
             saltBounce: Math.random()
         }, 
@@ -153,10 +153,10 @@ const channelsJson = JSON.stringify(channels);
     // the zoom waits WARM_FRAMES rendered frames before anything moves, so shader compiles, texture uploads and the
     // first paint of the frame land while nothing is animating. zoom out then holds on its first pose (it looks like
     // the page you just left) for ZOOM_OUT_HOLD_MS before it starts shrinking
-    const WARM_FRAMES = 3;
+    const WARM_FRAMES = 1;
     const ZOOM_OUT_HOLD_MS = 50;
     // both webgl canvases are full screen + antialiased, and phones are 3x. cap it (set to 3 to undo)
-    const MAX_PIXEL_RATIO = 2;
+    const MAX_PIXEL_RATIO = 1;
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
     const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);

@@ -1,9 +1,13 @@
 ---
 layout: ../../layouts/articles.astro
+
 title: De-Natured Path Finding
 dateWritten: May 2026
 timeSpan: March 2026 - May 2026
 tech: [Graph Traversal, Python, OOP, MainsailOS, Klipper, CoreXY]
+
+color: [250, 200, 25]
+imgPaths: ["/img/channel/path_finding_01.webp", "/img/channel/path_finding_03.webp", "/img/channel/path_finding_02.webp"]
 ---
 
 A RasPi with MainsailOS running a python script to control the movement of CoreXY configured stepper motors. Powered by a Dewalt drill battery

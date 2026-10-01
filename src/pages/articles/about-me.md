@@ -1,8 +1,16 @@
 ---
 layout: ../../layouts/articles.astro
+
 title: About Mii
 dateWritten: August 2026
 timeSpan: 2003 - Current
+
+color: [250, 200, 25]
+model: {
+    baseDir: /scans/mii,
+    baseRotation": [0.1, 3.8, 0],
+    direction: -1
+}
 ---
 
 <div class="video">

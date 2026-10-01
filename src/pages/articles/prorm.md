@@ -4,6 +4,16 @@ title: PRORM
 dateWritten: Jun 2026
 timeSpan: 2019 - present
 tech: [Docker, API Server, PC build, VNC, TTS]
+
+animationSvgDir: /svg/mask-gpu.svg
+
+animationSvgDimentions: [240, 79]
+color: [160,32,240]
+model: {
+    baseDir: "/scans/prorm2",
+    baseRotation: [0.1, 0.0, 0],
+    direction: -1
+}
 ---
 
 A gaming PC I built turned into dedicated windows remote work horse and operating as an API endpoint using Docker to convert text to audio

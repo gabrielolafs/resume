@@ -1,9 +1,14 @@
 ---
 layout: ../../layouts/articles.astro
+
 title: Aging Congress
 dateWritten: June 2026
 timeSpan: April 2026 - May 2026
 tech: ['Svelt', 'Data Aggregation', 'JSON Parsing', 'ETL']
+
+color: [138, 90, 21]
+imgPaths: ["/img/channel/aging_01.webp", "/img/channel/aging_02.webp", "/img/channel/aging_03.webp"]
+    
 ---
 
 Data Visualization project between 3 people. My responsibilities were data collection + cleaning, the style of the main visualization, and the interactive timeline.  
