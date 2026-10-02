@@ -24,8 +24,8 @@ if ( frontmatter.url ) {
   }
 }
 
-const next_slug = index != -1 && index < channels.length - 1? channels[index + 1].slug : "";
-const prev_slug = index != -1 && index > 0? channels[index - 1].slug : "";
+const next_slug = index != -1 && index < channels.length - 1? channels[index + 1] : "";
+const prev_slug = index != -1 && index > 0? channels[index - 1] : "";
 
 ---
 <html lang="en">

@@ -21,30 +21,23 @@ function backgroundLayers(s: Stage): HTMLElement[] {
         document.getElementById('page-track'),
         document.getElementById('arrow-prev'),
         document.getElementById('arrow-next'),
-        document.getElementById('bottom-container')
+        document.getElementById('bottom-container'),
+        document.getElementById('arrow-prev'),
+        document.getElementById('arrow-next')
     ].filter(Boolean) as HTMLElement[];
 }
 
-// the subset that is also magnified along with the clicked cell. the canvas holds the other models, the
-// track holds the other cells, and the bottom bar is part of the same "world" the glass is zooming into.
-// they all get the exact same transform, so each model stays glued to its cell and the bar slides down
-// and off the screen at the same rate as the row of cells above it. only the arrows just fade
+// every id that should be effected by the zooming
 function magnifiedLayers(s: Stage): HTMLElement[] {
     return [
         s.canvas,
         document.getElementById('page-track'),
-        document.getElementById('bottom-container')
+        document.getElementById('bottom-container'),
+        document.getElementById('arrow-prev'),
+        document.getElementById('arrow-next')
     ].filter(Boolean) as HTMLElement[];
 }
 
-// setBackgroundZoom is written as if every layer scales from the viewport's top left corner. only the
-// canvas and the track actually sit there, the bottom bar is pinned to the bottom, so each layer gets its
-// own transform-origin that points at the viewport's top left, wherever the layer itself is.
-//
-// the origin is measured from the layer's top left corner as laid out, with no transform of its own. the
-// rect we can read includes that transform, so back out its translation (the track has a translateX from
-// layoutPageTrack, and a bar centered with translateX(-50%) would too). only works for translate-only
-// transforms, which is all any of these should have
 function viewportOrigin(el: HTMLElement): string {
     const r = el.getBoundingClientRect();
     const t = getComputedStyle(el).transform;
@@ -56,13 +49,6 @@ function setBackgroundOpacity(s: Stage, value: number) {
     backgroundLayers(s).forEach(el => { el.style.opacity = `${value}`; });
 }
 
-// the magnifying glass. this is the same map the frame uses: identity at p = 0, and at p = 1 the
-// clicked cell's rect covers the viewport. everything else in the grid rides along with it, so the
-// neighbours slide outward and off the screen while the clicked cell fills it.
-//
-// uses the individual `translate` and `scale` css properties instead of `transform`, because they
-// stack on top of whatever `transform` layoutPageTrack already put on the track instead of replacing it.
-// with transform-origin 0 0 that comes out as: screenX' = tx + sx * screenX
 function setBackgroundZoom(s: Stage, p: number) {
     const z = s.zoom.state;
     const r = z.cellRect;
@@ -434,7 +420,6 @@ function finishZoom(s: Stage) {
 
         // TEMP DEBUG: should now be ~0, 0
         const after = model && screenCenter(s.main, model);
-        if (before && after) console.log('handoff dx', after[0] - before[0], 'dy', after[1] - before[1]);
     }
     s.zoom.stagedGroup = null;
 
