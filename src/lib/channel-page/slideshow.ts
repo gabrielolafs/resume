@@ -1,18 +1,4 @@
-// src/lib/slideshow.ts
-//
-// Crossfade slideshow whose phase can be read from one copy and applied to another.
-//
-// Model: one shared clock T in [0, total). Image i is "current" while T is in
-// [i * perImage, (i + 1) * perImage). Every layer runs the same keyframes, offset by a
-// negative delay so that layer i's own clock reads (T - i * perImage). Layer 0's clock is
-// therefore always T itself, which is what readSlideState() looks at.
-
-export interface SlideState {
-    index: number;    // image that is current
-    offset: number;   // seconds into that image's slot (use 0 if all you know is the index)
-    perImage: number; // seconds per image, so a copy can't disagree about the timing
-    at: number;       // performance.now() when read, so the receiver can account for any delay
-}
+import type { SlideState } from "./types";
 
 const FADE = 0.15; // share of a slot spent crossfading
 
