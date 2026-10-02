@@ -92,27 +92,29 @@ canvas {
   font-size: clamp(10px, 3.5dvw, 30px); /* todo: this is not the best. needs some testing on mobile + other devices before commiting to another prod push */
 }
 
-.page-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    background: none;
-    border: none;
-    font-size: 3rem;
-    cursor: pointer;
+#zoom-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 99;
 }
 
-.page-arrow.left {
-    left: 1rem;
-    height: 100px;
-    width: 50px;
+#zoom-clone-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.page-arrow.right {
-    right: 1rem;
-    height: 100px;
-    width: 50px;
-    transform: translateY(-50%) scaleX(-1);
+#zoom-background {
+  opacity: 0; 
+  background: black; 
+  z-index: 0; 
+  height: 100dvh; 
+  width: 100dvw; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  pointer-events: none;
 }
-

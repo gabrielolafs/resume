@@ -1,5 +1,8 @@
 ---
 import '../styles/articles.css';
+import FocusedBottomBar from '../components/focused-bottom-bar.astro';
+
+const { title, dateWritten, timeSpan, index = -1 } = Astro.props;
 ---
 <style>
   .embedded-channel {
@@ -9,12 +12,10 @@ import '../styles/articles.css';
     inset: 0;
     z-index: 1;
     background-color: var(--wii-background);
-    /* background-color: black; */
     opacity: 0;
-  }
 
-  .waiste-space {
-    height: 80%;
+    box-sizing: border-box; /* needed so the padding doesn't overflow the 100% size */
+    padding: 5% 5% 0 5%;
   }
 
   .mini-vignette {
@@ -22,19 +23,23 @@ import '../styles/articles.css';
     height: 100%;
     width: 100%;
     inset: 0;
+    pointer-events: none;
   }
 </style>
 
 <div class="embedded-channel">
-  <div class="waiste-space">
-    <!-- ipod modding -->
-  </div>  
-
-  <div class="coloring">
-      <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" overflow="visible" viewBox="0 0 24 24">
-          <path fill="var(--background-color)" stroke="var(--wii-blue-darker)" stroke-width=".3" vector-effect="non-scaling-stroke" d="M-1 1 Q12 0.6 25 1 L25 25 L-1 25 Z"></path>
-      </svg>
+  <div class="top">
+    <div class="title">
+      <h1>{title}</h1>
+    </div>
+    <div class="timeline">
+      {dateWritten && <p><b>Written:</b> {dateWritten}</p>}
+      {timeSpan && <p><b>Active:</b> {timeSpan}</p>}
+    </div>
   </div>
+
+  <FocusedBottomBar fromIndex={index} />
+
   <div class="mini-vignette">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="100%" height="100%" preserveAspectRatio="none">
       <filter id="blurMe">
@@ -47,4 +52,3 @@ import '../styles/articles.css';
     </svg>
   </div>
 </div>
-

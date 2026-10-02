@@ -5,6 +5,13 @@ title: 'Left Moonlander'
 dateWritten: 'Jan 2025'
 timeSpan: 'Feb 2024 - Now'
 techStack: [VIM, NeoVIM, CTS (prevention)]
+
+color: [99,159,189]
+model: {
+    baseDir: /scans/left-moonlander,
+    baseRotation: [0.8, 4.4, 0],
+    direction: -1
+}
 ---
 
 My main keyboard and the reason I got it. Configured with VIM in mind, both giving VIM shortcuts outside of VIM and configurations specifically for NeoVIM as I have been using this IDE more and more

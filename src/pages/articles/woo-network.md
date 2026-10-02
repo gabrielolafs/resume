@@ -1,9 +1,19 @@
 ---
 layout: ../../layouts/articles.astro
+
 title: WPI Home Lab
 dateWritten: Jan 2026
 timeSpan: Aug 2024 - May 2026
 tech: [Ubiquiti, Pi-hole, Ubuntu Server, DNS, Self-Host]
+
+animationSvgDir: /svg/mask-internet.svg
+animationSvgDimentions: [120, 44]
+color: [0,180,0]
+model: {
+    baseDir: /scans/woo-network,
+    baseRotation: [0.1, 3.8, 0],
+    direction: -1
+}
 ---
 
 Network configuration of my Worcester apartment

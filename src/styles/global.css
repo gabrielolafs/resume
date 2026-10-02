@@ -38,23 +38,21 @@
 
   --letter-fill: #fae289;
   --letter-outline: #e8b93a;
-  /* --letter-outline: #e9e5d6; */
   overscroll-behavior-y: none;
 }
 
-/* i found like the exact the font. I am so happy */
 @font-face {
   font-family: 'Contb';
-  src: url('../fonts/contb.ttf') format('woff2');
+  src: url('../fonts/contl_2.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Contm';
-  src: url('../fonts/contm.ttf') format('woff2');
+  src: url('../fonts/contl_2.ttf') format('woff2');
   font-weight: normal;
-  font-style: normal;
+  font-style: normal; 
 }
 
 @font-face {

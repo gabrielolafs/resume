@@ -1,6 +1,15 @@
 ---
 import '../styles/global.css';
 ---
+<style>
+    @keyframes blink_text {
+        0% { opacity: 0; }
+        45% { opacity: 0; }
+        45% { opacity: 1; }
+        55% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>
 
 <div id="loading-overlay" style="
     position: fixed;
@@ -38,18 +47,32 @@ import '../styles/global.css';
         <br/>
         <br/>
         <p style={{color: "white", fontSize: "20px"}}>Also within the webpage or at</p>
-        <a href="/pdf/gabriel_olafsson_resume.pdf" target="_blank" style={{color: "var(--wii-blue)", fontSize: "20px", textDecoration: "underline"}}>/pdf/gabriel_olafsson_resume.pdf</a>
+        <br/>
+        <a href="/pdf/gabriel_olafsson_resume.pdf" target="_blank" style={{color: "rgb(129, 159, 212)", fontSize: "20px", textDecoration: "none"}}>/pdf/gabriel_olafsson_resume.pdf</a>
     </div>
     <div style="
         position: absolute;
-        bottom: 10vh;
+        bottom: 1vh;
         width: 100%;
         text-align: center;
         color: white;
         margin: 0;
     ">
-        <p style={{color: "white", fontSize: "35px"}}>@Gabriel Olafsson 2026</p>
+        <p style={{color: "white", fontSize: "15px"}}>@Gabriel Olafsson 2026</p>
     </div>
+     
+    <div style="
+        position: absolute;
+        bottom: 15vh;
+        width: 100%;
+        text-align: center;
+        color: white;
+        margin: 0;
+        animation: blink_text 4s ease-in-out infinite;
+    ">
+        <p style={{color: "white", fontSize: "35px"}}>Press any thing to continue.</p>
+    </div>
+
     <div style="
         position: absolute;
         top: 110dvh;
@@ -70,3 +93,33 @@ import '../styles/global.css';
             of you as treating you as human. You are not. You will never be. You will never think. You will never be. </p>
     </div>
 </div>
+
+<script>
+    const overlay = document.getElementById('loading-overlay');
+
+    function dismiss() {
+        if (!overlay) return;
+
+        overlay.removeEventListener('click', onClick);
+        window.removeEventListener('keydown', onKeyDown);
+
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+
+        overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+        setTimeout(() => overlay.remove(), 1000);
+    }
+
+    function onClick(e: MouseEvent) {
+        if ((e.target as HTMLElement).closest('a')) return;
+        dismiss();
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Enter' && document.activeElement?.closest('a')) return;
+        dismiss();
+    }
+
+    overlay?.addEventListener('click', onClick);
+    window.addEventListener('keydown', onKeyDown);
+</script>

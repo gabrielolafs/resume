@@ -5,6 +5,15 @@ title: 'iPod Modding'
 dateWritten: 'Jan 2025'
 timeSpan: 'Feb 2024 - Now'
 tech: [iFlash, Hardware Modding, Hardware Repair, Storage Upgrade]
+
+animationSvgDir: /svg/mask-ipod.svg
+animationSvgDimentions: [36, 15.833333]  
+color: [255, 204, 0]
+model: {
+    baseDir: /scans/ipod,
+    scale: 1,
+    direction: -1
+}
 ---
 
 I like iPods and I like to mess with hardware from time to time

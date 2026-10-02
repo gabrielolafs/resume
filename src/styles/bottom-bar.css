@@ -1,9 +1,6 @@
 .bottom-container {
   --edge-w: max(60px, 20%);
   --curve-w: 12vmin;
-  /* --bar-size: max(25dvw, 50dvh);
-  --shadow-weight: calc(var(--bar-size) * 0.08); */
-
   --bar-size: min(25dvw, 20dvh);
   --shadow-weight: clamp(10px, calc(var(--bar-size) * 0.08), 12px);
   --shadow-blur: clamp(8px, calc(var(--bar-size) * 0.3), 100px);

@@ -9,14 +9,16 @@ export default defineConfig({
   },
 
   markdown: {
-  rehypePlugins: [
-    [
-      rehypeExternalLinks,
-      {
-        target: '_blank',
-        rel: ['noopener', 'noreferrer'],
-      },
+    rehypePlugins: [
+      [
+        rehypeExternalLinks,
+        {
+          target: '_blank',
+          rel: ['noopener', 'noreferrer'],
+        },
+      ],
     ],
-  ],
-},
+  },
+
+  build: { inlineStylesheets: 'always' },
 });

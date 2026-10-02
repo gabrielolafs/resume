@@ -1,9 +1,13 @@
 ---
 layout: ../../layouts/articles.astro
+
 title: Donations
 dateWritten: January 2026
 timeSpan: April 2024
 tech: [stem cells, baldness, blood]
+
+color: [250, 200, 25]
+imgPaths: [/img/channel/donate.webp, /img/channel/donate.webp]
 ---
 
 <hr/>
