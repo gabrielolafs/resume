@@ -1,4 +1,5 @@
-import { Vector3 } from 'three';
+import { Box3, Vector3 } from 'three';
+import type { Object3D } from 'three';
 import { navigate } from 'astro:transitions/client';
 import { applySlideState, readSlideState } from './slideshow';
 import {
@@ -9,11 +10,11 @@ import { layoutPageTrack, updateArrows } from './layout';
 import { cellWorldX, pageStride } from './metrics';
 import { loadchannel } from './models';
 import type { Skips, Stage, ZoomDir } from './types';
-import { Box3 } from 'three';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
+// everything that fades during the zoom
 function backgroundLayers(s: Stage): HTMLElement[] {
     return [
         s.canvas,
@@ -24,13 +25,73 @@ function backgroundLayers(s: Stage): HTMLElement[] {
     ].filter(Boolean) as HTMLElement[];
 }
 
+// the subset that is also magnified along with the clicked cell. the canvas holds the other models, the
+// track holds the other cells, and the bottom bar is part of the same "world" the glass is zooming into.
+// they all get the exact same transform, so each model stays glued to its cell and the bar slides down
+// and off the screen at the same rate as the row of cells above it. only the arrows just fade
+function magnifiedLayers(s: Stage): HTMLElement[] {
+    return [
+        s.canvas,
+        document.getElementById('page-track'),
+        document.getElementById('bottom-container')
+    ].filter(Boolean) as HTMLElement[];
+}
+
+// setBackgroundZoom is written as if every layer scales from the viewport's top left corner. only the
+// canvas and the track actually sit there, the bottom bar is pinned to the bottom, so each layer gets its
+// own transform-origin that points at the viewport's top left, wherever the layer itself is.
+//
+// the origin is measured from the layer's top left corner as laid out, with no transform of its own. the
+// rect we can read includes that transform, so back out its translation (the track has a translateX from
+// layoutPageTrack, and a bar centered with translateX(-50%) would too). only works for translate-only
+// transforms, which is all any of these should have
+function viewportOrigin(el: HTMLElement): string {
+    const r = el.getBoundingClientRect();
+    const t = getComputedStyle(el).transform;
+    const m = t && t !== 'none' ? new DOMMatrix(t) : new DOMMatrix();
+    return `${-(r.left - m.m41)}px ${-(r.top - m.m42)}px`;
+}
+
 function setBackgroundOpacity(s: Stage, value: number) {
     backgroundLayers(s).forEach(el => { el.style.opacity = `${value}`; });
+}
+
+// the magnifying glass. this is the same map the frame uses: identity at p = 0, and at p = 1 the
+// clicked cell's rect covers the viewport. everything else in the grid rides along with it, so the
+// neighbours slide outward and off the screen while the clicked cell fills it.
+//
+// uses the individual `translate` and `scale` css properties instead of `transform`, because they
+// stack on top of whatever `transform` layoutPageTrack already put on the track instead of replacing it.
+// with transform-origin 0 0 that comes out as: screenX' = tx + sx * screenX
+function setBackgroundZoom(s: Stage, p: number) {
+    const z = s.zoom.state;
+    const r = z.cellRect;
+    const kx = z.viewW / r.width;
+    const ky = z.viewH / r.height;
+
+    const sx = lerp(1, kx, p);
+    const sy = lerp(1, ky, p);
+    const tx = -r.left * kx * p;
+    const ty = -r.top * ky * p;
+
+    magnifiedLayers(s).forEach(el => {
+        el.style.translate = `${tx}px ${ty}px`;
+        el.style.scale = `${sx} ${sy}`;
+    });
+}
+
+function clearBackgroundZoom(s: Stage) {
+    magnifiedLayers(s).forEach(el => {
+        el.style.translate = '';
+        el.style.scale = '';
+        el.style.transformOrigin = '';
+    });
 }
 
 // in case we navigated back here mid-fade from a previous zoom
 export function resetZoomStage(s: Stage) {
     setBackgroundOpacity(s, 1);
+    clearBackgroundZoom(s);
     s.zoom.canvas.style.display = 'none';
 }
 
@@ -127,16 +188,27 @@ function beginZoom(s: Stage, dir: ZoomDir, pageIndex: number, cellIndex: number,
     s.zoom.canvas.style.display = 'block';
 
     // model endpoints. rest = in the cell, full = centered on the viewport.
-    // world units are css px, so the full position comes from where the zoom canvas
-    // actually sits on screen rather than assuming world (0, 0) is the viewport's center
+    // world units are css px, so positions come from where the canvases actually sit on screen
+    // rather than assuming world (0, 0) is the same screen point on both of them
     const group = s.cellGroups[pageIndex]?.[cellIndex] ?? null;
     const offset = s.layout.page * pageStride(s);
     const cr = s.zoom.canvas.getBoundingClientRect();
+    const mr = s.main.renderer.domElement.getBoundingClientRect();
 
-    const restPos = new Vector3(
+    // where the group sits in the MAIN scene. this is what gets handed back at the end
+    const mainPos = new Vector3(
         cellWorldX(s, pageIndex, cellIndex, offset),
         group?.position.y ?? 0,
         group?.position.z ?? 0
+    );
+
+    // the same screen point, expressed in the ZOOM scene. if the two canvases don't share a center
+    // (different height, an offset, a scrollbar) then world (x, y) lands on a different pixel in each,
+    // and copying main's position straight over leaves the model a few px off after the handoff
+    const restPos = new Vector3(
+        mainPos.x + (mr.left + mr.width / 2) - (cr.left + cr.width / 2),
+        mainPos.y + (cr.top + cr.height / 2) - (mr.top + mr.height / 2),
+        mainPos.z
     );
     const fullPos = new Vector3(
         vw / 2 - (cr.left + cr.width / 2),
@@ -164,6 +236,7 @@ function beginZoom(s: Stage, dir: ZoomDir, pageIndex: number, cellIndex: number,
         blackEl,
         chromeEl: chrome,
         group,
+        mainPos,
         restPos,
         fullPos,
         restScale,
@@ -187,6 +260,15 @@ function commitZoom(s: Stage) {
 
     // own layers while we fade them, so each frame doesn't repaint the whole grid
     backgroundLayers(s).forEach(el => { el.style.willChange = 'opacity'; });
+
+    // the magnified ones also move. measure every pivot first, nothing has been transformed yet,
+    // then write, so the reads don't see each other's changes
+    const layers = magnifiedLayers(s);
+    const origins = layers.map(viewportOrigin);
+    layers.forEach((el, i) => {
+        el.style.transformOrigin = origins[i];
+        el.style.willChange = 'opacity, transform';
+    });
 }
 
 function startZoomIn(s: Stage, pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
@@ -272,6 +354,7 @@ function renderZoom(s: Stage, p: number) {
         `scale(${lerp(r.width / z.viewW, 1, p)}, ${lerp(r.height / z.viewH, 1, p)})`;
 
     setBackgroundOpacity(s, 1 - dark); // cells, images, other models, arrows
+    setBackgroundZoom(s, p);           // cells, other models: magnified around the clicked cell, same clock
     if (z.blackEl) z.blackEl.style.opacity = `${dark}`;
 
     if (z.dir === 'out' && z.anchorEl) z.anchorEl.style.visibility = p <= BLACK_FULL_AT ? '' : 'hidden';
@@ -318,6 +401,7 @@ export function stepZoom(s: Stage, now: number) {
 
     if (t >= 1) finishZoom(s);
 }
+
 // TEMP DEBUG
 function screenCenter(rig: Pick<Stage['main'], 'renderer' | 'camera'>, model: Object3D): [number, number] {
     model.updateWorldMatrix(true, true);
@@ -331,6 +415,7 @@ function finishZoom(s: Stage) {
     z.active = false;
 
     if (z.dir === 'in') {
+        // leave the grid magnified and faded: we're navigating away, and resetZoomStage cleans up if we come back
         s.zoom.stagedGroup = null;
         navigate(z.href);
         return;
@@ -339,27 +424,23 @@ function finishZoom(s: Stage) {
     // zoom out: hand the model back to the normal scene and put everything back the way it was
     const staged = s.zoom.stagedGroup;
     if (staged) {
-        staged.position.copy(z.restPos);
+        // TEMP DEBUG: measure BEFORE the handoff, while it's still on the zoom stage at p = 0
+        const model = staged.children.find(c => !c.userData.isBackground);
+        const before = model && screenCenter(s.zoom, model);
+
+        staged.position.copy(z.mainPos); // main scene coordinates, not the zoom scene's restPos
         staged.scale.setScalar(z.restScale);
         s.main.scene.add(staged);
+
+        // TEMP DEBUG: should now be ~0, 0
+        const after = model && screenCenter(s.main, model);
+        if (before && after) console.log('handoff dx', after[0] - before[0], 'dy', after[1] - before[1]);
     }
     s.zoom.stagedGroup = null;
-    // in finishZoom, zoom-out path
-    if (staged) {
-        const model = staged.children.find(c => !c.userData.isBackground);
-        const before = model && screenCenter(s.zoom, model);   // zoom stage, p = 0
-
-        staged.position.copy(z.restPos);
-        staged.scale.setScalar(z.restScale);
-        s.main.scene.add(staged);
-
-        const after = model && screenCenter(s.main, model);    // main stage, same frame
-        if (before && after) console.log('handoff dx', after[0] - before[0], 'dy', after[1] - before[1]);
-        console.log('restPos.y', z.restPos.y, 'page y values', s.cellGroups[z.pageIndex].map(g => Math.round(g.position.y)));
-    }
 
     if (z.anchorEl) z.anchorEl.style.visibility = '';
     setBackgroundOpacity(s, 1);
+    clearBackgroundZoom(s);
     backgroundLayers(s).forEach(el => { el.style.willChange = ''; });
     if (z.blackEl) z.blackEl.style.opacity = '0';
     if (z.chromeEl) {

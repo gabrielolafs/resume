@@ -39,6 +39,7 @@ export interface ZoomState {
     warm: number;                 // frames to wait, with nothing visibly moving, before the clock may start
     hold: number;                 // ms to sit on the first pose once the clock starts (zoom out)
     committed: boolean;           // the real cell is hidden and the model has moved to the zoom stage
+    mainPos: Vector3;
     restPos: Vector3;             // model endpoints: sitting in the cell (p = 0)
     fullPos: Vector3;             // ...and full screen (p = 1)
     restScale: number;
