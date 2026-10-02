@@ -81,6 +81,8 @@ const channelsJson = JSON.stringify(channels);
     import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
     import { navigate } from 'astro:transitions/client';
+    import { slideshowMarkup, readSlideState, applySlideState, type SlideState } from '../lib/slideshow';
+
 
     type FlipState = {
         active: Boolean,
@@ -479,7 +481,6 @@ const channelsJson = JSON.stringify(channels);
                 `;
         }
 
-        // experimenting with different timing from the salt, not 100% sold atm. maybe if i can get some ts that reads the size of the images and uses that to have
         function buildChannelSection( salt: number, title: string, animationSvg: string, svgDimentions: number[] | undefined, imgPaths: string[] ) {
             const slug = title.replaceAll(/[^a-zA-Z0-9\-._~]/g, "_"); // all url un safe chars
             const highlightedTitle = `
@@ -508,46 +509,8 @@ const channelsJson = JSON.stringify(channels);
                         </div>` + highlightedTitle;
             }
 
-            // images present crossfade slideshow
-            const perImageDuration = 4 + salt;
-            const totalDuration = perImageDuration * imgPaths.length;
-            const slot = 100 / imgPaths.length;
-            const fadeEdge = slot * 0.15;
-
-            const layers = imgPaths.map((path, i) => {
-                const delay = -(i * perImageDuration);  // negative delay pre-offsets each image into its own slot
-                return `<img
-                            src="${path}"
-                            class="fade-layer"
-                            style="animation: fade_${slug} ${totalDuration}s ease-in-out infinite; animation-delay: ${delay}s;"
-                        />`;
-            }).join("");
-
-            return `<style>
-                        @keyframes fade_${slug} {
-                            0% { opacity: 1; }
-                            ${slot - fadeEdge}% { opacity: 1; }
-                            ${slot}% { opacity: 0; }
-                            ${100 - fadeEdge}% { opacity: 0; }
-                            100% { opacity: 1; }
-                        }
-                        .fade-stack {
-                            position: relative;
-                            width: 100%;
-                            height: 100%;
-                        }
-                        .fade-layer {
-                            position: absolute;
-                            inset: 0;
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                            opacity: 0;
-                        }
-                    </style>
-                    <div class="fade-stack">
-                        ${layers}
-                    </div>` + highlightedTitle;
+            // images present: crossfade slideshow (timing, ordering and phase live in lib/slideshow.ts)
+            return slideshowMarkup(slug, imgPaths, 4 + salt) + highlightedTitle;
         }
 
         // note: the embedded channel no longer lives in every cell. the zoom builds one full-size frame
@@ -812,7 +775,7 @@ const channelsJson = JSON.stringify(channels);
             return frame;
         }
 
-        function makeChromeLayer(anchorEl: HTMLElement, rect: DOMRect): HTMLElement {
+        function makeChromeLayer(anchorEl: HTMLElement, rect: DOMRect, pageIndex: number, cellIndex: number): HTMLElement {
             const vw = window.innerWidth, vh = window.innerHeight;
 
             const layer = document.createElement('div');
@@ -829,6 +792,12 @@ const channelsJson = JSON.stringify(channels);
             // the whole cell: yellow svg, .grid-wrap (drifting pattern, names), top mask + outline
             const clone = anchorEl.cloneNode(true) as HTMLElement;
             clone.removeAttribute('href');
+
+            // cloneNode restarts every css animation, which is why the slideshow always showed image 0.
+            // read where the live cell's slideshow is and stamp it onto the clone before it's inserted
+            const slide = readSlideState(anchorEl);
+            if (slide) applySlideState(clone, slide);
+
             Object.assign(clone.style, {
                 position: 'absolute', top: '0', left: '0', margin: '0',
                 width: `${rect.width}px`, height: `${rect.height}px`,
@@ -837,28 +806,12 @@ const channelsJson = JSON.stringify(channels);
                 visibility: 'visible'
             });
 
-            // the frame carries the sub page, so hide (don't remove) the cell's copy.
-            // hiding keeps the element order identical to the original, which syncAnimations relies on
+            // the frame carries the sub page, so hide (don't remove) the cell's copy
             const embedded = clone.querySelector<HTMLElement>('.embedded-channel');
             if (embedded) embedded.style.display = 'none';
 
             layer.append(clone);
             return layer;
-        }
-
-        function syncAnimations(from: Element, to: Element) {
-            const a = [from, ...from.querySelectorAll('*')];
-            const b = [to, ...to.querySelectorAll('*')];
-            a.forEach((el, i) => {
-                const twin = b[i];
-                if (!twin) return;
-                const dst = twin.getAnimations();
-                el.getAnimations().forEach(src => {
-                    if (!(src instanceof CSSAnimation)) return;
-                    const match = dst.find(d => d instanceof CSSAnimation && d.animationName === src.animationName);
-                    if (match) match.currentTime = src.currentTime;
-                });
-            });
         }
 
         function placeBehindModels(chrome: HTMLElement) {
@@ -878,7 +831,7 @@ const channelsJson = JSON.stringify(channels);
 
             // the frame is the only thing that zooms. there is deliberately no copy of the cell left behind
             const frame = makeZoomFrame(slug);  
-            const chrome = makeChromeLayer(anchorEl, rect);
+            const chrome = makeChromeLayer(anchorEl, rect, pageIndex, cellIndex);
             zoomCloneLayer.innerHTML = '';
             zoomCloneLayer.append(frame);
             placeBehindModels(chrome);
@@ -1067,13 +1020,27 @@ const channelsJson = JSON.stringify(channels);
 
         function renderPageTrack() {
             const track = document.getElementById('page-track')!;
+
+            // snapshot every live slideshow, keyed by channel url, before the cells are thrown away
+            const saved = new Map<string, SlideState>();
+            track.querySelectorAll<HTMLAnchorElement>('.channel-cell').forEach(a => {
+                const s = readSlideState(a);
+                if (s) saved.set(a.getAttribute('href') ?? '', s);
+            });
+
             track.innerHTML = pages.map((pageChannels, p) => `
-                 <div class="channel-grid channel-page" data-page="${p}"
-                     style="grid-template-columns:repeat(${channelLayout.cols}, 1fr); grid-template-rows:repeat(${channelLayout.rows}, 1fr);">
-                     ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
-                 </div>
-             `).join('');
+                <div class="channel-grid channel-page" data-page="${p}"
+                    style="grid-template-columns:repeat(${channelLayout.cols}, 1fr); grid-template-rows:repeat(${channelLayout.rows}, 1fr);">
+                    ${pageChannels.map((ch: any) => cellMarkup(ch)).join('')}
+                </div>
+            `).join('');
             pageEls = Array.from(track.querySelectorAll('.channel-page'));
+
+            // put each slideshow back where it was, in the same task, before the first paint
+            track.querySelectorAll<HTMLAnchorElement>('.channel-cell').forEach(a => {
+                const s = saved.get(a.getAttribute('href') ?? '');
+                if (s) applySlideState(a, s);
+            });
         }
 
         function layoutPageTrack(offset?: number) {
