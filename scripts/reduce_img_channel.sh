@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-IMG_DIR="$SCRIPT_DIR/../public/img/chanel"
+IMG_DIR="$SCRIPT_DIR/../public/img/channel"
 MAGICK="$SCRIPT_DIR/../bin/magick"
 
 MAX_SIZE=20000
