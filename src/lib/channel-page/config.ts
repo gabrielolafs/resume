@@ -3,8 +3,8 @@ export const FLIP_DURATION = 600;  // ms, page turn
 export const ZOOM_DURATION = 600;  // ms
 
 // zoom timeline (0..1): grid -> black, then black -> sub page
-export const BLACK_FULL_AT = 0.5;
-export const PAGE_FADE_FROM = 0.5;
+export const BLACK_FULL_AT = 0.4;
+export const PAGE_FADE_FROM = 0.3;
 export const PAGE_FADE_TO = 1;
 
 // mobile smoothness.

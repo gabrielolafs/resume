@@ -9,6 +9,7 @@ import { layoutPageTrack, updateArrows } from './layout';
 import { cellWorldX, pageStride } from './metrics';
 import { loadchannel } from './models';
 import type { Skips, Stage, ZoomDir } from './types';
+import { Box3 } from 'three';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
@@ -317,6 +318,13 @@ export function stepZoom(s: Stage, now: number) {
 
     if (t >= 1) finishZoom(s);
 }
+// TEMP DEBUG
+function screenCenter(rig: Pick<Stage['main'], 'renderer' | 'camera'>, model: Object3D): [number, number] {
+    model.updateWorldMatrix(true, true);
+    const v = new Box3().setFromObject(model).getCenter(new Vector3()).project(rig.camera);
+    const r = rig.renderer.domElement.getBoundingClientRect();
+    return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
+}
 
 function finishZoom(s: Stage) {
     const z = s.zoom.state;
@@ -336,6 +344,19 @@ function finishZoom(s: Stage) {
         s.main.scene.add(staged);
     }
     s.zoom.stagedGroup = null;
+    // in finishZoom, zoom-out path
+    if (staged) {
+        const model = staged.children.find(c => !c.userData.isBackground);
+        const before = model && screenCenter(s.zoom, model);   // zoom stage, p = 0
+
+        staged.position.copy(z.restPos);
+        staged.scale.setScalar(z.restScale);
+        s.main.scene.add(staged);
+
+        const after = model && screenCenter(s.main, model);    // main stage, same frame
+        if (before && after) console.log('handoff dx', after[0] - before[0], 'dy', after[1] - before[1]);
+        console.log('restPos.y', z.restPos.y, 'page y values', s.cellGroups[z.pageIndex].map(g => Math.round(g.position.y)));
+    }
 
     if (z.anchorEl) z.anchorEl.style.visibility = '';
     setBackgroundOpacity(s, 1);
