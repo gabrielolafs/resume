@@ -95,31 +95,53 @@ import '../styles/global.css';
 </div>
 
 <script>
-    const overlay = document.getElementById('loading-overlay');
+    function setupLoadingOverlay() {
+        const overlay = document.getElementById('loading-overlay');
 
-    function dismiss() {
         if (!overlay) return;
 
-        overlay.removeEventListener('click', onClick);
-        window.removeEventListener('keydown', onKeyDown);
+        // Prevent this script from installing duplicate listeners
+        if (overlay.dataset.initialized === 'true') return;
+        overlay.dataset.initialized = 'true';
 
-        overlay.style.opacity = '0';
-        overlay.style.pointerEvents = 'none';
+        function dismiss() {
+            if (!document.body.contains(overlay)) return;
 
-        overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
-        setTimeout(() => overlay.remove(), 1000);
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+
+            overlay.removeEventListener('click', onClick);
+            window.removeEventListener('keydown', onKeyDown);
+
+            setTimeout(() => {
+                if (document.body.contains(overlay)) {
+                    overlay.remove();
+                }
+            }, 500);
+        }
+
+        function onClick(e) {
+            if (e.target.closest('a')) return;
+            dismiss();
+        }
+
+        function onKeyDown(e) {
+            if (
+                e.key === 'Enter' &&
+                document.activeElement?.closest('a')
+            ) {
+                return;
+            }
+
+            dismiss();
+        }
+
+        overlay.addEventListener('click', onClick);
+        window.addEventListener('keydown', onKeyDown);
     }
 
-    function onClick(e: MouseEvent) {
-        if ((e.target as HTMLElement).closest('a')) return;
-        dismiss();
-    }
+    setupLoadingOverlay();
 
-    function onKeyDown(e: KeyboardEvent) {
-        if (e.key === 'Enter' && document.activeElement?.closest('a')) return;
-        dismiss();
-    }
-
-    overlay?.addEventListener('click', onClick);
-    window.addEventListener('keydown', onKeyDown);
+    // Important for client-side navigation/frameworks
+    document.addEventListener('astro:page-load', setupLoadingOverlay);
 </script>
