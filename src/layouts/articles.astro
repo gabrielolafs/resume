@@ -43,14 +43,14 @@ const prev_slug = index != -1 && index > 0? channels[index - 1] : "";
     <WholeScreenScene/>
 
     { prev_slug ?
-    <a href={prev_slug}>
+    <a href={"/articles/" + prev_slug}>
       <button id="arrow-prev" class="article page-arrow left">
         <LeftArrow />
       </button>
     </a>: <></>}
 
     { next_slug ?
-    <a href={next_slug}>
+    <a href={"/articles/" + next_slug}>
       <button id="arrow-next" class="article page-arrow right">
         <LeftArrow />
       </button>
