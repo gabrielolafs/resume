@@ -133,8 +133,6 @@ export function loadchannel(s: Stage, pageIndex: number, cellIndex: number) {
 }
 
 export function loadchannels(s: Stage, skips: Skips = { page: null, index: null }) {
-    const minWait = new Promise(resolve => setTimeout(resolve, MIN_MS_OF_LOADING_SCREEN));
-
     for (let p = 0; p < s.cellGroups.length; p++) {
         for (let i = 0; i < s.layout.cpp; i++) {
             // only load if not already loaded by zooming. skip that ONE cell, not its whole page and column
@@ -143,14 +141,7 @@ export function loadchannels(s: Stage, skips: Skips = { page: null, index: null 
     }
 
     // render all channels + unload loading screen
-    minWait.then(() => {
-        const overlay = s.overlay;
-        if (overlay) {
-            overlay.style.opacity = '.5';
-            setTimeout(() => overlay.remove(), MIN_MS_OF_LOADING_SCREEN);
-        }
-        s.main.renderer.compile(s.main.scene, s.main.camera);
-    });
+    s.main.renderer.compile(s.main.scene, s.main.camera);
 }
 
 // slides every cell's model group along with the page track. the zooming cell is skipped, renderZoom owns its position

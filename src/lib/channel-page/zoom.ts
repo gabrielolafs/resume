@@ -214,10 +214,6 @@ function startZoomOut(s: Stage, page: number, cell: number): boolean {
     return true;
 }
 
-// ---------------------------------------------------------------------------------------------
-// entry points called from the page
-// ---------------------------------------------------------------------------------------------
-
 // shows the zoom out if we arrived from a sub page (?fromIndex), otherwise leaves the loading screen alone.
 // returns the cell that startZoomOut already loaded, so loadchannels can skip it
 export function resolveArrival(s: Stage): Skips {
@@ -263,10 +259,6 @@ export function handleCellClick(s: Stage, e: MouseEvent) {
     e.preventDefault();
     startZoomIn(s, pageIndex, cellIndex, anchor, anchor.href);
 }
-
-// ---------------------------------------------------------------------------------------------
-// per frame
-// ---------------------------------------------------------------------------------------------
 
 function renderZoom(s: Stage, p: number) {
     const z = s.zoom.state;

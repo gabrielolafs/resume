@@ -1,4 +1,4 @@
-export const MIN_MS_OF_LOADING_SCREEN = 500;
+export const MIN_MS_OF_LOADING_SCREEN = 500000;
 export const FLIP_DURATION = 600;  // ms, page turn
 export const ZOOM_DURATION = 600;  // ms
 
