@@ -31,6 +31,6 @@ Send me an email: gabriel@gabrielolafsson.com
 <br/>  
 <hr/>  
 
-Tip: If you are here for the objective stay above the horizontal lines as everything anything below my writing about my experience with the project. 
+Tip: If you are here for the objective stay above the horizontal lines as everything anything below is my writing about the project.
 
-Tip: arrows withing articles will navigate with the same order as the main screen (but I wouldnt blame you for wanting to see the animation everytime you hit the home button). For example this pages right arrow will lead to channel #2, click it to find out
+Tip: Arrows within articles (really transparent, they are in the same location as the main page) will navigate with the same order as the main screen (but I wouldnt blame you for wanting to see the animation everytime you hit the home button). For example this pages right arrow will lead to channel #2, you'll just have to click it to find out
