@@ -22,7 +22,7 @@ model: {
 
 BS in Computer Science from Worcester Polytechnic Institute.
 
-Full stack developer, slight preference to backend as networking was my first love, and Python was my second.
+Full stack developer with a preference for backend, as network administration was my foray to programming
 
 Send me an email: gabriel@gabrielolafsson.com
 
@@ -31,4 +31,4 @@ Send me an email: gabriel@gabrielolafsson.com
 <br/>  
 <hr/>  
 
-Horizontal lines (like the one above) indicate that anything below it is a story or my experience with a particular part of the project. So if you like to stick to the objective, stay above this line
+Horizontal lines, like the one above, indicate that anything below it is a story or my experience with a particular part of the project. So if you like to stick to the objective, stay above this line

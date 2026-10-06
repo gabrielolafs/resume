@@ -11,12 +11,14 @@ imgPaths: ["/img/channel/aging_01.webp", "/img/channel/aging_02.webp", "/img/cha
     
 ---
 
-Data Visualization project between 3 people. My responsibilities were data collection + cleaning, the style of the main visualization, and the interactive timeline.  
+Data Visualization project, leading a team of 3. I was responsible for data collection & cleaning, the main visualization style, and the interactive timeline.  
 
 [aging-congress.us](https://aging-congress.us/) | [GitHub](https://github.com/gabrielolafs/aging-congress)
 
 <hr/>
 
-I really enjoyed working on this project as it gave me the chance to get better at front end while working on a problem I think is really important to pay attention to as a citizen of the United States of America. It was quite motivating (and gratifying after the fact) to make what I believe to be an important visualization and to make it intractable.
+![aging-congress.us screenshot](/img/article/aging_congress.png)
 
-This is currently hosted on a CloudFlare domain that I maintain, so you can check it out now!
+This project gave me the opportunity to enhance my front-end skills while working on an issue I believe every US citizen should pay attention to. It was quite motivating (and gratifying to see the end product) to build an important visualization and make it interactive.
+
+This is currently hosted on a CloudFlare domain that I maintain, so you can [check it out now](https://aging-congress.us/)! 
