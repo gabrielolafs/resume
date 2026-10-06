@@ -31,4 +31,6 @@ Send me an email: gabriel@gabrielolafsson.com
 <br/>  
 <hr/>  
 
-Horizontal lines, like the one above, indicate that anything below it is a story or my experience with a particular part of the project. So if you like to stick to the objective, stay above this line
+Tip: If you are here for the objective stay above the horizontal lines as everything anything below my writing about my experience with the project. 
+
+Tip: arrows withing articles will navigate with the same order as the main screen (but I wouldnt blame you for wanting to see the animation everytime you hit the home button). For example this pages right arrow will lead to channel #2, click it to find out
