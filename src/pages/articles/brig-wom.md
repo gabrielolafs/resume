@@ -36,18 +36,14 @@ I want to start with the game that we made at the very end of the course first, 
 
 ![score board](/img/article/score_board.webp)
 
-The user provided up to 3 "initial" characters, either through arrow/mouse input cycling through valid characters, or by using the keyboard.
-
-  
-
-This was the first page that I made fully by myself, frontend and back, the design being inspired by retro arcade machines. The user provided up to 3 "initial" characters, either through arrow/mouse input cycling through valid characters, or by using the keyboard. Based off the SQL table I created, this page displayed those "initials" along with their score and the playable character used to achieve that score. This sorted by highest score, and can either display the top scores of that day or all time high scores.
+This was the first page that I made fully by myself, frontend and back, the design being inspired by retro arcade machines (ignore the pink indicators). The user provided up to 3 "initial" characters, either through arrow/mouse input, cycling through valid characters, or by using the keyboard. Based off the SQL table I created, this page displayed those "initials" along with their score and the playable character used to achieve that score. This sorted by highest score, and can either display the top scores of that day or all time high scores.
 
   
 
 The keen eye (even though this is generously 720p) will spot that the highest score seems to have a really long string, and the eagle eyed _might_ even be able to read it. These scores popped up right after the deployment that allowed people to play the game for themselves. Through some detective work, I was able to figure out who had done it (giggling and whispering to your friends every time you see me walk by is not the best way to keep a secret, fyi) but I had to find out how it was done. The next investigation technique I used was pen testing our own website.
 
   
-I had been a member of the Cyber Security Club for almost 2 years and had participated in several hackathons, so I found it relatively quickly. The bad actor re-sent a packet containing a phony score to the database. The game ran exclusively on the client and we had no preventative measures against it, plus doing so wasn't possible without changing the game logic. When I confronted and interrogated the perp, they said that we should “try to hide the values in the put request” and to “not have the score in plain text”. They just wanted us to fix it with an incomplete solution so he could do it all over again. This perp was a serial hacker.
+I had been a member of the Cyber Security Club for almost 2 years and had participated in several hackathons, so I found it relatively quickly. The bad actor re-sent a packet containing a phony score to the database. The game ran exclusively on the client and we had no preventative measures against it, plus doing so wasn't possible without changing the game logic. When I confronted and interrogated the perp, they said that we should “try to hide the values in the put request” and to “not have the score in plain text”. They just wanted us to fix it with an incomplete solution so they could do it all over again. This perp was a serial hacker.
 
   
 
@@ -60,5 +56,6 @@ Starting a game caused a create/update (one user should only be playing one game
   
 
 ###### My playable character from this game:
-
+<br/>
+<br/>
 <img src="/img/article/bouncing-gabriel.webp" style="box-shadow: none; height: min(75dvh, 60dvw);">
