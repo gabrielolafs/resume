@@ -184,19 +184,21 @@ import CircleButton from './circle-button.astro';
 
 </div>
 <script>
-    function updateTime() {
-        const now = new Date();
-        document.getElementById('time-hours').textContent = now.getHours();
-        document.getElementById('time-minutes').textContent = now.getMinutes().toString().padStart(2, '0');
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        document.getElementById('current-date').textContent = `${days[now.getDay()]} ${now.getMonth() + 1}/${now.getDate()}`;
-    }
+  function updateClock() {
+    const hours = document.getElementById("time-hours");
+    const minutes = document.getElementById("time-minutes");
+    const date = document.getElementById("current-date");
+    if (!hours || !minutes || !date) return; // clock isn't on this page
 
-    updateTime();
-    setInterval(updateTime, 60000);
+    const now = new Date();
+    hours.textContent = now.getHours().toString().padStart(2, "0");
+    minutes.textContent = now.getMinutes().toString().padStart(2, "0");
+    date.textContent = `${DAYS[now.getDay()]} ${now.getMonth() + 1}/${now.getDate()}`;
+  }
 
-    document.addEventListener('astro:page-load', () => {
-        updateTime();
-    });
+  updateClock();
+  setInterval(updateClock, 60_000);
+  document.addEventListener("astro:page-load", updateClock);
 </script>
