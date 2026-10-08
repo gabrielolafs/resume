@@ -1,3 +1,4 @@
+import { driftMarkup } from './drift';
 import { slideshowMarkup } from './slideshow';
 import { BLANK_COLOR } from './config';
 import type { Channel } from './types';
@@ -75,22 +76,9 @@ function buildChannelSection(salt: number, title: string, animationSvg: string, 
                     ${title}
                 </div>`;
 
-    // no images, fall back to the drifting background svg
+    // no images, fall back to the drifting background svg (lib/drift.ts)
     if (imgPaths.length === 0) {
-        const dims = svgDimentions ?? [1, 1];
-        const aspectRatio = dims[0] / dims[1];
-        const offSetYTimes = Math.trunc(aspectRatio);
-
-        return `<style>
-                    @keyframes drift_${slug} {
-                        0% { transform: translate(0, 0); }
-                        100% { transform: translate(${aspectRatio * 2.5}dvh, ${2.5 * offSetYTimes}dvh); }
-                    }
-                </style>
-                <div class="grid-mover" 
-                    style="background-image: url('${animationSvg}'); animation: drift_${slug} ${4 + salt}s linear infinite;"
-                >
-                </div>` + highlightedTitle;
+        return driftMarkup(slug, animationSvg, svgDimentions, 4 + salt) + highlightedTitle;
     }
 
     // images present: crossfade slideshow (timing, ordering and phase live in lib/slideshow.ts)

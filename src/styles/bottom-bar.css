@@ -24,7 +24,7 @@
 }
 
 @supports (height: round(down, 10.5px, 1px)) {
-  .bottom-container {
+  .bottom-container, .bottom-container-alignment {
     --bar-h: round(down, max(min(25dvw, 20dvh), 10vh), 1px);
     --edge-w: round(down, max(60px, 20vw), 1px);
     --curve-w: round(down, 12vmin, 1px);
