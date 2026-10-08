@@ -4,8 +4,8 @@
   --curve-w: 12vmin;
 
   --bar-size: min(25dvw, 20dvh);
-  --shadow-weight: clamp(10px, calc(var(--bar-size) * 0.08), 12px);
-  --shadow-blur: clamp(8px, calc(var(--bar-size) * 0.3), 100px);
+  --shadow-blur: clamp(20px, calc(20px + var(--bar-size) * 0.2), 100px);
+  --shadow-thickness: clamp(24px, calc(26px + var(--bar-size) * 0.15), 90px);
 
   position: fixed;
   left: 0;
@@ -63,6 +63,8 @@
   overflow: visible;
 }
 
+/* --- shapes drawn inside the passes ------------------------------------- */
+
 /* page-coloured area above the bar edge (hides the shadow above the edge) */
 .bar-mask {
   fill: var(--wii-background);
@@ -76,16 +78,16 @@
   stroke-width: 0.5;
 }
 
-/* black line that gets blurred into the inner shadow */
 .bar-shadow {
   fill: none;
   stroke: #000;
+  vector-effect: non-scaling-stroke;
 }
 .bar-shadow--line {
-  stroke-width: calc(var(--shadow-weight) * 0.7);
+  stroke-width: var(--shadow-thickness);
 }
 .bar-shadow--curve {
-  stroke-width: calc(var(--shadow-weight) * 0.5);
+  stroke-width: calc(var(--shadow-thickness) * 0.71); /* same 0.5 : 0.7 ratio as before */
 }
 
 .left-line, .left-curve, .center-line, .right-curve, .right-line {
