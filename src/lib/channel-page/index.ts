@@ -4,22 +4,15 @@ import { idleAnimate, loadchannels, positionCells } from './models';
 import { createStage, resizeZoomRig } from './stage';
 import { handleCellClick, resetZoomStage, resolveArrival, stepZoom } from './zoom';
 
-export function initChannelPage() {
-    document.addEventListener('astro:page-load', () => {
+export async function initChannelPage() {
+    document.addEventListener('astro:page-load', async () => {
         const canvas = document.getElementById('three-canvas') as HTMLCanvasElement | null;
         if (!canvas) return;
 
         const s = createStage(canvas);
 
-        resetZoomStage(s);
-        switchLayout(s, true);
-        setup(s);
-
-        const skips = resolveArrival(s); // zoom out if we came from a sub page, returns the cell it already loaded
-        loadchannels(s, skips);
-        updateArrows(s);
-
-        let frameId = requestAnimationFrame(animate);
+        let disposed = false;
+        let frameId = 0;
 
         const onResize = () => {
             switchLayout(s);
@@ -28,16 +21,30 @@ export function initChannelPage() {
         };
         window.addEventListener('resize', onResize);
 
-        document.getElementById('arrow-prev')?.addEventListener('click', () => startFlip(s, s.layout.page - 1));
-        document.getElementById('arrow-next')?.addEventListener('click', () => startFlip(s, s.layout.page + 1));
-        document.getElementById('page-track')?.addEventListener('click', (e) => handleCellClick(s, e));
-
-        // this page's canvas is about to be swapped out, so stop its loop and listener. without this every
-        // visit to the grid leaves another render loop running against a canvas that's gone
+        // registered before the await: this page's canvas is about to be swapped out, so stop its loop
+        // and listener. without this every visit to the grid leaves another render loop running against
+        // a canvas that's gone
         document.addEventListener('astro:before-swap', () => {
+            disposed = true;
             cancelAnimationFrame(frameId);
             window.removeEventListener('resize', onResize);
         }, { once: true });
+
+        resetZoomStage(s);
+        switchLayout(s, true);
+        setup(s);
+
+        const skips = await resolveArrival(s); // zoom out if we came from a sub page, returns the cell it already loaded
+        if (disposed) return;                  // navigated away while we were waiting for layout to settle
+
+        loadchannels(s, skips);
+        updateArrows(s);
+
+        frameId = requestAnimationFrame(animate);
+
+        document.getElementById('arrow-prev')?.addEventListener('click', () => startFlip(s, s.layout.page - 1));
+        document.getElementById('arrow-next')?.addEventListener('click', () => startFlip(s, s.layout.page + 1));
+        document.getElementById('page-track')?.addEventListener('click', (e) => handleCellClick(s, e));
 
         function animate(t: number) {
             frameId = requestAnimationFrame(animate);

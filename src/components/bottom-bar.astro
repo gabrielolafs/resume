@@ -2,13 +2,38 @@
 import '../styles/bottom-bar.css'; 
 import '../styles/global.css';
 import CircleButton from './circle-button.astro';
+
+const H = 30;
+const LINE_W = 10;
+const CURVE_W = 9;
+const TOP = 0.25;
+const DIP = 8
+const BLEED = 1;
+const ABOVE = 2;
+const BELOW = H + 2;
+
+const LINE_VB = `0 0 ${LINE_W} ${H}`;
+const CURVE_VB = `0 0 ${CURVE_W} ${H}`;
+
+const topLine = `M0 ${TOP} L${LINE_W} ${TOP}`;
+const dipLine = `M0 ${DIP} L${LINE_W} ${DIP}`;
+const leftEdge = `M${-BLEED} ${TOP} L0 ${TOP} C4 ${TOP} 4 ${DIP} ${CURVE_W} ${DIP} L${CURVE_W + BLEED} ${DIP}`;
+const rightEdge = `M${-BLEED} ${DIP} L0 ${DIP} C5 ${DIP} 5 ${TOP} ${CURVE_W} ${TOP} L${CURVE_W + BLEED} ${TOP}`;
+
+const dipAbove = `${dipLine} L${LINE_W} ${-ABOVE} L0 ${-ABOVE} Z`;
+const leftAbove = `${leftEdge} L${CURVE_W + BLEED} ${-ABOVE} L${-BLEED} ${-ABOVE} Z`;
+const rightAbove = `${rightEdge} L${CURVE_W + BLEED} ${-ABOVE} L${-BLEED} ${-ABOVE} Z`;
+
+const dipBelow = `${dipLine} L${LINE_W} ${BELOW} L0 ${BELOW} Z`;
+const leftBelow = `${leftEdge} L${CURVE_W + BLEED} ${BELOW} L${-BLEED} ${BELOW} Z`;
+const rightBelow = `${rightEdge} L${CURVE_W + BLEED} ${BELOW} L${-BLEED} ${BELOW} Z`;
 ---
 
 <div class="bottom-container" id="bottom-container">
     <div class="resume-button">
         <CircleButton href="./../../pdf/gabriel_olafsson_resume.pdf" openInNewTab="true">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 26">
-                <path stroke-linecap="round" stroke-width="2" fill="var(--round-button-content)" stroke="var(--round-button-content" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
+                <path stroke-linecap="round" stroke-width="2" fill="var(--round-button-content)" stroke="var(--round-button-content)" d="M1 1L1 24 L19 24 L19 7 L13 1L1 1"></path>
                 <path stroke-linecap="round" fill="none" stroke-width="1" stroke="var(--text-secondary)" d="M13 0.5 L13 6 Q13 7 14 7 L19.5 7"></path>
                 <path stroke-linecap="round" stroke-width="1" stroke="var(--round-button-background)" d="M2 4L12 4M4 6L12 6M4 8L12 8M2 11L16 11M4 13L12 13M4 15L16 15M4 17L14 17M2 20L15 20M4 22L18 22"></path>
             </svg>
@@ -74,100 +99,66 @@ import CircleButton from './circle-button.astro';
         </div>
     </div>
 
-    <!-- background pass -->
-    <div class="bottom-container-background-pass">
-        <div class="left-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <rect x="0" y="0" width="10" height="30" fill="var(--background-color)"/>
-            </svg>
-        </div>
-        <div class="left-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path fill="var(--background-color)" d="M0 .25 C4 .25 4 7 9 7 L9 30 L0 30 Z" />
-            </svg>
-        </div>
-        <div class="center-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <rect x="0" y="7" width="10" height="23" fill="var(--background-color)"/>
-            </svg>
-        </div>
-        <div class="right-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path fill="var(--background-color)" stroke="none" d="M0 7 C5 7 6 .25 9 .25 L9 30 L0 30 Z"/>
-            </svg>
-        </div>
-        <div class="right-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <rect x="0" y="0" width="10" height="30" fill="var(--background-color)"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- css blur handles making it look good -->
+    <!-- shadow pass (css blur handles making it look good) -->
     <div class="bottom-container-shadow-pass">
         <div class="left-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none">
-                <path d="M10 0 L0 0" stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <path class="bar-shadow bar-shadow--line" d={topLine} />
             </svg>
         </div>
         <div class="left-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" >
-                <path d="M-2 .25 L0 .25 C4 1 4 7 9 7 L 13 7" stroke="black" stroke-width="calc(var(--shadow-weight) * 0.5)" fill="none"  />
-                
-                <path d="M0 .25 C4 .25 4 7 9 7 L9 0 L0 0" stroke="var(--wii-background)" stroke-width="0" fill="var(--wii-background)" />
+            <svg viewBox={CURVE_VB} preserveAspectRatio="none">
+                <defs><clipPath id="bar-clip-left"><path d={leftBelow} /></clipPath></defs>
+                <path class="bar-shadow bar-shadow--curve" d={leftEdge} clip-path="url(#bar-clip-left)" />
             </svg>
         </div>
         <div class="center-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none" d="M0 8 L10 8"/>
-
-                <path stroke="none" fill="var(--wii-background)" d="M0 8 L10 8 L10 0 L 0 0 Z"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <defs><clipPath id="bar-clip-center"><path d={dipBelow} /></clipPath></defs>
+                <path class="bar-shadow bar-shadow--line" d={dipLine} clip-path="url(#bar-clip-center)" />
             </svg>
         </div>
         <div class="right-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.5)" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
-
-                <path stroke="none" fill="var(--wii-background)" d="M0 8 C5 8 5 .25 9 .25 L9 0 L0 0 Z"/>
+            <svg viewBox={CURVE_VB} preserveAspectRatio="none">
+                <defs><clipPath id="bar-clip-right"><path d={rightBelow} /></clipPath></defs>
+                <path class="bar-shadow bar-shadow--curve" d={rightEdge} clip-path="url(#bar-clip-right)" />
             </svg>
         </div>
         <div class="right-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="black" stroke-width="calc(var(--shadow-weight) * 0.7)" fill="none" d="M0 .25 L100 .25"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <path class="bar-shadow bar-shadow--line" d={topLine} />
             </svg>
         </div>
     </div>
 
+    <!-- highlight pass -->
     <div class="bottom-container-highlight-pass">
         <div class="left-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 L10 .25"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <path class="bar-edge" d={topLine} />
             </svg>
         </div>
         <div class="left-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="none" fill="var(--wii-background)" d="M0 .25 C4 .25 4 8 9 8 L9 0 L0 0 Z"/>
-
-                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 C4 .25 4 8 9 8" />
+            <svg viewBox={CURVE_VB} preserveAspectRatio="none">
+                <path class="bar-mask" d={leftAbove} />
+                <path class="bar-edge" d={leftEdge} />
             </svg>
         </div>
         <div class="center-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="none" fill="var(--wii-background)" d="M0 8 L10 8 L10 0 L 0 0 Z"/>
-
-                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 8 L10 8"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <path class="bar-mask" d={dipAbove} />
+                <path class="bar-edge" d={dipLine} />
             </svg>
         </div>
         <div class="right-curve">
-            <svg viewBox="0 0 9 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="none" fill="var(--wii-background)" d="M0 8 C5 8 5 .25 9 .25 L9 0 L0 0 Z"/>
-                
-                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 8 C5 8 5 .25 9 .25"/>
+            <svg viewBox={CURVE_VB} preserveAspectRatio="none">
+                <path class="bar-mask" d={rightAbove} />
+                <path class="bar-edge" d={rightEdge} />
             </svg>
         </div>
         <div class="right-line">
-            <svg viewBox="0 0 10 30" preserveAspectRatio="none" overflow="visible">
-                <path stroke="var(--wii-blue)" stroke-width=".5" fill="none" d="M0 .25 L10 .25"/>
+            <svg viewBox={LINE_VB} preserveAspectRatio="none">
+                <path class="bar-edge" d={topLine} />
             </svg>
         </div>
     </div>

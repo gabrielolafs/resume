@@ -1,5 +1,4 @@
-import { Box3, Vector3 } from 'three';
-import type { Object3D } from 'three';
+import { Vector3 } from 'three';
 import { navigate } from 'astro:transitions/client';
 import { applySlideState, readSlideState } from './slideshow';
 import {
@@ -13,6 +12,25 @@ import type { Skips, Stage, ZoomDir } from './types';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
+
+// zoom in: the request starts when the zoom starts, the DOM swap waits for the last frame
+let zoomDone: Promise<void> | null = null;
+let releaseZoom: () => void = () => {};
+
+document.addEventListener('astro:before-preparation', (e) => {
+    const gate = zoomDone;
+    if (!gate) return;
+    const load = e.loader;
+    e.loader = async () => {
+        await load();  // fetch + parse, runs while the zoom plays
+        await gate;    // then hold until the final zoom frame
+    };
+});
+
+async function layoutSettled() {
+    await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 400))]);
+    await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+}
 
 // everything that fades during the zoom
 function backgroundLayers(s: Stage): HTMLElement[] {
@@ -132,11 +150,20 @@ function makeChromeLayer(anchorEl: HTMLElement, rect: DOMRect): HTMLElement {
 
     Object.assign(clone.style, {
         position: 'absolute', top: '0', left: '0', margin: '0',
-        width: `${rect.width}px`, height: `${rect.height}px`,
         transformOrigin: '0 0',
         transform: `scale(${vw / rect.width}, ${vh / rect.height})`,
         visibility: 'visible'
     });
+
+    const pin = (prop: string, value: string) => clone.style.setProperty(prop, value, 'important');
+    pin('box-sizing', 'border-box');
+    pin('width', `${rect.width}px`);
+    pin('height', `${rect.height}px`);
+    pin('min-width', '0');
+    pin('min-height', '0');
+    pin('max-width', 'none');
+    pin('max-height', 'none');
+    pin('aspect-ratio', 'auto');
 
     // the frame carries the sub page, so hide (don't remove) the cell's copy
     const embedded = clone.querySelector<HTMLElement>('.embedded-channel');
@@ -156,6 +183,8 @@ function placeBehindModels(s: Stage, chrome: HTMLElement) {
 function beginZoom(s: Stage, dir: ZoomDir, pageIndex: number, cellIndex: number, anchorEl: HTMLElement, href = '') {
     if (s.flip.active || s.zoom.state.active) return;
 
+    s.zoom.canvas.style.display = 'block'; // moved up: show it before anything is measured
+
     const rect = anchorEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -171,7 +200,7 @@ function beginZoom(s: Stage, dir: ZoomDir, pageIndex: number, cellIndex: number,
     const blackEl = document.getElementById('zoom-background') as HTMLElement | null;
 
     // the canvas has to be displayed before we can measure it
-    s.zoom.canvas.style.display = 'block';
+    // s.zoom.canvas.style.display = 'block';
 
     // model endpoints. rest = in the cell, full = centered on the viewport.
     // world units are css px, so positions come from where the canvases actually sit on screen
@@ -258,6 +287,11 @@ function commitZoom(s: Stage) {
 }
 
 function startZoomIn(s: Stage, pageIndex: number, cellIndex: number, anchorEl: HTMLAnchorElement, href: string) {
+    // beginZoom bails in this case, and the gate would then never be released
+    if (s.flip.active || s.zoom.state.active) return;
+
+    zoomDone = new Promise<void>(res => { releaseZoom = res; });
+    navigate(href);
     beginZoom(s, 'in', pageIndex, cellIndex, anchorEl, href);
 }
 
@@ -283,32 +317,55 @@ function startZoomOut(s: Stage, page: number, cell: number): boolean {
     return true;
 }
 
+const slugAt = (s: Stage, index: number) =>
+    s.pages[Math.floor(index / s.layout.cpp)]?.[index % s.layout.cpp]?.url?.split('/').pop();
+
+// zoom out arrival: stands in for the loading screen while layout settles. it is the same picture the
+// zoom starts from (sub page filling the viewport, on black), so beginZoom can swap it for the real
+// frame within one task, with no paint in between
+function coverForArrival(s: Stage, slug: string) {
+    const frame = makeZoomFrame(slug);
+    frame.style.opacity = '1';
+    s.zoom.cloneLayer.innerHTML = '';
+    s.zoom.cloneLayer.append(frame);
+    setBackgroundOpacity(s, 0);
+    const blackEl = document.getElementById('zoom-background') as HTMLElement | null;
+    if (blackEl) blackEl.style.opacity = '1';
+}
+
+// only for when there turns out to be nothing to zoom to
+function removeArrivalCover(s: Stage) {
+    s.zoom.cloneLayer.innerHTML = '';
+    setBackgroundOpacity(s, 1);
+    const blackEl = document.getElementById('zoom-background') as HTMLElement | null;
+    if (blackEl) blackEl.style.opacity = '0';
+}
+
 // shows the zoom out if we arrived from a sub page (?fromIndex), otherwise leaves the loading screen alone.
 // returns the cell that startZoomOut already loaded, so loadchannels can skip it
-export function resolveArrival(s: Stage): Skips {
+export async function resolveArrival(s: Stage): Promise<Skips> {
     const params = new URLSearchParams(location.search);
     let skips: Skips = { page: null, index: null };
+    history.replaceState(history.state, '', location.pathname + location.hash);
 
-    if (params.has('fromIndex')) { // this came from somewhere else (routing), meaning we can zoom out working
-        // fromIndex is the channel's global index in allChannels. map it through the CURRENT layout,
-        // so the page is still right if the screen was rotated between leaving and coming back
+    if (params.has('fromIndex')) {
         const index = Number(params.get('fromIndex'));
-
         if (Number.isInteger(index)) {
+            const slug = index >= 0 ? slugAt(s, index) : undefined; // message board is index -1
+
+            // cover first, then drop the overlay, both before the first await. the loading screen is never shown on a redirect
+            if (slug) coverForArrival(s, slug);
             document.getElementById('loading-overlay')?.remove();
 
-            if (index >= 0) { // message board is index -1
+            if (slug) {
+                await layoutSettled(); // the cover is what's on screen while we wait
                 const page = Math.floor(index / s.layout.cpp);
                 const cell = index % s.layout.cpp;
-
-                if (startZoomOut(s, page, cell)) {
-                    skips = { page, index: cell }; // startZoomOut already loaded this one
-                }
+                if (startZoomOut(s, page, cell)) skips = { page, index: cell };
+                else removeArrivalCover(s);
             }
         }
     }
-    history.replaceState(history.state, '', location.pathname + location.hash);
-
     return skips;
 }
 
@@ -388,38 +445,23 @@ export function stepZoom(s: Stage, now: number) {
     if (t >= 1) finishZoom(s);
 }
 
-// TEMP DEBUG
-function screenCenter(rig: Pick<Stage['main'], 'renderer' | 'camera'>, model: Object3D): [number, number] {
-    model.updateWorldMatrix(true, true);
-    const v = new Box3().setFromObject(model).getCenter(new Vector3()).project(rig.camera);
-    const r = rig.renderer.domElement.getBoundingClientRect();
-    return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
-}
-
 function finishZoom(s: Stage) {
     const z = s.zoom.state;
     z.active = false;
 
     if (z.dir === 'in') {
-        // leave the grid magnified and faded: we're navigating away, and resetZoomStage cleans up if we come back
+        // leave the grid magnified and faded: resetZoomStage cleans up if we come back
         s.zoom.stagedGroup = null;
-        navigate(z.href);
+        releaseZoom(); // lets the already-fetched page swap in
+        zoomDone = null;
         return;
     }
 
-    // zoom out: hand the model back to the normal scene and put everything back the way it was
     const staged = s.zoom.stagedGroup;
     if (staged) {
-        // TEMP DEBUG: measure BEFORE the handoff, while it's still on the zoom stage at p = 0
-        const model = staged.children.find(c => !c.userData.isBackground);
-        const before = model && screenCenter(s.zoom, model);
-
         staged.position.copy(z.mainPos); // main scene coordinates, not the zoom scene's restPos
         staged.scale.setScalar(z.restScale);
         s.main.scene.add(staged);
-
-        // TEMP DEBUG: should now be ~0, 0
-        const after = model && screenCenter(s.main, model);
     }
     s.zoom.stagedGroup = null;
 

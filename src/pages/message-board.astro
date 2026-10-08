@@ -20,9 +20,9 @@ import WholeScreenScene from "../components/whole-screen-scene.astro";
 
         <!-- stolen from home page cause its like the exact same thing, the class names totaly make sence here -->
         <div class="container">
-            <div class="bottom-container">
-                <div class="email-button">
-                    <div class="email-background">
+            <div class="bottom-container" style="background: none;"> 
+                <div class="email-button" style="opacity: 1">
+                    <div class="email-background" style="opacity: 1">
                         <div class="fill-behind-right">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 13 14">
                                 <path d="M13 1 L8 1 A1 1.05 0 0 0 8 11 L13 11" stroke-width=".2" stroke="none" fill="#ffffff"></path>
@@ -45,7 +45,7 @@ import WholeScreenScene from "../components/whole-screen-scene.astro";
 
             <div class="shading" />
 
-            <div class="bottom-container" style="z-index: 10; !important">
+            <div class="bottom-container" style="z-index: 10 !important; background: none;">
                 <div class="email-button">
                     <CircleButton href="/?fromIndex=-1">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 9">
