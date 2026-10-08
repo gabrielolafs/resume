@@ -33,6 +33,11 @@ const prev_slug = index != -1 && index > 0? channels[index - 1] : "";
     <title> {frontmatter.title? "Gabriel's " + frontmatter.title : "Gabriel Olafsson"}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="Gabriel Olafsson's Website" />
+    <meta property="og:description" content="Retro inpired portfolio / personal page" />
+    <meta property="og:image" content="./favicon.svg" />
+    <meta property="og:url" content="./" />
+    <meta property="og:type" content="website" /> 
 
     <ClientRouter />
 
