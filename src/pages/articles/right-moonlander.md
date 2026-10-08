@@ -13,6 +13,6 @@ model: {
 }
 ---
 
-The right on is SOOOOOO LLLAAAAAAAMMMMEEE
+The right one is SOOOOOO LLLAAAAAAAMMMMEEE
 
 [The left one is way cooler](/articles/left-moonlander)
