@@ -28,6 +28,27 @@ document.addEventListener('astro:before-preparation', (e) => {
     };
 });
 
+// TEMP: compares the zoom's copy of the cell with the real cell at the end of the zoom out
+function debugCloneDrift(z: Stage['zoom']['state']) {
+    const clone = z.chromeEl?.firstElementChild as HTMLElement | null;
+    const real = z.anchorEl;
+    if (!clone || !real) return;
+
+    const c = clone.getBoundingClientRect();
+    const r = real.getBoundingClientRect();
+    const fmt = (b: DOMRect) => `${b.left.toFixed(1)}, ${b.top.toFixed(1)}  ${b.width.toFixed(1)} x ${b.height.toFixed(1)}`;
+
+    const d = document.createElement('pre');
+    d.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;margin:0;padding:4px;pointer-events:none';
+    d.textContent =
+        `clone  ${fmt(c)}\n` +
+        `real   ${fmt(r)}\n` +
+        `began  ${fmt(z.cellRect)}\n` +
+        `innerH ${window.innerHeight}  viewH ${z.viewH}`;
+    document.body.append(d);
+    setTimeout(() => d.remove(), 8000);
+}
+
 async function layoutSettled() {
     await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 400))]);
     await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
@@ -151,11 +172,20 @@ function makeChromeLayer(anchorEl: HTMLElement, rect: DOMRect): HTMLElement {
 
     Object.assign(clone.style, {
         position: 'absolute', top: '0', left: '0', margin: '0',
-        width: `${rect.width}px`, height: `${rect.height}px`,
         transformOrigin: '0 0',
         transform: `scale(${vw / rect.width}, ${vh / rect.height})`,
         visibility: 'visible'
     });
+
+    const pin = (prop: string, value: string) => clone.style.setProperty(prop, value, 'important');
+    pin('box-sizing', 'border-box');
+    pin('width', `${rect.width}px`);
+    pin('height', `${rect.height}px`);
+    pin('min-width', '0');
+    pin('min-height', '0');
+    pin('max-width', 'none');
+    pin('max-height', 'none');
+    pin('aspect-ratio', 'auto');
 
     // the frame carries the sub page, so hide (don't remove) the cell's copy
     const embedded = clone.querySelector<HTMLElement>('.embedded-channel');
@@ -452,10 +482,13 @@ function finishZoom(s: Stage) {
     if (z.dir === 'in') {
         // leave the grid magnified and faded: resetZoomStage cleans up if we come back
         s.zoom.stagedGroup = null;
-        releaseZoom();   // lets the already-fetched page swap in
+        releaseZoom(); // lets the already-fetched page swap in
         zoomDone = null;
         return;
     }
+
+    // TEMP: measured before anything is hidden or reset, zoom out only
+    debugCloneDrift(z);
 
     const staged = s.zoom.stagedGroup;
     if (staged) {
@@ -476,14 +509,4 @@ function finishZoom(s: Stage) {
     }
     s.zoom.cloneLayer.innerHTML = '';
     s.zoom.canvas.style.display = 'none';
-
-    // TEMP: remove once the snap is understood
-    const live = z.anchorEl?.getBoundingClientRect();
-    if (live) console.log('zoom-out drift', {
-        top: live.top - z.cellRect.top,
-        left: live.left - z.cellRect.left,
-        w: live.width - z.cellRect.width,
-        h: live.height - z.cellRect.height,
-        innerH: window.innerHeight - z.viewH
-    });
 }
