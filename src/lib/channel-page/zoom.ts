@@ -1,5 +1,4 @@
-import { Box3, Vector3 } from 'three';
-import type { Object3D } from 'three';
+import { Vector3 } from 'three';
 import { navigate } from 'astro:transitions/client';
 import { applySlideState, readSlideState } from './slideshow';
 import {
@@ -27,27 +26,6 @@ document.addEventListener('astro:before-preparation', (e) => {
         await gate;    // then hold until the final zoom frame
     };
 });
-
-// TEMP: compares the zoom's copy of the cell with the real cell at the end of the zoom out
-function debugCloneDrift(z: Stage['zoom']['state']) {
-    const clone = z.chromeEl?.firstElementChild as HTMLElement | null;
-    const real = z.anchorEl;
-    if (!clone || !real) return;
-
-    const c = clone.getBoundingClientRect();
-    const r = real.getBoundingClientRect();
-    const fmt = (b: DOMRect) => `${b.left.toFixed(1)}, ${b.top.toFixed(1)}  ${b.width.toFixed(1)} x ${b.height.toFixed(1)}`;
-
-    const d = document.createElement('pre');
-    d.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;margin:0;padding:4px;pointer-events:none';
-    d.textContent =
-        `clone  ${fmt(c)}\n` +
-        `real   ${fmt(r)}\n` +
-        `began  ${fmt(z.cellRect)}\n` +
-        `innerH ${window.innerHeight}  viewH ${z.viewH}`;
-    document.body.append(d);
-    setTimeout(() => d.remove(), 8000);
-}
 
 async function layoutSettled() {
     await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 400))]);
@@ -467,14 +445,6 @@ export function stepZoom(s: Stage, now: number) {
     if (t >= 1) finishZoom(s);
 }
 
-// TEMP DEBUG
-function screenCenter(rig: Pick<Stage['main'], 'renderer' | 'camera'>, model: Object3D): [number, number] {
-    model.updateWorldMatrix(true, true);
-    const v = new Box3().setFromObject(model).getCenter(new Vector3()).project(rig.camera);
-    const r = rig.renderer.domElement.getBoundingClientRect();
-    return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
-}
-
 function finishZoom(s: Stage) {
     const z = s.zoom.state;
     z.active = false;
@@ -486,9 +456,6 @@ function finishZoom(s: Stage) {
         zoomDone = null;
         return;
     }
-
-    // TEMP: measured before anything is hidden or reset, zoom out only
-    debugCloneDrift(z);
 
     const staged = s.zoom.stagedGroup;
     if (staged) {

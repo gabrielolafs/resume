@@ -25,6 +25,9 @@ const channels = Object.entries(globbed)
         order: overrideIndex,
         title:   mod.frontmatter.title,
         url:     `/articles/${slug}`,
+        dateWritten: mod.frontmatter.dateWritten ?? "",
+        timeSpan: mod.frontmatter.timeSpan ?? "",
+        tech: mod.frontmatter.tech ?? [],
         scanDir: mod.frontmatter.model?.baseDir ?? mod.frontmatter.channelPageScanDir,
         animationSvg: mod.frontmatter.animationSvgDir ? mod.frontmatter.animationSvgDir : `/svg/mask-star.svg`,
         animationSvgDimentions: mod.frontmatter.animationSvgDimentions ?? [90.45, 43.61], // default to size of mask-star.svg. this could have its own json with options if i get around to making more default svgs
@@ -49,11 +52,14 @@ const channelsJson = JSON.stringify(channels);
 ---
 
 {channels.map((ch) => {
-  const slug = ch.url?.split('/').pop();
+  const slug = ch?.url?.split('/').pop();
   return (
     <template data-slug={slug}>
       <EmbeddedChannel
-        title={ch.title}
+        title={ch?.title}
+        dateWritten={ch?.dateWritten}
+        timeSpan={ch?.timeSpan}
+        tech={ch?.tech}
       />
     </template>
   );
