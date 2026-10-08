@@ -5,9 +5,18 @@ import BottomBar from '../components/bottom-bar.astro';
 import ChannelsSection from '../components/channels-section.astro';
 
 import '../styles/index.css';
-
-const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true }));
 ---
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="Gabriel Olafsson's Website" />
+    <meta property="og:description" content="Retro inpired portfolio / personal page" />
+    <meta property="og:image" content="/favicon.svg" />
+    <meta property="og:url" content="https://gabrielolafsson.dev" />
+    <meta property="og:type" content="website" /> 
+</head>
 <div class="container">
     <div class="content">
         <Layout {...article} set:html={article.compiledContent()} />
@@ -16,3 +25,4 @@ const posts = Object.values(import.meta.glob('./articles/*.md', { eager: true })
     <ChannelsSection />
     <BottomBar />
 </div>
+</html>
